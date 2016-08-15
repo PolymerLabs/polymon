@@ -59,6 +59,7 @@
         route="{{route}}"
         active="{{scanRouteActive}}">
     </app-route>
+
     <polymon-qr-code-scanner
         return-to="[[route.prefix]]"
         active="[[scanRouteActive]]">
@@ -66,8 +67,13 @@
     <google-map
         disable-default-ui
         zoom="16"
-        latitude="37.7905490"
-        longitude="-122.393477">
+        latitude="{{mapCoords.latitude}}"
+        longitude="{{mapCoords.longitude}}">
+      <google-map-marker
+          icon='{"url":"../../images/player.svg", "scaledSize":{"width":64,"height":64}}'
+          latitude="[[playerCoords.latitude]]"
+          longitude="[[playerCoords.longitude]]">
+      </google-map-marker>
       <google-map-marker
           icon='{"url":"../../images/polymon/goat.svg", "scaledSize":{"width":32,"height":32}}'
           latitude="37.7905490"
@@ -91,13 +97,68 @@
         active: {
           type: Boolean,
           reflectToAttribute: true,
-          value: false
+          value: false,
+          observer: '__activeChanged'
         },
 
         route: {
           type: Object,
           notify: true
+        },
+
+        mapCoords: {
+          type: Object,
+          notify: true,
+          value: function() {
+            return {
+              latitude: 37.7905490,
+              longitude: -122.393477
+            };
+          }
+        },
+
+        playerCoords: {
+          type: Object,
+          notify: true,
+          value: null,
+          observer: '__playerCoordsChanged'
         }
+      },
+
+      attached: function() {
+        try {
+          navigator.geolocation.getCurrentPosition(position => {
+            let coords = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            };
+
+            this.playerCoords = coords;
+          });
+        } catch (e) {}
+      },
+
+      __activeChanged: function(active) {
+        if (active) {
+          try {
+            this.__watchId = navigator.geolocation.watchPosition(position => {
+              let coords = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              };
+
+              this.playerCoords = coords;
+            });
+          } catch (e) {}
+        } else {
+          try {
+            navigator.geolocation.clearWatch(this.__watchId);
+          } catch (e) {}
+        }
+      },
+
+      __playerCoordsChanged: function() {
+        this.mapCoords = this.playerCoords;
       }
     });
   </script>

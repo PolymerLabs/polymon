@@ -5,6 +5,7 @@
 <link rel="import" href="polymon-map.html">
 <link rel="import" href="polymon-start-screen.html">
 <link rel="import" href="polymon-caught-screen.html">
+<link rel="import" href="polymon-polydex.html">
 <dom-module id="polymon-app">
   <template>
     <style>
@@ -38,6 +39,11 @@
         data="{{caughtData}}"
         query-params="{{caughtQueryParams}}">
     </app-route>
+    <app-route
+        pattern="/polydex"
+        route="{{route}}"
+        active="{{polydexRouteActive}}">
+    </app-route>
 
     <polymon-map
         active="[[mapRouteActive]]"
@@ -53,6 +59,10 @@
         data="[[caughtData]]"
         continue-to="[[caughtQueryParams.continueTo]]">
     </polymon-caught-screen>
+
+    <polymon-polydex
+        active="[[polydexRouteActive]]">
+    </polymon-polydex>
   </template>
 
   <script>
