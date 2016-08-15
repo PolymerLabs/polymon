@@ -1,0 +1,7 @@
+{
+  "name": "polymon",
+  "short_name": "polymon",
+  "description": "Seek out Polymer Team members and capture their Polymon!",
+  "start_url": "/",
+  "display": "standalone"
+}

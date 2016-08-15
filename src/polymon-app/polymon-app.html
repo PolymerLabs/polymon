@@ -1,0 +1,87 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="polymon-map.html">
+<link rel="import" href="polymon-start-screen.html">
+<link rel="import" href="polymon-caught-screen.html">
+<dom-module id="polymon-app">
+  <template>
+    <style>
+      :host {
+        --polymon-font-family: 'kenvector', sans-serif;
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        background-color: #eee;
+        overflow: hidden;
+      }
+    </style>
+    <app-location
+        route="{{route}}"
+        query-params="{{queryParams}}">
+    </app-location>
+    <app-route
+        pattern="/"
+        route="{{route}}"
+        active="{{rootRouteActive}}">
+    </app-route>
+    <app-route
+        pattern="/map"
+        route="{{route}}"
+        tail="{{mapRoute}}"
+        active="{{mapRouteActive}}">
+    </app-route>
+    <app-route
+        pattern="/caught/:polymon"
+        route="{{route}}"
+        active="{{caughtRouteActive}}"
+        data="{{caughtData}}"
+        query-params="{{caughtQueryParams}}">
+    </app-route>
+
+    <polymon-map
+        active="[[mapRouteActive]]"
+        route="{{mapRoute}}">
+    </polymon-map>
+
+    <polymon-start-screen
+        active="[[rootRouteActive]]">
+    </polymon-start-screen>
+
+    <polymon-caught-screen
+        active="[[caughtRouteActive]]"
+        data="[[caughtData]]"
+        continue-to="[[caughtQueryParams.continueTo]]">
+    </polymon-caught-screen>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'polymon-app',
+
+      properties: {
+        route: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      listeners: {
+        'polymon-qr-code-data': '__onPolymonQrCodeData'
+      },
+
+      __onPolymonQrCodeData: function(event) {
+        let data = event.detail.data;
+
+        if (/^polymon:/.test(data)) {
+          let continueTo = event.detail.continueTo;
+          let polymon = data.split(':').pop();
+          console.log('Caught a Polymon:', polymon);
+
+          this.set('queryParams.continueTo', continueTo);
+          this.set('route.path', `/caught/${polymon}`)
+        }
+      }
+    });
+  </script>
+</dom-module>

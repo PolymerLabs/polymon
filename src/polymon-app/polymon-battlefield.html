@@ -1,0 +1,24 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="polymon-battlefield">
+  <template>
+    <style>
+      #enemy-platform {
+        display: block;
+        position: absolute;
+        width: 4404px;
+        height: 1133px;
+        background-image: url('../../images/prototype_assets_enemy_platform.png');
+        background-repeat: no-repeat;
+        transform-origin: top left;
+        transform: scale(0.25);
+      }
+    </style>
+    <div id="enemy-platform"></div>
+    <div id="player-platform"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-battlefield'
+    });
+  </script>
+</dom-module>

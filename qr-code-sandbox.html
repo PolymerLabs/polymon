@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>polymon</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="/src/polymon-app/polymon-qr-code.html">
+    <style>
+      body {
+        display: flex;
+        flex-direction: row;
+        font-family: sans-serif;
+      }
+
+      div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <polymon-qr-code data="polymon:goat"></polymon-qr-code>
+      <span>Goat</span>
+    </div>
+    <div>
+      <polymon-qr-code data="polymon:monkey"></polymon-qr-code>
+      <span>Monkey</span>
+    </div>
+    <div>
+      <polymon-qr-code data="polymon:tiger"></polymon-qr-code>
+      <span>Tiger</span>
+    </div>
+  </body>
+</html>

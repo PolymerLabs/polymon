@@ -1,0 +1,27 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-qr-code-scanner.html">
+<dom-module id="polymon-scan-page">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-fit);
+        background-color: #eee;
+        z-index: 2;
+      }
+    </style>
+    <polymon-qr-code-scanner active="active"></polymon-qr-code-scanner>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-scan-page',
+
+      properties: {
+        active: {
+          type: Boolean,
+          value: false
+        }
+      }
+    });
+  </script>
+</dom-module>

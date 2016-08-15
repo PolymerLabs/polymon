@@ -1,0 +1,52 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script src="../../bower_components/qr.js/qr.js"></script>
+<dom-module id="polymon-qr-code">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+      }
+
+      #image {
+        width: 100%;
+        height: 100%;
+      }
+
+      #image[hidden] {
+        display: none;
+      }
+    </style>
+    <img id="image" src="[[url]]" hidden$="[[!url]]">
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-qr-code',
+
+      properties: {
+        data: {
+          type: String,
+          value: ''
+        },
+
+        url: {
+          type: String,
+          computed: '__computeUrl(data)'
+        }
+      },
+
+      __computeUrl: function(data) {
+        var url = '';
+
+        if (data) {
+          url = QRCode.generatePNG(data, {
+            modulesize: 10,
+            margin: 4
+          });
+        }
+
+        return url;
+      }
+    })
+  </script>
+</dom-module>

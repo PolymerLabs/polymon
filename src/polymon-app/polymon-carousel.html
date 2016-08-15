@@ -1,0 +1,260 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<dom-module id="polymon-carousel">
+  <template>
+    <style>
+
+      @keyframes orbit {
+        0% {
+          transform: rotateY(-10deg);
+        }
+
+        30% {
+          transform: rotateY(10deg);
+        }
+
+        33.33% {
+          transform: rotateY(110deg);
+        }
+
+        63.33% {
+          transform: rotateY(130deg);
+        }
+
+        66.66% {
+          transform: rotateY(230deg);
+        }
+
+        96.66% {
+          transform: rotateY(250deg);
+        }
+
+        100% {
+          transform: rotateY(350deg);
+        }
+      }
+
+
+      @keyframes rotate1 {
+        0% {
+          transform:
+              translate3d(0px, 0px, 75px)
+              rotateY(10deg);
+        }
+
+        30% {
+          transform:
+              translate3d(0px, 0px, 75px)
+              rotateY(-10deg);
+        }
+
+        33.33% {
+          transform:
+              translate3d(0px, 0px, 75px)
+              rotateY(-110deg);
+        }
+
+        63.33% {
+          transform:
+              translate3d(0px, 0px, 75px)
+              rotateY(-130deg);
+        }
+
+        66.66% {
+          transform:
+              translate3d(0px, 0px, 75px)
+              rotateY(-230deg);
+        }
+
+        96.66% {
+          transform:
+              translate3d(0px, 0px, 75px)
+              rotateY(-250deg);
+        }
+
+        100% {
+          transform:
+              translate3d(0px, 0px, 75px)
+              rotateY(-350deg);
+        }
+      }
+
+
+
+      @keyframes rotate2 {
+        0% {
+          transform:
+              translate3d(-64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(10deg);
+        }
+
+        30% {
+          transform:
+              translate3d(-64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-10deg);
+        }
+
+        33.33% {
+          transform:
+              translate3d(-64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-110deg);
+        }
+
+        63.33% {
+          transform:
+              translate3d(-64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-130deg);
+        }
+
+        66.66% {
+          transform:
+              translate3d(-64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-230deg);
+        }
+
+        96.66% {
+          transform:
+              translate3d(-64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-250deg);
+        }
+
+        100% {
+          transform:
+              translate3d(-64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-350deg);
+        }
+      }
+
+
+      @keyframes rotate3 {
+        0% {
+          transform:
+              translate3d(64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(10deg);
+        }
+
+        30% {
+          transform:
+              translate3d(64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-10deg);
+        }
+
+        33.33% {
+          transform:
+              translate3d(64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-110deg);
+        }
+
+        63.33% {
+          transform:
+              translate3d(64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-130deg);
+        }
+
+        66.66% {
+          transform:
+              translate3d(64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-230deg);
+        }
+
+        96.66% {
+          transform:
+              translate3d(64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-250deg);
+        }
+
+        100% {
+          transform:
+              translate3d(64.9519052838329px, 0px, -37.499999999999986px)
+              rotateY(-350deg);
+        }
+      }
+
+      :host {
+        /*@apply --layout-fit;*/
+        position: relative;
+        margin: auto;
+        width: 100%;
+        max-width: 400px;
+        height: 200px;
+        perspective: 150px;
+        perspective-origin: center 0px;
+        transform: scale(1.3) translateY(50px);
+        /* 600 @ 1129 x 800 */
+        /* 150 @ 412 x 660*/
+      }
+
+      #container.animated {
+        animation-name: orbit;
+      }
+
+      #container.animated #one {
+        animation-name: rotate1;
+      }
+
+      #container.animated #two {
+        animation-name: rotate2;
+      }
+
+      #container.animated #three {
+        animation-name: rotate3;
+      }
+
+
+
+      #container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 50%;
+        transform-origin: 0 0;
+        transform-style: preserve-3d;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        animation-duration: 10s;
+      }
+
+      img {
+        position: absolute;
+        width: 15%;
+        left: -5%;
+        transform-style: preserve-3d;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        animation-duration: 10s;
+      }
+
+    </style>
+    <div id="container">
+      <img id="one" src="../../images/polymon/goat.svg">
+      <img id="two" src="../../images/polymon/monkey.svg">
+      <img id="three" src="../../images/polymon/tiger.svg">
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-carousel',
+
+      properties: {
+        active: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false,
+          observer: '__activeChanged'
+        }
+      },
+
+      __activeChanged: function(active) {
+        if (active) {
+          this.cancelAsync(this.__cancelAnimationAsync);
+          Polymer.dom(this.$.container).classList.add('animated');
+        } else {
+          this.__cancelAnimationAsync = this.async(function() {
+            Polymer.dom(this.$.container).classList.remove('animated');
+          }, 500);
+        }
+      }
+    });
+  </script>
+</dom-module>

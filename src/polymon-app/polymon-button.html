@@ -1,0 +1,88 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-behaviors/iron-control-state.html">
+<link rel="import" href="../../bower_components/iron-behaviors/iron-button-state.html">
+<dom-module id="polymon-button">
+  <template>
+    <style>
+      :host {
+        --polymon-button-shadow: #166E93;
+        --polymon-button-border: #1989B8;
+        --polymon-button-background: #3EBBF0;
+        --polymon-button-background-shadow: #2BA8DE;
+
+        display: inline-block;
+        position: relative;
+        background-color: var(--polymon-button-shadow);
+        box-sizing: border-box;
+        border-radius: 4px;
+        font-family: var(--polymon-font-family);
+        cursor: pointer;
+        text-align: center;
+      }
+
+      :host(.alt) {
+        --polymon-button-shadow: #A51430;
+        --polymon-button-border: #CC1746;
+        --polymon-button-background: #F73463;
+        --polymon-button-background-shadow: #E22D54;
+      }
+
+      :host:before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 4px;
+        border-radius: 4px;
+        background-color: var(--polymon-button-border);
+      }
+
+      :host:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 6px;
+        background-color: var(--polymon-button-background);
+        border-radius: 3px;
+      }
+
+      :host([pressed]) {
+        top: 4px;
+        background-color: transparent;
+      }
+
+      #content {
+        position: relative;
+        padding: 6px 20px;
+        margin: 4px 4px 8px 4px;
+        border-radius: 2px;
+        z-index: 1;
+        color: rgba(255, 255, 255, 0.9);
+        background-image:
+            linear-gradient(
+                transparent 50%,
+                var(--polymon-button-background-shadow) 50%);
+        pointer-events: none;
+        -webkit-user-select: none;
+      }
+    </style>
+    <div id="content">
+      <content></content>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-button',
+
+      behaviors: [
+        Polymer.IronControlState,
+        Polymer.IronButtonState
+      ]
+    });
+  </script>
+</dom-module>

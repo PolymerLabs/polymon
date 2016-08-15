@@ -1,0 +1,211 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<dom-module id="polymon-caught-screen">
+  <template>
+    <style>
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: rotateZ(3deg) translateY(0px);
+        }
+
+        25% {
+          transform: rotateZ(-2deg) translateY(0px);
+        }
+
+        50% {
+          transform: rotateZ(1deg) translateY(0px);
+        }
+
+        60% {
+          transform: rotateZ(-1deg) translateY(-14px) scale(1.02);
+        }
+
+        70% {
+          transform: rotateZ(2deg) translateY(0px);
+        }
+
+        75% {
+          transform: translateY(-8px) scale(1.01);
+        }
+
+        80% {
+          transform: rotateZ(-1deg) translateY(0px);
+        }
+
+        85% {
+          transform: translateY(0px);
+        }
+
+        100% {
+          transform: rotateZ(3deg) translateY(0px);
+        }
+      }
+
+      :host {
+        @apply --layout-fit;
+        font-family: var(--polymon-font-family);
+        text-align: center;
+        background-image: linear-gradient(25deg, #71D3F4, #DEF6FF);
+
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: transform 0.3s, opacity 0.15s;
+      }
+
+      h1 {
+        /*color: #3EBBF0;
+        text-shadow: 0 1px 0 #1D6F91;*/
+
+        color: #F43865;
+        text-shadow: 0 1px 0 #a31733;
+      }
+
+      :host([active]) {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+      }
+
+      #container {
+        position: relative;
+        margin-top: 6em;
+      }
+
+      #container img {
+        position: relative;
+        width: 250px;
+        z-index: 1;
+        animation: bounce 2s;
+        animation-iteration-count: infinite;
+      }
+
+      #container:after {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: calc(50% - 100px);
+        width: 200px;
+        height: 200px;
+        background-color: #71D3F4;
+        border-radius: 100px;
+      }
+
+      #container > div {
+        position: absolute;
+        animation-name: rotate;
+        animation-duration: 10s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      #container > div#one {
+        width: 260px;
+        height: 260px;
+        top: 0px;
+        left: calc(50% - 130px);
+        border-left: 15px solid #71D3F4;
+        border-radius: 130px;
+      }
+
+      #container > div#one {
+        width: 260px;
+        height: 260px;
+        top: 0px;
+        left: calc(50% - 130px);
+        border-left: 15px solid #71D3F4;
+        border-radius: 130px;
+      }
+
+      #container > div#two {
+        width: 280px;
+        height: 280px;
+        top: -20px;
+        left: calc(50% - 160px);
+        border-left: 10px solid #71D3F4;
+        border-radius: 140px;
+        animation-duration: 9s;
+        animation-delay: -4s;
+        animation-direction: reverse;
+      }
+
+      #container > div#three {
+        width: 270px;
+        height: 270px;
+        top: -10px;
+        left: calc(50% - 140px);
+        border-left: 20px solid #71D3F4;
+        border-radius: 135px;
+        animation-duration: 12s;
+        animation-delay: -7s;
+      }
+
+      #container > div#four {
+        width: 260px;
+        height: 260px;
+        top: 10px;
+        left: calc(50% - 120px);
+        border-left: 15px solid #71D3F4;
+        border-radius: 130px;
+        animation-delay: -2s;
+        animation-direction: reverse;
+      }
+
+      #overlay {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        @apply --layout-end-justified;
+        margin: 1em;
+      }
+
+      #continue {
+        width: 100%;
+      }
+
+
+    </style>
+    <h1>You caught a [[data.polymon]] Polymon!</h1>
+    <section id="container">
+      <img src="../../images/polymon/[[data.polymon]].svg">
+      <div id="one"></div>
+      <div id="two"></div>
+      <div id="three"></div>
+      <div id="four"></div>
+    </section>
+
+    <section id="overlay">
+      <a href="[[continueTo]]">
+        <polymon-button id="continue" class="alt">Continue</polymon-button>
+      </a>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-caught-screen',
+
+      properties: {
+        active: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+
+        data: {
+          type: Object,
+          notify: true
+        }
+      }
+    });
+  </script>
+</dom-module>

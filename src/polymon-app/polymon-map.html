@@ -1,0 +1,104 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="polymon-qr-code-scanner.html">
+<link rel="import" href="polymon-button.html">
+<dom-module id="polymon-map">
+  <template>
+    <style>
+      :host {
+        @apply --layout-fit;
+        -webkit-filter: saturate(0%);
+        transition: -webkit-filter 0.3s, opacity 0.3s;
+        opacity: 0.5;
+      }
+
+      :host([active]) {
+        -webkit-filter: saturate(100%);
+        opacity: 1;
+      }
+
+      :host([active]) #controls {
+        transition-delay: 0.3s;
+        transform: translateY(0px);
+      }
+
+      #controls {
+        z-index: 1;
+        position: absolute;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 1em;
+        bottom: 0;
+        @apply --layout-horizontal;
+        align-items: flex-end;
+        transition: transform 0.3s;
+        transition-delay: 0s;
+        transform: translateY(100px);
+      }
+
+      #controls > :last-child {
+        flex: 1;
+      }
+
+      #controls > :first-child {
+        margin-right: 1em;
+      }
+
+      polymon-button {
+        width: 100%;
+      }
+
+      polymon-qr-code-scanner {
+        z-index: 10;
+      }
+    </style>
+    <app-route
+        pattern="/scan"
+        route="{{route}}"
+        active="{{scanRouteActive}}">
+    </app-route>
+    <polymon-qr-code-scanner
+        return-to="[[route.prefix]]"
+        active="[[scanRouteActive]]">
+    </polymon-qr-code-scanner>
+    <google-map
+        disable-default-ui
+        zoom="16"
+        latitude="37.7905490"
+        longitude="-122.393477">
+      <google-map-marker
+          icon='{"url":"../../images/polymon/goat.svg", "scaledSize":{"width":32,"height":32}}'
+          latitude="37.7905490"
+          longitude="-122.393477">
+      </google-map-marker>
+    </google-map>
+    <section id="controls">
+      <a href="/">
+        <polymon-button class="alt">Back</polymon-button>
+      </a>
+      <a href="[[route.prefix]]/scan">
+        <polymon-button>Scan Polymon QR Code</polymon-button>
+      </a>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-map',
+
+      properties: {
+        active: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+
+        route: {
+          type: Object,
+          notify: true
+        }
+      }
+    });
+  </script>
+</dom-module>

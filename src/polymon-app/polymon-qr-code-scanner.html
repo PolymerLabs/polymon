@@ -1,0 +1,200 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-video.html">
+<link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-devices.html">
+<link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-user-media.html">
+<link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-film-strip.html">
+<link rel="import" href="third-party/jsqrcode.html">
+<link rel="import" href="polymon-button.html">
+<dom-module id="polymon-qr-code-scanner">
+  <template>
+    <style>
+      :host {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+        text-align: center;
+        background-color: #000;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: transform 0.3s, opacity 0.15s;
+      }
+
+      :host([active]) {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+      }
+
+      :host([active]) #warning {
+        opacity: 1;
+        transform: translateY(-10px);
+      }
+
+      meat-scope-video {
+        text-align: left;
+      }
+
+      #camera {
+        @apply --layout-fit;
+      }
+
+      #warning {
+        margin: 2em;
+        display: inline-block;
+        max-width: 640px;
+        font-family: var(--polymon-font-family);
+        font-size: 24px;
+        color: #F43865;
+        text-shadow: 0 1px 0 #a31733;
+        opacity: 0;
+        transform: translateY(0);
+        transition: transform 0.3s, opacity 0.15s;
+        transition-delay: 1s;
+      }
+
+      #overlay {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        @apply --layout-end-justified;
+        margin: 1em;
+      }
+
+      #cancel {
+        width: 100%;
+      }
+    </style>
+    <span id="warning">
+      Please enable your camera so that Polymon can scan for QR codes!
+    </span>
+    <section id="camera">
+      <meat-scope-devices
+          id="devices"
+          selected-camera="{{camera}}"
+          has-multiple-cameras="{{hasMultipleCameras}}">
+      </meat-scope-devices>
+      <meat-scope-user-media
+          id="media"
+          device="[[camera]]"
+          stream="{{stream}}">
+      </meat-scope-user-media>
+      <meat-scope-video
+          id="video"
+          stream="[[stream]]">
+      </meat-scope-video>
+    </section>
+    <section id="overlay">
+      <a href="[[returnTo]]">
+        <polymon-button
+            id="cancel"
+            class="alt">Cancel</polymon-button>
+      </a>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-qr-code-scanner',
+
+      properties: {
+        active: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+
+        returnTo: {
+          type: String
+        },
+
+        scanning: {
+          type: Boolean,
+          value: false
+        },
+
+        imagePreview: {
+          type: Object,
+          value: function() {
+            return new MeatScopeImagePreview();
+          }
+        }
+      },
+
+      observers: [
+        '__cameraChanged(camera, hasMultipleCameras)',
+        '__activeChanged(active)'
+      ],
+
+      __activeChanged: function() {
+        this.debounce('activeChanged', () => {
+          if (this.active) {
+            this.scan();
+          } else {
+            this.stopScanning();
+          }
+        }, 300);
+      },
+
+      __scanForQrCode: function() {
+        return new Promise((resolve, reject) => {
+          let captureRect = new MeatScopeCaptureRect(this.$.video);
+
+          this.imagePreview.draw(
+              this.$.video.$.video,
+              captureRect,
+              new MeatScopeTransform());
+
+          try {
+            qrcode.width = captureRect.clampedWidth;
+            qrcode.height = captureRect.clampedHeight;
+            qrcode.imagedata = this.imagePreview.context
+                .getImageData(0, 0, qrcode.width, qrcode.height);
+
+            resolve(qrcode.process(this.imagePreview.context));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      },
+
+      scan: function() {
+        let self = this;
+        this.$.media.active = true;
+
+        (function doScan() {
+          if (!self.$.media.active) {
+            return;
+          }
+
+          self.__scanForQrCode().then(data => {
+            console.log('QR Code Data:', data);
+            self.fire('polymon-qr-code-data', {
+              data: data,
+              continueTo: self.returnTo
+            });
+          }).catch(error => {
+            console.log('QR Code Scanner:', error);
+          }).then(() => {
+            setTimeout(doScan, 1000);
+          });
+        })();
+      },
+
+      stopScanning: function() {
+        this.$.media.active = false;
+        this.$.video.$.video.src = null;
+      },
+
+      __cameraChanged: function(camera) {
+        if (!camera) {
+          return;
+        }
+
+        if (!/environment|rear|back/i.test(camera.label) &&
+            this.$.devices.hasMultipleCameras) {
+          this.$.devices.switchToNextCamera();
+        }
+      }
+    });
+  </script>
+</dom-module>
