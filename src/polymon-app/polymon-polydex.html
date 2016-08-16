@@ -1,0 +1,248 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-portrait.html">
+<link rel="import" href="polymon-button.html">
+<dom-module id="polymon-polydex">
+  <template>
+    <style>
+      :host {
+        position: absolute;
+        box-sizing: border-box;
+        font-family: var(--polymon-font-family);
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        padding: 8px;
+
+        border-radius: 8px;
+        border: 2px solid #999999;
+        background-color: #eee;
+
+        @apply --layout-vertical;
+        align-items: stretch;
+
+        text-align: center;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: transform 0.3s, opacity 0.15s;
+      }
+
+      :host:after {
+        content: '';
+        position: absolute;
+        box-sizing: border-box;
+        pointer-events: none;
+        border-radius: 6px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 2px solid #fff;
+      }
+
+      :host([active]) {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+      }
+
+      #controls {
+        @apply --layout-horizontal;
+      }
+
+      #controls > :first-child {
+        margin-right: 8px;
+      }
+
+      #controls > :last-child {
+        flex: 1;
+      }
+
+      polymon-button {
+        width: 100%;
+      }
+
+      h2 {
+        font-size: 1em;
+        color: #444;
+        text-align: left;
+        margin: 8px 16px 0;
+      }
+
+      #team {
+        @apply --layout-horizontal;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 16px;
+        margin: 8px;
+      }
+
+      #caught {
+        @apply --layout-horizontal;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: flex-start;
+        flex: 1;
+        margin: 8px;
+        overflow: auto;
+      }
+
+      @media (min-width: 500px) {
+        #team {
+          justify-content: flex-start;
+        }
+
+        .polymon-portrait {
+          margin: 8px;
+        }
+      }
+    </style>
+
+    <app-route
+        pattern="/show/:polymon"
+        route="{{route}}"
+        active="{{showPolymonRouteActive}}">
+    </app-route>
+
+    <h2>Your team</h2>
+    <section id="team">
+      <polymon-portrait polymon="goat" caught></polymon-portrait>
+      <polymon-portrait polymon="monkey" caught></polymon-portrait>
+      <polymon-portrait polymon="tiger" caught></polymon-portrait>
+      <polymon-portrait></polymon-portrait>
+      <polymon-portrait></polymon-portrait>
+    </section>
+    <h2>Available Polymon</h2>
+    <section id="caught">
+      <template is="dom-repeat" items="[[polymons]]" as="polymon">
+        <a href="[[route.prefix]]/show/[[polymon.shortName]]">
+          <polymon-portrait
+              polymon="[[polymon.shortName]]"
+              caught>
+          </polymon-portrait>
+        </a>
+      </template>
+    </section>
+    <section id="controls">
+      <a href="/">
+        <polymon-button class="alt">Back</polymon-button>
+      </a>
+      <a href="/battle">
+        <polymon-button>Battle</polymon-button>
+      </a>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-polydex',
+
+      properties: {
+        polymons: {
+          type: Array,
+          value: function() {
+            return [
+              {
+                shortName: 'goat'
+              },
+              {
+                shortName: 'dancer'
+              },
+              {
+                shortName: 'octopus'
+              },
+              {
+                shortName: 'tiger'
+              },
+              {
+                shortName: 'penguin'
+              },
+              {
+                shortName: 'pile-of-poo'
+              },
+              {
+                shortName: 'ram'
+              },
+              {
+                shortName: 'snake'
+              },
+              {
+                shortName: 'turtle'
+              },
+              {
+                shortName: 'honeybee'
+              },
+              {
+                shortName: 'whale'
+              },
+              {
+                shortName: 'monkey'
+              },
+              {
+                shortName: 'slice-of-pizza'
+              },
+              {
+                shortName: 'rabbit'
+              },
+              {
+                shortName: 'pig'
+              },
+              {
+                shortName: 'horse'
+              },
+              {
+                shortName: 'rat'
+              },
+              {
+                shortName: 'ghost'
+              },
+              {
+                shortName: 'first-quarter-moon-with-face'
+              },
+              {
+                shortName: 'moyai'
+              },
+              {
+                shortName: 'ship'
+              },
+              {
+                shortName: 'cactus'
+              },
+              {
+                shortName: 'steaming-bowl'
+              },
+              {
+                shortName: 'snail'
+              },
+              {
+                shortName: 'koala'
+              },
+              {
+                shortName: 'horse'
+              },
+              {
+                shortName: 'cat-face-with-tears-of-joy'
+              },
+              {
+                shortName: 'baby-chick'
+              }
+            ];
+          }
+        },
+
+        active: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+
+        route: {
+          type: Object,
+          notify: true
+        }
+      }
+    });
+  </script>
+</dom-module>

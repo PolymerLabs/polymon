@@ -1,0 +1,52 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<dom-module id="polymon-portrait">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        width: 64px;
+        height: 64px;
+        border-radius: 32px;
+        background-color: #ccc;
+        margin: 4px;
+      }
+
+      :host(:not([caught])) img {
+        -webkit-filter: contrast(0%) brightness(125%);
+      }
+
+      img {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+      }
+    </style>
+    <img src="[[__polymonUrl(polymon)]]">
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-portrait',
+
+      properties: {
+        polymon: {
+          type: String
+        },
+
+        caught: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        }
+      },
+
+      __polymonUrl: function(polymon) {
+        if (polymon) {
+          return `../../images/polymon/${polymon}.svg`;
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -13,7 +13,9 @@
     "iron-flex-layout": "polymerelements/iron-flex-layout#^1.0.0",
     "app-route": "polymerelements/app-route#^0.9.0",
     "google-map": "googlewebcomponents/google-map#^1.0.0",
-    "jsqrcode": "LazarSoft/jsqrcode"
+    "jsqrcode": "LazarSoft/jsqrcode",
+    "polymerfire": "firebase/polymerfire#^0.9.0",
+    "iron-ajax": "polymerelements/iron-ajax#^1.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

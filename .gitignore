@@ -1,2 +1,4 @@
 bower_components
 .DS_Store
+polymon-qr-code-data.json
+node_modules
