@@ -23,17 +23,70 @@
         transform: translateY(0);
       }
 
+      :host([active][authenticated]) #for-user {
+        pointer-events: all;
+      }
+
+      :host([active]:not([authenticated])) #for-anon {
+        pointer-events: all;
+      }
+
+      :host([authenticated]) #for-anon {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(60px);
+      }
+
+      :host([authenticated]) #for-user {
+        opacity: 1;
+        transform: translateY(0px);
+        transition-delay: 0.5s;
+      }
+
+      #for-anon {
+        opactiy: 1;
+        transform: translateY(80px);
+      }
+
+      #for-user {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px);
+        transition-delay: 0.5s;
+      }
+
+      #for-anon, #for-user {
+        transition: opacity 0.3s, transform 0.3s;
+      }
+
       #options {
-        display: block;
-        @apply --layout-vertical;
-        @apply --layout-center-center;
+        display: flex;
+        position: relative;
         flex: 1;
       }
 
-      #options a {
+      #options > section {
+        flex: 1;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+      }
+
+      #for-anon {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        z-index: 1;
+      }
+
+      #options polymon-button {
         margin-bottom: 1em;
         width: 50%;
         max-width: 320px;
+      }
+
+      #options a {
+        width: 100%;
+        text-align: center;
       }
 
       #options polymon-button {
@@ -48,14 +101,19 @@
     </polymon-carousel>
 
     <section id="options">
-      <a href="/polydex">
-        <polymon-button>Polydex</polymon-button>
-      <a href="/map">
-        <polymon-button>Find Polymon</polymon-button>
-      </a>
-      <a href="/about">
-        <polymon-button>About</polymon-button>
-      </a>
+      <section id="for-user">
+        <a href="/polydex">
+          <polymon-button>Polydex</polymon-button>
+        <a href="/map">
+          <polymon-button>Find Polymon</polymon-button>
+        </a>
+        <a href="/about">
+          <polymon-button>About</polymon-button>
+        </a>
+      </section>
+      <section id="for-anon">
+        <polymon-button on-tap="requestLogin">Login with Google</polymon-button>
+      </section>
     </section>
   </template>
   <script>
@@ -67,7 +125,17 @@
           type: Boolean,
           reflectToAttribute: true,
           value: false
+        },
+
+        authenticated: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
         }
+      },
+
+      requestLogin: function() {
+        this.fire('request-login');
       }
     });
   </script>
