@@ -11,14 +11,13 @@
         ".read": "$uid === auth.uid",
         ".write": "$uid === auth.uid",
         "team": {
-          ".indexOn": "id"
+          ".indexOn": "polydexId"
         },
-        "caughtPolymon": {
-          ".indexOn": "id"
+        "polydex": {
+          ".indexOn": "polymonId"
         },
         "achievements": {
-          ".write": "false",
-          ".indexOn": "id"
+          ".write": "false"
         }
       }
     }

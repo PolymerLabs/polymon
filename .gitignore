@@ -4,3 +4,4 @@ polymon-qr-code-data.json
 node_modules
 polymon-firebase-data.json
 firebase-debug.log
+*.swp

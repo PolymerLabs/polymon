@@ -1,12 +1,24 @@
-var functions = require('firebase-functions');
+const functions = require('firebase-functions');
 
-// // converts the "text" key of messages pushed to /messages to uppercase
-// exports.upperCaser = functions.database().path('/messages/{id}').on('write', function(event) {
-//   // prevent infinite loops
-//   if (event.data.child('uppercased').val()) { return; }
-//
-//   return event.data.ref.update({
-//     text: event.data.child('text').val().toUpperCase(),
-//     uppercased: true
-//   });
-// });
+function value(ref) {
+  return new Promise((resolve, reject) => {
+    ref.once('value', resolve);
+  });
+}
+
+exports.validateCaughtPolymon = functions
+    .database()
+    .path('/users/{userId}/polydex/{polydexId}')
+    .on('write', function(event) {
+      const data = event.data;
+      const key = data.key;
+      const polymon = data.val();
+      const db = functions.app.database();
+      const ref = db.ref(`polymon/${polymon.id}`);
+
+      return value(ref).then(snapshot => {
+        if (!snapshot.exists()) {
+          return data.ref.remove();
+        }
+      });
+    });
