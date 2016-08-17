@@ -3,12 +3,12 @@ const writeJson = require('then-write-json');
 const del = require('del');
 const SHA256 = require('crypto-js/sha256');
 const secret = process.env.POLYMON_SECRET || 'NO_SECRET_SPECIFIED';
-const polymonQrCodeData = './polymon-qr-code-data.json';
-const polymonFirebaseData = './polymon-firebase-data.json';
+const polymonQrCodeData = './client/polymon-qr-code-data.json';
+const polymonFirebaseData = './client/polymon-firebase-data.json';
 
 
 del([polymonQrCodeData, polymonFirebaseData]).then(() => {
-  return readJson('./src/polymon-app/polymon.json').then(polymons => {
+  return readJson('./client/src/polymon-app/polymon.json').then(polymons => {
     const polymonsWithShas = polymons.map(polymon => {
       return Object.assign({}, polymon, {
         sha: SHA256(`${polymon.shortName}${secret}`).toString()

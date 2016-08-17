@@ -1,0 +1,25 @@
+{
+  "rules": {
+    ".read": "false",
+    ".write": "false",
+    "polymon": {
+      ".read": "auth != null",
+      ".indexOn": "shortName"
+    },
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        "team": {
+          ".indexOn": "polydexId"
+        },
+        "polydex": {
+          ".indexOn": "polymonId"
+        },
+        "achievements": {
+          ".write": "false"
+        }
+      }
+    }
+  }
+}

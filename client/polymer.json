@@ -1,0 +1,9 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/polymon-app/polymon-app.html",
+  "fragments": [
+    "src/polymon-app/polymon-qr-code-scanner.html",
+    "src/polymon-app/polymon-polydex.html",
+    "src/polymon-app/polymon-map.html"
+  ]
+}

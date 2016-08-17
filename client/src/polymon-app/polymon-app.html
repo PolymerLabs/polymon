@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="polymon-map.html">
 <link rel="import" href="polymon-start-screen.html">
 <link rel="import" href="polymon-caught-screen.html">
@@ -17,6 +18,14 @@
         overflow: hidden;
       }
     </style>
+    <firebase-auth
+        app-name="polymon"
+        provider="google"
+        signed-in="{{authenticated}}"
+        user="{{user}}"
+        id="auth">
+    </firebase-auth>
+
     <app-location
         route="{{route}}"
         query-params="{{queryParams}}">
@@ -52,7 +61,9 @@
     </polymon-map>
 
     <polymon-start-screen
-        active="[[rootRouteActive]]">
+        active="[[rootRouteActive]]"
+        authenticated="[[authenticated]]"
+        on-request-login="attemptLogin">
     </polymon-start-screen>
 
     <polymon-caught-screen
@@ -63,7 +74,8 @@
 
     <polymon-polydex
         active="[[polydexRouteActive]]"
-        route="{{polydexRoute}}">
+        route="{{polydexRoute}}"
+        user="{{user}}">
     </polymon-polydex>
   </template>
 
@@ -80,6 +92,10 @@
 
       listeners: {
         'polymon-qr-code-data': '__onPolymonQrCodeData'
+      },
+
+      attemptLogin: function() {
+        this.$.auth.signInWithPopup();
       },
 
       __onPolymonQrCodeData: function(event) {
