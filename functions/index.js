@@ -8,17 +8,36 @@ function value(ref) {
 
 exports.validateCaughtPolymon = functions
     .database()
-    .path('/users/{userId}/polydex/{polydexId}')
+    .path('/users/{userId}/catchQueue/{catchId}')
     .on('write', function(event) {
-      const data = event.data;
-      const key = data.key;
-      const polymon = data.val();
+      const userId = event.params.userId;
+      const polymonId = event.data.val();
+      const catchId = event.data.key;
       const db = functions.app.database();
-      const ref = db.ref(`polymon/${polymon.id}`);
+      const auth = functions.app.auth();
+      const polymonRef = db.ref(`/polymons/${polymonId}`);
 
-      return value(ref).then(snapshot => {
-        if (!snapshot.exists()) {
-          return data.ref.remove();
-        }
+      if (polymonId == null) {
+        console.log('No Polymon ID, ignoring..')
+        return;
+      }
+
+      console.log(`Polymon ID: ${polymonId}`);
+      console.log(`Catch ID: ${catchId}`);
+      console.log(`User ID: ${userId}`);
+
+      return value(polymonRef).then(snapshot => {
+
+        console.log('Polymon:', snapshot.val());
+
+        const processQueue = snapshot.exists() ?
+            db.ref(`/users/${userId}/polydex`).push({
+              caughtAt: Date.now(),
+              catchId,
+              polymonId
+            }) :
+            Promise.resolve();
+
+        return processQueue.then(() => event.data.ref.remove());
       });
     });

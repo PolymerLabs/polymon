@@ -8,37 +8,87 @@
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="/bower_components/polymer/polymer.html">
     <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+    <link rel="import" href="/bower_components/app-location/app-location.html">
+    <link rel="import" href="/bower_components/app-route/app-route.html">
     <link rel="import" href="/src/polymon-app/polymon-qr-code.html">
     <style>
-      body {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        font-family: sans-serif;
-      }
 
-      div {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
     </style>
   </head>
   <body>
-    <template is="dom-bind">
-      <iron-ajax
-          url="/polymon-qr-code-data.json"
-          handle-as="json"
-          last-response="{{polymons}}"
-          auto>
-      </iron-ajax>
+    <dom-module id="qr-code-viewer">
+      <template>
+        <style>
+          :host {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            font-family: sans-serif;
+            justify-content: space-around;
+          }
 
-      <template is="dom-repeat" items="[[polymons]]" as="polymon">
-        <div>
-          <polymon-qr-code data="[[polymon.sha]]"></polymon-qr-code>
-          <span>[[polymon.shortName]]</span>
-        </div>
+          a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+        </style>
+        <iron-ajax
+            url="/polymon-qr-code-data.json"
+            handle-as="json"
+            last-response="{{polymons}}"
+            auto>
+        </iron-ajax>
+
+        <app-location route="{{route}}" use-hash-as-path hidden>
+        </app-location>
+        <app-route
+            route="{{route}}"
+            pattern="/polymon/:index"
+            data="{{polymonSelection}}"
+            active="{{polymonRouteActive}}"
+            hidden>
+        </app-route>
+
+        <a hidden$="[[!polymonRouteActive]]">
+          <polymon-qr-code
+              size="7"
+              margin="5"
+              data="[[selectedPolymon.sha]]">
+          </polymon-qr-code>
+          <span>[[selectedPolymon.shortName]]</span>
+        </a>
+
+        <template is="dom-repeat" items="[[polymons]]" as="polymon">
+          <a href="#/polymon/[[index]]" hidden$="[[polymonRouteActive]]">
+            <polymon-qr-code data="[[polymon.sha]]"></polymon-qr-code>
+            <span>[[polymon.shortName]]</span>
+          </a>
+        </template>
       </template>
-    </template>
+      <script>
+        Polymer({
+          is: 'qr-code-viewer',
+
+          properties: {
+            polymons: {
+              type: Array
+            },
+
+            selectedPolymon: {
+              type: Object,
+              computed: '__computeSelectedPolymon(polymons, polymonSelection.index)'
+            }
+          },
+
+          __computeSelectedPolymon: function(polymons, index) {
+            if (index != null && polymons != null) {
+              return polymons[index];
+            }
+          }
+        });
+      </script>
+    </dom-module>
+    <qr-code-viewer></qr-code-viewer>
   </body>
 </html>

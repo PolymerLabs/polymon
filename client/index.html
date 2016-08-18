@@ -22,6 +22,14 @@
         database-url="https://polymon-b105e.firebaseio.com"
         storage-bucket="polymon-b105e.appspot.com">
     </firebase-app>
-    <polymon-app></polymon-app>
+    <polymon-app id="app"></polymon-app>
+    <script>
+      function scanCode(code) {
+        window.app.fire('polymon-code', {
+          code,
+          continueTo: '/'
+        });
+      }
+    </script>
   </body>
 </html>

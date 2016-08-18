@@ -1,7 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-element.html">
 <dom-module id="polymon-polydex">
   <template>
     <style>
@@ -107,21 +110,41 @@
         active="{{showPolymonRouteActive}}">
     </app-route>
 
+    <iron-ajax
+        url="polymon.json"
+        handle-as="json"
+        last-response="{{availablePolymons}}"
+        auto>
+    </iron-ajax>
+
+    <firebase-query
+        app-name="polymon"
+        path="[[__firebaseTeamPath(user)]]"
+        order-by-child="position"
+        data="{{team}}">
+    </firebase-query>
+
+    <firebase-query
+        id="polydexQuery"
+        app-name="polymon"
+        path="[[__firebasePolydexPath(user)]]"
+        data="{{data}}">
+    </firebase-query>
+
     <h2>Your team</h2>
     <section id="team">
-      <polymon-portrait polymon="goat" caught></polymon-portrait>
-      <polymon-portrait polymon="monkey" caught></polymon-portrait>
-      <polymon-portrait polymon="tiger" caught></polymon-portrait>
-      <polymon-portrait></polymon-portrait>
-      <polymon-portrait></polymon-portrait>
+      <polymon-portrait polymon="[[team.0.shortName]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.1.shortName]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.2.shortName]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.3.shortName]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.4.shortName]]" caught></polymon-portrait>
     </section>
     <h2>Available Polymon</h2>
     <section id="caught">
-      <template is="dom-repeat" items="[[polymons]]" as="polymon">
+      <template is="dom-repeat" items="[[entries]]" as="polymon">
         <a href="[[route.prefix]]/show/[[polymon.shortName]]">
           <polymon-portrait
-              polymon="[[polymon.shortName]]"
-              caught>
+              polymon="[[polymon.shortName]]" caught=[[polymon.caught]]>
           </polymon-portrait>
         </a>
       </template>
@@ -139,109 +162,116 @@
     Polymer({
       is: 'polymon-polydex',
 
+      behaviors: [
+        PolymonElement
+      ],
+
       properties: {
-        polymons: {
-          type: Array,
-          value: function() {
-            return [
-              {
-                shortName: 'goat'
-              },
-              {
-                shortName: 'dancer'
-              },
-              {
-                shortName: 'octopus'
-              },
-              {
-                shortName: 'tiger'
-              },
-              {
-                shortName: 'penguin'
-              },
-              {
-                shortName: 'pile-of-poo'
-              },
-              {
-                shortName: 'ram'
-              },
-              {
-                shortName: 'snake'
-              },
-              {
-                shortName: 'turtle'
-              },
-              {
-                shortName: 'honeybee'
-              },
-              {
-                shortName: 'whale'
-              },
-              {
-                shortName: 'monkey'
-              },
-              {
-                shortName: 'slice-of-pizza'
-              },
-              {
-                shortName: 'rabbit'
-              },
-              {
-                shortName: 'pig'
-              },
-              {
-                shortName: 'horse'
-              },
-              {
-                shortName: 'rat'
-              },
-              {
-                shortName: 'ghost'
-              },
-              {
-                shortName: 'first-quarter-moon-with-face'
-              },
-              {
-                shortName: 'moyai'
-              },
-              {
-                shortName: 'ship'
-              },
-              {
-                shortName: 'cactus'
-              },
-              {
-                shortName: 'steaming-bowl'
-              },
-              {
-                shortName: 'snail'
-              },
-              {
-                shortName: 'koala'
-              },
-              {
-                shortName: 'horse'
-              },
-              {
-                shortName: 'cat-face-with-tears-of-joy'
-              },
-              {
-                shortName: 'baby-chick'
-              }
-            ];
-          }
+        data: {
+          type: Array
         },
 
-        active: {
-          type: Boolean,
-          reflectToAttribute: true,
-          value: false
-        },
-
-        route: {
+        entries: {
           type: Object,
-          notify: true
+          notify: true,
+          readOnly: true
+          // computed: '__computePolydexEntries(availablePolymons, data.length)'
+        },
+
+        availablePolymons: {
+          type: Array
+        },
+
+        db: {
+          type: Object
         }
+      },
+
+      observers: [
+        '__dataChanged(data.*)',
+        '__updateEntries(availablePolymons, data.length)'
+      ],
+
+      __dataChanged: function(change) {
+        let splices = change.value.indexSplices;
+
+        if (!splices) {
+          return;
+        }
+
+        let queue = Promise.resolve();
+        let db = this.$.polydexQuery.db;
+
+        splices.forEach(splice => {
+          for (let i = 0; i < splice.addedCount; ++i) {
+            let polydexEntry = splice.object[splice.index + i];
+
+            queue = queue
+                .then(() => this.__polymonById(polydexEntry.polymonId))
+                .then(polymon => this.fire('polydex-entry-added', {
+                  polymon,
+                  polydexEntry
+                }));
+          }
+        });
+      },
+
+      __polymonById: function(polymonId) {
+        return this.$.polydexQuery.db
+            .ref(`/polymons/${polymonId}`)
+            .once('value')
+            .then(snapshot => snapshot.val());
+      },
+
+      __updateEntries: function(availablePolymons) {
+        Promise.all(this.data.map(
+            polydexEntry => this.__polymonById(polydexEntry.polymonId)))
+            .then(caughtPolymons => {
+              let entries = availablePolymons.map(polymon => {
+                let caught = false;
+
+                for (let i = 0; i < caughtPolymons.length; ++i) {
+                  if (caughtPolymons[i].shortName === polymon.shortName) {
+                    caught = true;
+                    caughtPolymons.splice(i, 1);
+                    break;
+                  }
+                }
+
+                return Object.assign({}, { caught }, polymon);
+              });
+
+              this._setEntries(entries);
+            });
+      },
+
+      __computePolydexEntries: function(availablePolymons) {
+        let remainingData = this.data.slice();
+
+        return availablePolymons.map(polymon => {
+          let caught = false;
+          let shortName = polymon.shortName;
+
+          for (let i = 0; i < remainingData.length; ++i) {
+            let polymonId = remainingData[i].polymonId;
+
+            if (remainingData[i].shortName === shortName) {
+              remainingData.splice(i, 1);
+              caught = true;
+              break;
+            }
+          }
+
+          return { shortName, caught };
+        });
+      },
+
+      __firebasePolydexPath: function(user) {
+        return user == null ? null : `/users/${user.uid}/polydex`;
+      },
+
+      __firebaseTeamPath: function(user) {
+        return user == null ? null : `/users/${user.uid}/team`;
       }
     });
   </script>

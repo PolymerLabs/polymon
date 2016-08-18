@@ -28,19 +28,29 @@
           value: ''
         },
 
+        size: {
+          type: Number,
+          value: 5
+        },
+
+        margin: {
+          type: Number,
+          value: 3
+        },
+
         url: {
           type: String,
-          computed: '__computeUrl(data)'
+          computed: '__computeUrl(data, size, margin)'
         }
       },
 
-      __computeUrl: function(data) {
-        var url = '';
+      __computeUrl: function(data, size, margin) {
+        var url = undefined;
 
         if (data) {
           url = QRCode.generatePNG(data, {
-            modulesize: 10,
-            margin: 4
+            modulesize: size,
+            margin: margin
           });
         }
 

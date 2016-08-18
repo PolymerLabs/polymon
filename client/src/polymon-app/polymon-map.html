@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-qr-code-scanner.html">
 <link rel="import" href="polymon-button.html">
 <dom-module id="polymon-map">
@@ -64,6 +65,7 @@
         return-to="[[route.prefix]]"
         active="[[scanRouteActive]]">
     </polymon-qr-code-scanner>
+
     <google-map
         disable-default-ui
         zoom="16"
@@ -94,19 +96,11 @@
     Polymer({
       is: 'polymon-map',
 
+      behaviors: [
+        PolymonElement
+      ],
+
       properties: {
-        active: {
-          type: Boolean,
-          reflectToAttribute: true,
-          value: false,
-          observer: '__activeChanged'
-        },
-
-        route: {
-          type: Object,
-          notify: true
-        },
-
         mapCoords: {
           type: Object,
           notify: true,
@@ -125,6 +119,10 @@
           observer: '__playerCoordsChanged'
         }
       },
+
+      observers: [
+        '__activeChanged(active)'
+      ],
 
       attached: function() {
         try {

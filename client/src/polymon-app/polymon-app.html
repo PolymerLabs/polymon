@@ -3,10 +3,12 @@
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="polymon-map.html">
 <link rel="import" href="polymon-start-screen.html">
 <link rel="import" href="polymon-caught-screen.html">
 <link rel="import" href="polymon-polydex.html">
+<link rel="import" href="polymon-element.html">
 <dom-module id="polymon-app">
   <template>
     <style>
@@ -18,6 +20,7 @@
         overflow: hidden;
       }
     </style>
+
     <firebase-auth
         app-name="polymon"
         provider="google"
@@ -25,6 +28,12 @@
         user="{{user}}"
         id="auth">
     </firebase-auth>
+
+    <firebase-document
+        id="catchQueue"
+        app-name="polymon"
+        path="[[__catchQueuePath(user)]]">
+    </firebase-document>
 
     <app-location
         route="{{route}}"
@@ -48,6 +57,7 @@
         data="{{caughtData}}"
         query-params="{{caughtQueryParams}}">
     </app-route>
+
     <app-route
         pattern="/polydex"
         route="{{route}}"
@@ -57,7 +67,8 @@
 
     <polymon-map
         active="[[mapRouteActive]]"
-        route="{{mapRoute}}">
+        route="{{mapRoute}}"
+        user="[[user]]">
     </polymon-map>
 
     <polymon-start-screen
@@ -75,7 +86,7 @@
     <polymon-polydex
         active="[[polydexRouteActive]]"
         route="{{polydexRoute}}"
-        user="{{user}}">
+        user="[[user]]">
     </polymon-polydex>
   </template>
 
@@ -83,32 +94,53 @@
     Polymer({
       is: 'polymon-app',
 
+      behaviors: [
+        PolymonElement
+      ],
+
       properties: {
-        route: {
-          type: Object,
-          notify: true
+        unconfirmedCatches: {
+          type: Array,
+          value: function() {
+            return [];
+          }
         }
       },
 
       listeners: {
-        'polymon-qr-code-data': '__onPolymonQrCodeData'
+        'polymon-code': '__onPolymonCode',
+        'polydex-entry-added': '__onPolydexEntryAdded'
       },
 
       attemptLogin: function() {
         this.$.auth.signInWithPopup();
       },
 
-      __onPolymonQrCodeData: function(event) {
-        let data = event.detail.data;
+      __onPolymonCode: function(event) {
+        let code = event.detail.code;
+        let continueTo = event.detail.continueTo;
 
-        if (/^polymon:/.test(data)) {
-          let continueTo = event.detail.continueTo;
-          let polymon = data.split(':').pop();
-          console.log('Caught a Polymon:', polymon);
-
+        if (this.$.catchQueue.ref) {
           this.set('queryParams.continueTo', continueTo);
-          this.set('route.path', `/caught/${polymon}`)
+          this.push('unconfirmedCatches', this.$.catchQueue.ref.push(code).key);
         }
+      },
+
+      __onPolydexEntryAdded: function(event) {
+        let { polydexEntry, polymon } = event.detail;
+
+        for (let i = 0; i < this.unconfirmedCatches.length; ++i) {
+          let catchId = this.unconfirmedCatches[i];
+
+          if (catchId === polydexEntry.catchId) {
+            this.unconfirmedCatches.splice(i, 1);
+            this.set('route.path', `/caught/${polymon.shortName}`);
+          }
+        }
+      },
+
+      __catchQueuePath: function(user) {
+        return user == null ? null : `/users/${user.uid}/catchQueue`;
       }
     });
   </script>

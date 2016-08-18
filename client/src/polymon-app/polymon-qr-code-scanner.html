@@ -166,10 +166,10 @@
             return;
           }
 
-          self.__scanForQrCode().then(data => {
-            console.log('QR Code Data:', data);
-            self.fire('polymon-qr-code-data', {
-              data: data,
+          self.__scanForQrCode().then(code => {
+            console.log('QR Code Data:', code);
+            self.fire('polymon-code', {
+              code,
               continueTo: self.returnTo
             });
           }).catch(error => {
