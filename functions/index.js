@@ -11,24 +11,25 @@ exports.validateCaughtPolymon = functions
     .path('/users/{userId}/catchQueue/{catchId}')
     .on('write', function(event) {
       const userId = event.params.userId;
-      const polymonId = event.data.val();
+      const referenceId = event.data.val();
       const catchId = event.data.key;
       const db = functions.app.database();
       const auth = functions.app.auth();
-      const polymonRef = db.ref(`/polymons/${polymonId}`);
+      const referenceRef = db.ref(`/references/${referenceId}`);
 
-      if (polymonId == null) {
-        console.log('No Polymon ID, ignoring..')
+      if (referenceId == null) {
+        console.log('No Reference ID, ignoring..')
         return;
       }
 
-      console.log(`Polymon ID: ${polymonId}`);
+      console.log(`Reference ID: ${referenceId}`);
       console.log(`Catch ID: ${catchId}`);
       console.log(`User ID: ${userId}`);
 
-      return value(polymonRef).then(snapshot => {
+      return value(referenceRef).then(snapshot => {
+        let polymonId = snapshot.val();
 
-        console.log('Polymon:', snapshot.val());
+        console.log('Polymon ID:', polymonId);
 
         const processQueue = snapshot.exists() ?
             db.ref(`/users/${userId}/polydex`).push({

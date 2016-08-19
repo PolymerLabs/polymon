@@ -3,9 +3,11 @@
     ".read": "false",
     ".write": "false",
     "polymons": {
-      "$polymon": {
-        ".read": "auth != null",
-        ".indexOn": "shortName"
+      ".read": "true"
+    },
+    "references": {
+      "$reference": {
+        ".read": "auth != null"
       }
     },
     "users": {
