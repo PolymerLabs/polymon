@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<dom-module id="active-fade-up">
+  <template>
+    <style>
+      :host {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: transform 0.3s, opacity 0.3s;
+      }
+
+      :host([active]) {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+      }
+    </style>
+  </template>
+</dom-module>
+<dom-module id="polymon-panel">
+  <template>
+    <style>
+      :host {
+        font-family: var(--polymon-font-family);
+        position: absolute;
+        box-sizing: border-box;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        padding: 8px;
+
+        border-radius: 8px;
+        border: 2px solid #999999;
+        background-color: #eee;
+
+        @apply(--layout-vertical);
+        align-items: stretch;
+
+        text-align: center;
+      }
+
+      :host:after {
+        content: '';
+        position: absolute;
+        box-sizing: border-box;
+        pointer-events: none;
+        border-radius: 6px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 2px solid #fff;
+      }
+    </style>
+  </template>
+</dom-module>
