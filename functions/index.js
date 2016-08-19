@@ -17,9 +17,11 @@ exports.validateCaughtPolymon = functions
       const auth = functions.app.auth();
       const referenceRef = db.ref(`/references/${referenceId}`);
 
+      // If we don't have a referenceId, it means this is probably the write
+      // performed by the function removing the queued catch event
       if (referenceId == null) {
         console.log('No Reference ID, ignoring..')
-        return;
+        return event.data.val();
       }
 
       console.log(`Reference ID: ${referenceId}`);
@@ -27,18 +29,33 @@ exports.validateCaughtPolymon = functions
       console.log(`User ID: ${userId}`);
 
       return value(referenceRef).then(snapshot => {
-        let polymonId = snapshot.val();
+        if (snapshot.exists()) {
+          let polymonId = snapshot.val();
 
-        console.log('Polymon ID:', polymonId);
+          console.log('Polymon ID:', polymonId);
 
-        const processQueue = snapshot.exists() ?
-            db.ref(`/users/${userId}/polydex`).push({
-              caughtAt: Date.now(),
-              catchId,
-              polymonId
-            }) :
-            Promise.resolve();
+          return db.ref(`/users/${userId}/polydex`)
+              .orderByChild('polymonId')
+              .once('value').then(snapshot => {
+                let polydexEntries = snapshot.val();
 
-        return processQueue.then(() => event.data.ref.remove());
-      });
+                for (var id in polydexEntries) {
+                  if (polydexEntries[id].polymonId === polymonId) {
+                    console.log(
+                        `This Polymon was already caught..`);
+                    return;
+                  }
+                }
+
+                console.log('Recording catch in Polydex.');
+                return db.ref(`/users/${userId}/polydex`).push({
+                  caughtAt: Date.now(),
+                  catchId,
+                  polymonId
+                });
+              });
+        }
+      }).catch(error => {
+        console.error(`Validation: ${error}`);
+      }).then(() => event.data.ref.remove());
     });
