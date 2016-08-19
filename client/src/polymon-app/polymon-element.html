@@ -1,20 +1,37 @@
 <script>
-  window.PolymonElement = {
-    properties: {
-      user: {
-        type: Object
+  (() => {
+    window.PolymonElement = {
+      properties: {
+        user: {
+          type: Object
+        },
+
+        route: {
+          type: Object,
+          notify: true
+        },
+
+        active: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        }
       },
 
-      route: {
-        type: Object,
-        notify: true
+      created: function() {
+        this.__rafs = {};
       },
 
-      active: {
-        type: Boolean,
-        reflectToAttribute: true,
-        value: false
+      deraf: function(name, fn) {
+        if (this.__rafs[name]) {
+          return;
+        }
+
+        this.__rafs[name] = requestAnimationFrame(() => {
+          this.__rafs[name] = null;
+          fn();
+        });
       }
-    }
-  };
+    };
+  })();
 </script>

@@ -6,6 +6,7 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-detail.html">
 <dom-module id="polymon-polydex">
   <template>
     <style include="polymon-panel active-fade-up">
@@ -63,9 +64,10 @@
     </style>
 
     <app-route
-        pattern="/show/:polymon"
+        pattern="/:polymonId"
         route="{{route}}"
-        active="{{showPolymonRouteActive}}">
+        active="{{showPolymonRouteActive}}"
+        data="{{showPolymonData}}">
     </app-route>
 
     <firebase-query
@@ -90,18 +92,20 @@
 
     <h2>Your team</h2>
     <section id="team">
-      <polymon-portrait polymon="[[team.0.shortName]]" caught></polymon-portrait>
-      <polymon-portrait polymon="[[team.1.shortName]]" caught></polymon-portrait>
-      <polymon-portrait polymon="[[team.2.shortName]]" caught></polymon-portrait>
-      <polymon-portrait polymon="[[team.3.shortName]]" caught></polymon-portrait>
-      <polymon-portrait polymon="[[team.4.shortName]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.0]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.1]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.2]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.3]]" caught></polymon-portrait>
+      <polymon-portrait polymon="[[team.4]]" caught></polymon-portrait>
     </section>
     <h2>Available Polymon</h2>
     <section id="caught">
       <template is="dom-repeat" items="[[entries]]" as="polymon">
-        <a href="[[route.prefix]]/show/[[polymon.shortName]]">
+        <a href="[[route.prefix]]/[[polymon.$key]]">
           <polymon-portrait
-              polymon="[[polymon.shortName]]" caught=[[polymon.caught]]>
+              id$="[[polymon.$key]]"
+              polymon="[[polymon]]"
+              caught=[[polymon.caught]]>
           </polymon-portrait>
         </a>
       </template>
@@ -114,6 +118,10 @@
         <polymon-button>Battle</polymon-button>
       </a>
     </section>
+    <polymon-detail
+        active="[[showPolymonRouteActive]]"
+        polymon-id="[[showPolymonData.polymonId]]">
+    </polymon-detail>
   </template>
   <script>
     Polymer({

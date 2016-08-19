@@ -1,0 +1,173 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="polymon-element.html">
+<dom-module id="polymon-detail">
+  <template>
+    <style>
+      :host {
+        @apply --layout-fit;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 2;
+
+        transition: opacity 0s;
+        transition-delay: 0.5s;
+
+        --polymon-portrait-size: 128px;
+
+        box-sizing: border-box;
+        padding: 8px;
+      }
+
+      :host([active]) {
+        pointer-events: all;
+        opacity: 1;
+        transition-delay: 0s;
+      }
+
+      :host([active][open]) #background {
+        transform: scale(22);
+      }
+
+      :host([active]:not([open])) #portrait {
+        transition: none;
+      }
+
+      :host([active][open]) #portrait {
+        transform: translate(0, 0) scale(1) !important;
+        transition-delay: 0.2s;
+      }
+
+      #background {
+        position: absolute;
+        background-color: #ccc;
+        width: 64px;
+        height: 64px;
+        border-radius: 32px;
+        will-change: transform;
+        transition: transform 0.5s;
+        transform-origin: center center;
+      }
+
+      #portrait {
+        will-change: transform;
+        transition: transform 0.3s;
+        transition-delay: 0s;
+        transform-origin: -24px -24px;
+      }
+
+      @media (min-width: 500px) {
+        :host([active][open]) #background {
+          transform: scale(30);
+        }
+      }
+
+      @media (min-width: 1000px) {
+        :host([active][open]) #background {
+          transform: scale(50);
+        }
+      }
+
+      @media (min-width: 1500px) {
+        :host([active][open]) #background {
+          transform: scale(70);
+        }
+      }
+    </style>
+
+    <firebase-document
+        app-name="polymon"
+        path="[[__polymonPath(polymonId)]]"
+        data="{{polymon}}">
+    </firebase-document>
+    <div id="background"></div>
+    <polymon-portrait
+        id="portrait"
+        polymon="[[polymon]]"
+        caught="[[polymon.caught]]">
+    </polymon-portrait>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-detail',
+
+      behaviors: [
+        PolymonElement
+      ],
+
+      properties: {
+        originElement: {
+          type: HTMLElement
+        },
+
+        polymonId: {
+          type: String
+        },
+
+        open: {
+          type: Boolean,
+          reflectToAttribute: true,
+          readOnly: true,
+          value: false
+        }
+      },
+
+      observers: [
+        '__openOrClose(polymonId, active)'
+      ],
+
+      get originElement() {
+        let root = Polymer.dom(this).getOwnerRoot() || document;
+        return Polymer.dom(root).querySelector(`#${this.polymonId}`);
+      },
+
+      __openOrClose: function() {
+        this.deraf('openOrClose', () => {
+          if (this.active) {
+            let selfBoundingRect = this.getBoundingClientRect();
+            let originElement = this.originElement;
+            let top;
+            let left;
+
+            if (originElement) {
+              let originBoundingRect =
+                  this.originElement.getBoundingClientRect();
+
+              top = (originBoundingRect.top - selfBoundingRect.top);
+              left = (originBoundingRect.left - selfBoundingRect.left);
+            } else {
+              // NOTE(cdata): The magic number 32 comes from the half-width of
+              // the <polymon-portrait>, which has a full width of 64px:
+              top = (selfBoundingRect.height / 2 - 32);
+              left = (selfBoundingRect.width / 2 - 32);
+            }
+
+            console.log(top, left);
+
+            this.$.portrait.style.transform =
+                `translate(${left}px,${top}px) scale(0.5)`;
+
+            console.log(this.$.portrait.style.transform);
+
+            this.$.background.style.top = top + 'px';
+            this.$.background.style.left = left + 'px';
+
+            // NOTE(cdata): This raf is kind of annoying. Without it, the
+            // portrait will attempt to transition from its old initial position
+            // to its new initial position:
+            this.deraf('open', () => {
+              this._setOpen(true);
+            });
+          } else {
+            this._setOpen(false);
+          }
+        });
+      },
+
+      __polymonPath: function(polymonId) {
+        return `/polymons/${polymonId}`;
+      }
+    });
+  </script>
+</dom-module>

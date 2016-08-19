@@ -6,9 +6,9 @@
       :host {
         display: block;
         position: relative;
-        width: 64px;
-        height: 64px;
-        border-radius: 32px;
+        width: var(--polymon-portrait-size, 64px);
+        height: var(--polymon-portrait-size, 64px);
+        border-radius: calc(var(--polymon-portrait-size, 64px) / 2);
         background-color: #ccc;
         margin: 4px;
       }
@@ -32,7 +32,7 @@
 
       properties: {
         polymon: {
-          type: String
+          type: Object
         },
 
         caught: {
@@ -44,7 +44,7 @@
 
       __polymonUrl: function(polymon) {
         if (polymon) {
-          return `../../images/polymon/${polymon}.svg`;
+          return `../../images/polymon/${polymon.shortName}.svg`;
         }
       }
     });
