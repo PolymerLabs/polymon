@@ -34,9 +34,9 @@
           }
         </style>
         <iron-ajax
-            url="/polymon-qr-code-data.json"
+            url="/qr-code-data.json"
             handle-as="json"
-            last-response="{{polymons}}"
+            last-response="{{data}}"
             auto>
         </iron-ajax>
 
@@ -44,7 +44,7 @@
         </app-location>
         <app-route
             route="{{route}}"
-            pattern="/polymon/:index"
+            pattern="/polymon/:shortName"
             data="{{polymonSelection}}"
             active="{{polymonRouteActive}}"
             hidden>
@@ -54,15 +54,15 @@
           <polymon-qr-code
               size="7"
               margin="5"
-              data="[[selectedPolymon.sha]]">
+              data="[[selectedDatum.reference]]">
           </polymon-qr-code>
-          <span>[[selectedPolymon.shortName]]</span>
+          <span>[[selectedDatum.polymon.shortName]]</span>
         </a>
 
-        <template is="dom-repeat" items="[[polymons]]" as="polymon">
-          <a href="#/polymon/[[index]]" hidden$="[[polymonRouteActive]]">
-            <polymon-qr-code data="[[polymon.sha]]"></polymon-qr-code>
-            <span>[[polymon.shortName]]</span>
+        <template is="dom-repeat" items="[[data]]" as="datum">
+          <a href="#/polymon/[[datum.polymon.shortName]]" hidden$="[[polymonRouteActive]]">
+            <polymon-qr-code data="[[datum.reference]]"></polymon-qr-code>
+            <span>[[datum.polymon.shortName]]</span>
           </a>
         </template>
       </template>
@@ -71,19 +71,21 @@
           is: 'qr-code-viewer',
 
           properties: {
-            polymons: {
+            data: {
               type: Array
             },
 
-            selectedPolymon: {
+            selectedDatum: {
               type: Object,
-              computed: '__computeSelectedPolymon(polymons, polymonSelection.index)'
+              computed: '__computeSelectedDatum(data, polymonSelection.shortName)'
             }
           },
 
-          __computeSelectedPolymon: function(polymons, index) {
-            if (index != null && polymons != null) {
-              return polymons[index];
+          __computeSelectedDatum: function(data, shortName) {
+            for (var i = 0; i < data.length; ++i) {
+              if (data[i].polymon.shortName === shortName) {
+                return data[i];
+              }
             }
           }
         });

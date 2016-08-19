@@ -110,25 +110,24 @@
         active="{{showPolymonRouteActive}}">
     </app-route>
 
-    <iron-ajax
-        url="polymon.json"
-        handle-as="json"
-        last-response="{{availablePolymons}}"
-        auto>
-    </iron-ajax>
-
     <firebase-query
         app-name="polymon"
-        path="[[__firebaseTeamPath(user)]]"
-        order-by-child="position"
-        data="{{team}}">
+        path="/polymons"
+        data="{{availablePolymons}}">
     </firebase-query>
 
     <firebase-query
         id="polydexQuery"
         app-name="polymon"
         path="[[__firebasePolydexPath(user)]]"
-        data="{{data}}">
+        data="{{caughtPolymons}}">
+    </firebase-query>
+
+    <firebase-query
+        app-name="polymon"
+        path="[[__firebaseTeamPath(user)]]"
+        order-by-child="position"
+        data="{{team}}">
     </firebase-query>
 
     <h2>Your team</h2>
@@ -167,7 +166,7 @@
       ],
 
       properties: {
-        data: {
+        caughtPolymons: {
           type: Array
         },
 
@@ -175,7 +174,6 @@
           type: Object,
           notify: true,
           readOnly: true
-          // computed: '__computePolydexEntries(availablePolymons, data.length)'
         },
 
         availablePolymons: {
@@ -188,11 +186,11 @@
       },
 
       observers: [
-        '__dataChanged(data.*)',
-        '__updateEntries(availablePolymons, data.length)'
+        '__caughtPolymonsChanged(caughtPolymons.*)',
+        '__updateEntries(availablePolymons.length, caughtPolymons.length)'
       ],
 
-      __dataChanged: function(change) {
+      __caughtPolymonsChanged: function(change) {
         let splices = change.value.indexSplices;
 
         if (!splices) {
@@ -223,11 +221,11 @@
             .then(snapshot => snapshot.val());
       },
 
-      __updateEntries: function(availablePolymons) {
-        Promise.all(this.data.map(
+      __updateEntries: function() {
+        Promise.all(this.caughtPolymons.map(
             polydexEntry => this.__polymonById(polydexEntry.polymonId)))
             .then(caughtPolymons => {
-              let entries = availablePolymons.map(polymon => {
+              let entries = this.availablePolymons.map(polymon => {
                 let caught = false;
 
                 for (let i = 0; i < caughtPolymons.length; ++i) {
@@ -243,27 +241,6 @@
 
               this._setEntries(entries);
             });
-      },
-
-      __computePolydexEntries: function(availablePolymons) {
-        let remainingData = this.data.slice();
-
-        return availablePolymons.map(polymon => {
-          let caught = false;
-          let shortName = polymon.shortName;
-
-          for (let i = 0; i < remainingData.length; ++i) {
-            let polymonId = remainingData[i].polymonId;
-
-            if (remainingData[i].shortName === shortName) {
-              remainingData.splice(i, 1);
-              caught = true;
-              break;
-            }
-          }
-
-          return { shortName, caught };
-        });
       },
 
       __firebasePolydexPath: function(user) {
