@@ -143,12 +143,8 @@
               left = (selfBoundingRect.width / 2 - 32);
             }
 
-            console.log(top, left);
-
             this.$.portrait.style.transform =
                 `translate(${left}px,${top}px) scale(0.5)`;
-
-            console.log(this.$.portrait.style.transform);
 
             this.$.background.style.top = top + 'px';
             this.$.background.style.left = left + 'px';
