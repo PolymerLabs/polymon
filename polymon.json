@@ -1,86 +1,118 @@
 [
   {
-    "shortName": "goat"
+    "shortName": "goat",
+    "codePoint": "1f410"
   },
   {
-    "shortName": "dancer"
+    "shortName": "dancer",
+    "codePoint": "1f483"
   },
   {
-    "shortName": "octopus"
+    "shortName": "octopus",
+    "codePoint": "1f419"
   },
   {
-    "shortName": "tiger"
+    "shortName": "tiger",
+    "codePoint": "1f405"
   },
   {
-    "shortName": "penguin"
+    "shortName": "penguin",
+    "codePoint": "1f427"
   },
   {
-    "shortName": "pile-of-poo"
+    "shortName": "pile-of-poo",
+    "codePoint": "1f4a9"
   },
   {
-    "shortName": "ram"
+    "shortName": "ram",
+    "codePoint": "1f40f"
   },
   {
-    "shortName": "snake"
+    "shortName": "snake",
+    "codePoint": "1f40d"
   },
   {
-    "shortName": "turtle"
+    "shortName": "turtle",
+    "codePoint": "1f422"
   },
   {
-    "shortName": "honeybee"
+    "shortName": "honeybee",
+    "codePoint": "1f41d"
   },
   {
-    "shortName": "whale"
+    "shortName": "boar",
+    "codePoint": "1f417"
   },
   {
-    "shortName": "monkey"
+    "shortName": "whale",
+    "codePoint": "1f40b"
   },
   {
-    "shortName": "slice-of-pizza"
+    "shortName": "monkey",
+    "codePoint": "1f412"
   },
   {
-    "shortName": "rabbit"
+    "shortName": "slice-of-pizza",
+    "codePoint": "1f355"
   },
   {
-    "shortName": "pig"
+    "shortName": "rabbit",
+    "codePoint": "1f407"
   },
   {
-    "shortName": "horse"
+    "shortName": "pig",
+    "codePoint": "1f416"
   },
   {
-    "shortName": "rat"
+    "shortName": "horse",
+    "codePoint": "1f40e"
   },
   {
-    "shortName": "ghost"
+    "shortName": "rat",
+    "codePoint": "1f400"
   },
   {
-    "shortName": "first-quarter-moon-with-face"
+    "shortName": "ghost",
+    "codePoint": "1f47b"
   },
   {
-    "shortName": "moyai"
+    "shortName": "first-quarter-moon-with-face",
+    "codePoint": "1f31b"
   },
   {
-    "shortName": "ship"
+    "shortName": "moyai",
+    "codePoint": "1f5ff"
   },
   {
-    "shortName": "cactus"
+    "shortName": "ship",
+    "codePoint": "1f6a2"
   },
   {
-    "shortName": "steaming-bowl"
+    "shortName": "cactus",
+    "codePoint": "1f335"
   },
   {
-    "shortName": "snail"
+    "shortName": "steaming-bowl",
+    "codePoint": "1f35c"
   },
   {
-    "shortName": "koala"
+    "shortName": "snail",
+    "codePoint": "1f40c"
   },
   {
-    "shortName": "horse"
+    "shortName": "koala",
+    "codePoint": "1f428"
   },
   {
-    "shortName": "cat-face-with-tears-of-joy"
+    "shortName": "cat-face-with-tears-of-joy",
+    "codePoint": "1f639"
   },
   {
-    "shortName": "baby-chick"
+    "shortName": "baby-chick",
+    "codePoint": "1f424"
+  },
+  {
+    "shortName": "elephant",
+    "codePoint": "1f418"
   }
 ]

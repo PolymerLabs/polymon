@@ -120,7 +120,8 @@
     </section>
     <polymon-detail
         active="[[showPolymonRouteActive]]"
-        polymon-id="[[showPolymonData.polymonId]]">
+        polymon-id="[[showPolymonData.polymonId]]"
+        caught="[[__isCaught(showPolymonData.polymonId, caughtPolymons.length)]]">
     </polymon-detail>
   </template>
   <script>
@@ -207,6 +208,18 @@
 
               this._setEntries(entries);
             });
+      },
+
+      __isCaught: function(polymonId) {
+        if (polymonId) {
+          for (var i = 0; i < this.caughtPolymons.length; ++i) {
+            if (this.caughtPolymons[i].polymonId === polymonId) {
+              return true;
+            }
+          }
+        }
+
+        return false;
       },
 
       __firebasePolydexPath: function(user) {

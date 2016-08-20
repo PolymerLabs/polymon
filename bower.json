@@ -15,7 +15,8 @@
     "google-map": "googlewebcomponents/google-map#^1.0.0",
     "jsqrcode": "LazarSoft/jsqrcode",
     "polymerfire": "firebase/polymerfire#^0.9.0",
-    "iron-ajax": "polymerelements/iron-ajax#^1.0.0"
+    "iron-ajax": "polymerelements/iron-ajax#^1.0.0",
+    "iron-iconset-svg": "polymerelements/iron-iconset-svg#^1.0.9"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-imageset.html">
 <dom-module id="polymon-portrait">
   <template>
     <style>
@@ -13,40 +14,88 @@
         margin: 4px;
       }
 
-      :host(:not([caught])) img {
-        -webkit-filter: contrast(0%) brightness(125%);
+      :host(:not([caught])) svg * {
+        fill: #888 !important;
       }
 
-      img {
+      svg {
         position: absolute;
         width: 100%;
+        height: 100%;
         top: 0;
         left: 0;
       }
     </style>
-    <img src="[[__polymonUrl(polymon)]]">
   </template>
   <script>
-    Polymer({
-      is: 'polymon-portrait',
+    (() => {
+      const images = {};
 
-      properties: {
-        polymon: {
-          type: Object
+      Polymer({
+        is: 'polymon-portrait',
+
+        properties: {
+          polymon: {
+            type: Object,
+            observer: '__applyPolymonImage'
+          },
+
+          caught: {
+            type: Boolean,
+            reflectToAttribute: true,
+            value: false
+          }
         },
 
-        caught: {
-          type: Boolean,
-          reflectToAttribute: true,
-          value: false
-        }
-      },
+        get imageCache() {
+          return images;
+        },
 
-      __polymonUrl: function(polymon) {
-        if (polymon) {
-          return `../../images/polymon/${polymon.shortName}.svg`;
+        __allocateImage: function() {
+          let shortName = this.polymon.shortName;
+
+          if (images[shortName] && images[shortName].length) {
+            return images[shortName].pop();
+          }
+
+          let icon = Polymer.DomModule
+              .import('polymon-iconset', `#${shortName}`);
+
+          if (icon) {
+            return icon.cloneNode(true);
+          }
+        },
+
+        __freeImage: function(icon) {
+          let shortName = icon.id;
+
+          if (!images[shortName]) {
+            images[shortName] = [];
+          }
+
+          images[shortName].push(icon);
+        },
+
+        __applyPolymonImage: function(polymon) {
+          if (this.__icon) {
+            Polymer.dom(this.root).removeChild(this.__icon);
+            this.__freeImage(this.__icon);
+          }
+
+          this.__icon = this.__allocateImage();
+
+          if (this.__icon) {
+            Polymer.dom(this.root).appendChild(this.__icon);
+          }
+        },
+
+        __polymonUrl: function(polymon) {
+          if (polymon) {
+            return `../../images/polymon/${polymon.shortName}.svg`;
+          }
         }
-      }
-    });
+      });
+    })();
+
   </script>
 </dom-module>

@@ -7,6 +7,8 @@
  *  1. qr-code-data.json, a file mapping references to Polymon resources.
  */
 
+const path = require('path');
+
 const readJson = require('then-read-json');
 const writeJson = require('then-write-json');
 const del = require('del');
@@ -14,7 +16,9 @@ const SHA256 = require('crypto-js/sha256');
 const firebase = require('firebase');
 
 const secret = process.env.POLYMON_SECRET || 'NO_SECRET_SPECIFIED';
-const qrCodeDataPath = './client/qr-code-data.json';
+const polymonJsonPath = path.resolve(__dirname, '../polymon.json');
+const qrCodeDataPath =
+    path.resolve(__dirname, '../client/qr-code-data.json');
 const app = firebase.initializeApp({
   name: 'polymon',
   apiKey: 'AIzaSyD5zoX-HpvOEiV-bEwHaHBCl9Rmnbgw_xk',
@@ -41,7 +45,7 @@ function clean() {
 }
 
 clean().then(() => {
-  return readJson('./polymon.json').then(polymons => {
+  return readJson(polymonJsonPath).then(polymons => {
     let writes = [];
     let qrCodeData = polymons.map(polymon => {
       let reference = makeReference(polymon);

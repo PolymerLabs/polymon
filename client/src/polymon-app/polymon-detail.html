@@ -14,10 +14,12 @@
         transition: opacity 0s;
         transition-delay: 0.5s;
 
-        --polymon-portrait-size: 128px;
+        --polymon-portrait-size: 256px;
 
         box-sizing: border-box;
-        padding: 8px;
+
+        @apply --layout-horizontal;
+        justify-content: center;
       }
 
       :host([active]) {
@@ -39,6 +41,10 @@
         transition-delay: 0.2s;
       }
 
+      firebase-document {
+        display: none;
+      }
+
       #background {
         position: absolute;
         background-color: #ccc;
@@ -54,7 +60,7 @@
         will-change: transform;
         transition: transform 0.3s;
         transition-delay: 0s;
-        transform-origin: -24px -24px;
+        transform-origin: 0 -5px;
       }
 
       @media (min-width: 500px) {
@@ -81,11 +87,13 @@
         path="[[__polymonPath(polymonId)]]"
         data="{{polymon}}">
     </firebase-document>
+
     <div id="background"></div>
+
     <polymon-portrait
         id="portrait"
         polymon="[[polymon]]"
-        caught="[[polymon.caught]]">
+        caught="[[caught]]">
     </polymon-portrait>
   </template>
   <script>
@@ -103,6 +111,11 @@
 
         polymonId: {
           type: String
+        },
+
+        caught: {
+          type: Boolean,
+          value: false
         },
 
         open: {
@@ -126,6 +139,9 @@
         this.deraf('openOrClose', () => {
           if (this.active) {
             let selfBoundingRect = this.getBoundingClientRect();
+            // NOTE(cdata): Magic number determined by custom style in this
+            // element's stylesheet:
+            let portraitFullSize = 256;
             let originElement = this.originElement;
             let top;
             let left;
@@ -138,16 +154,20 @@
               left = (originBoundingRect.left - selfBoundingRect.left);
             } else {
               // NOTE(cdata): The magic number 32 comes from the half-width of
-              // the <polymon-portrait>, which has a full width of 64px:
+              // the <polymon-portrait> in the main Polydex view, which has a
+              // full width of 64px:
               top = (selfBoundingRect.height / 2 - 32);
               left = (selfBoundingRect.width / 2 - 32);
             }
 
-            this.$.portrait.style.transform =
-                `translate(${left}px,${top}px) scale(0.5)`;
-
             this.$.background.style.top = top + 'px';
             this.$.background.style.left = left + 'px';
+
+            left = left -
+                (selfBoundingRect.width / 2 - portraitFullSize / 2);
+
+            this.$.portrait.style.transform =
+                `translate(${left}px,${top}px) scale(0.25)`;
 
             // NOTE(cdata): This raf is kind of annoying. Without it, the
             // portrait will attempt to transition from its old initial position
