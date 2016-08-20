@@ -1,17 +1,46 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-imageset.html">
+<link rel="import" href="polymon-styles.html">
 <dom-module id="polymon-portrait">
   <template>
-    <style>
+    <style include="scaled-rotate-animation">
       :host {
         display: block;
         position: relative;
         width: var(--polymon-portrait-size, 64px);
         height: var(--polymon-portrait-size, 64px);
         border-radius: calc(var(--polymon-portrait-size, 64px) / 2);
-        background-color: var(--polymon-portrait-background, #ccc);
         margin: 4px;
+      }
+
+      :host:before {
+        content: '';
+        display: none;
+        @apply --layout-fit;
+        border-radius: calc(var(--polymon-portrait-size, 64px) / 1.5);
+        background-image: linear-gradient(0deg, #F43865 0%,  #55c3f1 100%);
+        transition: transform 0.15s;
+        animation-duration: 3s;
+        animation-delay: -2.5s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+      }
+
+      :host(.iron-selected) {
+        transform: scale(1.05);
+      }
+
+      :host(.iron-selected):before {
+        display: block;
+        animation-name: rotate;
+      }
+
+      :host:after {
+        content: '';
+        @apply --layout-fit;
+        border-radius: calc(var(--polymon-portrait-size, 64px) / 2);
+        background-color: var(--polymon-portrait-background, #ccc);
       }
 
       :host(:not([caught])) svg * {
@@ -20,6 +49,7 @@
 
       svg {
         position: absolute;
+        z-index: 2;
         width: 100%;
         height: 100%;
         top: 0;

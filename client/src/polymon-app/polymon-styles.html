@@ -1,5 +1,81 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="scaled-rotate-animation">
+  <template>
+    <style>
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg) scale(1.15);
+        }
+
+        100% {
+          transform: rotate(360deg) scale(1.15);
+        }
+      }
+    </style>
+  </template>
+</dom-module>
+
+<dom-module id="rotate-animation">
+  <template>
+    <style>
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </template>
+</dom-module>
+
+<dom-module id="wiggle-animation">
+  <template>
+    <style>
+      @keyframes wiggle {
+        0% {
+          transform: rotateZ(3deg) translateY(0px);
+        }
+
+        25% {
+          transform: rotateZ(-2deg) translateY(0px);
+        }
+
+        50% {
+          transform: rotateZ(1deg) translateY(0px);
+        }
+
+        60% {
+          transform: rotateZ(-1deg) translateY(-14px) scale(1.02);
+        }
+
+        70% {
+          transform: rotateZ(2deg) translateY(0px);
+        }
+
+        75% {
+          transform: translateY(-8px) scale(1.01);
+        }
+
+        80% {
+          transform: rotateZ(-1deg) translateY(0px);
+        }
+
+        85% {
+          transform: translateY(0px);
+        }
+
+        100% {
+          transform: rotateZ(3deg) translateY(0px);
+        }
+      }
+    </style>
+  </template>
+</dom-module>
 <dom-module id="active-fade-up">
   <template>
     <style>

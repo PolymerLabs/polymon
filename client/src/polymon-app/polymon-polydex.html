@@ -9,21 +9,73 @@
 <link rel="import" href="polymon-detail.html">
 <dom-module id="polymon-polydex">
   <template>
-    <style include="polymon-panel active-fade-up">
+    <style include="polymon-panel active-fade-up wiggle-animation">
       #controls {
         @apply --layout-horizontal;
       }
 
-      #controls > :first-child {
+      #controls > a:first-of-type {
         margin-right: 8px;
       }
 
-      #controls > :last-child {
+      #controls > a:last-of-type {
         flex: 1;
       }
 
       polymon-button {
         width: 100%;
+      }
+
+      polymon-portrait {
+        transition: transform 0.15s, opacity 0.15s;
+      }
+
+      :host([editing-team]) #team > polymon-portrait:not(.iron-selected),
+      :host([editing-team]) #index polymon-portrait:not([caught]) {
+        transform: scale(0.9);
+        opacity: 0.75;
+      }
+
+      :host([editing-team]) #index [caught] {
+        animation: wiggle 2s;
+        animation-iteration-count: infinite;
+      }
+
+      #controls {
+        position: relative;
+      }
+
+      :host([editing-team]) #controls > a {
+        transition-delay: 0s;
+        opacity: 0;
+        transform: translateY(4px);
+        pointer-events: none;
+      }
+
+      :host([editing-team]) #cancel-team-swap {
+        transition-delay: 0.15s;
+        opacity: 1;
+        pointer-events: all;
+        transform: inherit;
+      }
+
+      #controls > a  {
+        transition: transform 0.15s, opacity 0.15s;
+        transition-delay: 0.15s;
+
+        opacity: 1;
+      }
+
+      #cancel-team-swap {
+        @apply --layout-fit;
+        z-index: 2;
+
+        transition: transform 0.15s, opacity 0.15s;
+        transition-delay: 0s;
+
+        transform: translateY(4px);
+        opacity: 0;
+        pointer-events: none;
       }
 
       h2 {
@@ -42,7 +94,7 @@
         margin: 8px;
       }
 
-      #caught {
+      #index {
         @apply --layout-horizontal;
         flex-wrap: wrap;
         justify-content: center;
@@ -90,18 +142,21 @@
         data="{{team}}">
     </firebase-query>
 
-    <h2>Your team</h2>
-    <section id="team">
+    <h2>Your team &middot; Tap spot to swap</h2>
+
+    <iron-selector id="team" selected="{{selectedTeamSpot}}">
       <polymon-portrait polymon="[[team.0]]" caught></polymon-portrait>
       <polymon-portrait polymon="[[team.1]]" caught></polymon-portrait>
       <polymon-portrait polymon="[[team.2]]" caught></polymon-portrait>
       <polymon-portrait polymon="[[team.3]]" caught></polymon-portrait>
       <polymon-portrait polymon="[[team.4]]" caught></polymon-portrait>
-    </section>
+    </iron-selector>
+
     <h2>Available Polymon</h2>
-    <section id="caught">
+
+    <section id="index">
       <template is="dom-repeat" items="[[entries]]" as="polymon">
-        <a href="[[route.prefix]]/[[polymon.$key]]">
+        <a href="[[route.prefix]]/[[polymon.$key]]" on-click="__onPolymonAnchorClick">
           <polymon-portrait
               id$="[[polymon.$key]]"
               polymon="[[polymon]]"
@@ -110,7 +165,12 @@
         </a>
       </template>
     </section>
+
     <section id="controls">
+      <div id="cancel-team-swap">
+        <polymon-button
+            class="alt">Cancel</polymon-button>
+      </div>
       <a href="/">
         <polymon-button class="alt">Back</polymon-button>
       </a>
@@ -118,6 +178,7 @@
         <polymon-button>Battle</polymon-button>
       </a>
     </section>
+
     <polymon-detail
         active="[[showPolymonRouteActive]]"
         polymon-id="[[showPolymonData.polymonId]]"
@@ -133,6 +194,13 @@
       ],
 
       properties: {
+        editingTeam: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false,
+          computed: '__computeEditingTeam(selectedTeamSpot)'
+        },
+
         caughtPolymons: {
           type: Array
         },
@@ -156,6 +224,26 @@
         '__caughtPolymonsChanged(caughtPolymons.*)',
         '__updateEntries(availablePolymons.length, caughtPolymons.length)'
       ],
+
+      listeners: {
+        'cancel-team-swap.tap': '__onCancelTeamSwapTap'
+      },
+
+      __onPolymonAnchorClick: function(event) {
+        if (this.editingTeam) {
+          event.preventDefault();
+        }
+      },
+
+      __onCancelTeamSwapTap: function() {
+        this.async(() => {
+          this.selectedTeamSpot = null;
+        }, 100);
+      },
+
+      __computeEditingTeam: function(selectedTeamSpot) {
+        return selectedTeamSpot != null;
+      },
 
       __caughtPolymonsChanged: function(change) {
         let splices = change.value.indexSplices;
