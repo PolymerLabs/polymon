@@ -6,7 +6,13 @@
   <template>
     <style>
       :host {
-        @apply --layout-fit;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 2px;
+        overflow: hidden;
+
         pointer-events: none;
         opacity: 0;
         z-index: 2;
@@ -15,6 +21,7 @@
         transition-delay: 0.5s;
 
         --polymon-portrait-size: 256px;
+        --polymon-portrait-background: transparent;
 
         box-sizing: border-box;
 
@@ -30,6 +37,7 @@
 
       :host([active][open]) #background {
         transform: scale(22);
+        background-color: #eee;
       }
 
       :host([active]:not([open])) #portrait {
@@ -52,7 +60,7 @@
         height: 64px;
         border-radius: 32px;
         will-change: transform;
-        transition: transform 0.5s;
+        transition: transform 0.5s, background-color 0.3s;
         transform-origin: center center;
       }
 
