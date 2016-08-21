@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-portrait.html">
 <dom-module id="polymon-caught-screen">
   <template>
     <style include="rotate-animation wiggle-animation">
@@ -14,6 +15,9 @@
         pointer-events: none;
         transform: translateY(10px);
         transition: transform 0.3s, opacity 0.15s;
+
+        --polymon-portrait-background: transparent;
+        --polymon-portrait-size: 250px;
       }
 
       h1 {
@@ -32,9 +36,9 @@
         margin-top: 6em;
       }
 
-      #container img {
+      #container polymon-portrait {
         position: relative;
-        width: 250px;
+        margin: auto;
         z-index: 1;
         animation: wiggle 2s;
         animation-iteration-count: infinite;
@@ -124,9 +128,12 @@
 
 
     </style>
-    <h1>You caught a [[data.polymon]] Polymon!</h1>
+    <h1>You caught a [[data.shortName]] Polymon!</h1>
     <section id="container">
-      <img src="../../images/polymon/[[data.polymon]].svg">
+      <polymon-portrait
+          polymon="[[data]]"
+          caught>
+      </polymon-portrait>
       <div id="one"></div>
       <div id="two"></div>
       <div id="three"></div>
