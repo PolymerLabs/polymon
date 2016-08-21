@@ -17,13 +17,17 @@
         "player": {
         },
         "team": {
+          ".write": "$uid === auth.uid",
+          "$teamPosition": {
+            ".validate": "newData.child('index').val() < 5 && newData.child('index').val() > -1 && newData.hasChild('polydexId')"
+          }
         },
         "polydex": {
         },
         "achievements": {
         },
         "catchQueue": {
-          ".write": "true"
+          ".write": "$uid === auth.uid"
         }
       }
     }

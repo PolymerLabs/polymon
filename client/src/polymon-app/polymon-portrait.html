@@ -112,6 +112,10 @@
             this.__freeImage(this.__icon);
           }
 
+          if (!polymon) {
+            return;
+          }
+
           this.__icon = this.__allocateImage();
 
           if (this.__icon) {
