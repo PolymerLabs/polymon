@@ -10,7 +10,7 @@ exports.validateTeam = functions
 
       if (newTeamPosition == null) {
         console.log('No new team position, ignoring..');
-        return
+        return null;
       }
 
       console.log(`Index: ${newTeamPosition.index}`);

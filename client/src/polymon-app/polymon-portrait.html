@@ -19,7 +19,17 @@
         display: none;
         @apply --layout-fit;
         border-radius: calc(var(--polymon-portrait-size, 64px) / 1.5);
-        background-image: linear-gradient(0deg, #F43865 0%,  #55c3f1 100%);
+        background-image: linear-gradient(0deg,
+          #F43865 0%,
+          #F43865 10%,
+          #B3719E 10%,
+          #B3719E 30%,
+          #908FBC 30%,
+          #908FBC 70%,
+          #6cabdc 70%,
+          #6cabdc 90%,
+          #55c3f1 90%,
+          #55c3f1 100%);
         transition: transform 0.15s;
         animation-duration: 3s;
         animation-delay: -2.5s;

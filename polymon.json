@@ -1,118 +1,273 @@
 [
   {
+    "name": "Cooptoo",
     "shortName": "goat",
-    "codePoint": "1f410"
+    "codePoint": "1f410",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    },
+    "flavor": "One time it tried to chew through a closed shadow root. Now it mostly prefers script tags."
   },
   {
+    "name": "Ferdinoms",
     "shortName": "dancer",
-    "codePoint": "1f483"
+    "codePoint": "1f483",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    },
+    "flavor": "And those who were seen dancing were thought to be insane by those who could not hear the music."
   },
   {
+    "name": "Octorvel",
     "shortName": "octopus",
-    "codePoint": "1f419"
+    "codePoint": "1f419",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    },
+    "flavor": "It will jump at the opportunity to share its deep wisdom. It likes to share for long periods of time."
   },
   {
+    "name": "Tiscript",
     "shortName": "tiger",
-    "codePoint": "1f405"
+    "codePoint": "1f405",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    },
+    "flavor": "When hunting, it will stalk prey with sound typings before anything else."
   },
   {
     "shortName": "penguin",
-    "codePoint": "1f427"
+    "codePoint": "1f427",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "pile-of-poo",
-    "codePoint": "1f4a9"
+    "codePoint": "1f4a9",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "ram",
-    "codePoint": "1f40f"
+    "codePoint": "1f40f",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "snake",
-    "codePoint": "1f40d"
+    "codePoint": "1f40d",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "turtle",
-    "codePoint": "1f422"
+    "codePoint": "1f422",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "honeybee",
-    "codePoint": "1f41d"
+    "codePoint": "1f41d",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "boar",
-    "codePoint": "1f417"
+    "codePoint": "1f417",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "whale",
-    "codePoint": "1f40b"
+    "codePoint": "1f40b",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "monkey",
-    "codePoint": "1f412"
+    "codePoint": "1f412",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "slice-of-pizza",
-    "codePoint": "1f355"
+    "codePoint": "1f355",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "rabbit",
-    "codePoint": "1f407"
+    "codePoint": "1f407",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "pig",
-    "codePoint": "1f416"
+    "codePoint": "1f416",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "horse",
-    "codePoint": "1f40e"
+    "codePoint": "1f40e",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "rat",
-    "codePoint": "1f400"
+    "codePoint": "1f400",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
+    "name": "Bootooth",
     "shortName": "ghost",
-    "codePoint": "1f47b"
+    "codePoint": "1f47b",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    },
+    "flavor": "Pairs of Bootooth have been known to exchange ideas over thin air."
   },
   {
     "shortName": "first-quarter-moon-with-face",
-    "codePoint": "1f31b"
+    "codePoint": "1f31b",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "moyai",
-    "codePoint": "1f5ff"
+    "codePoint": "1f5ff",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "ship",
-    "codePoint": "1f6a2"
+    "codePoint": "1f6a2",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "cactus",
-    "codePoint": "1f335"
+    "codePoint": "1f335",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "steaming-bowl",
-    "codePoint": "1f35c"
+    "codePoint": "1f35c",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "snail",
-    "codePoint": "1f40c"
+    "codePoint": "1f40c",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "koala",
-    "codePoint": "1f428"
+    "codePoint": "1f428",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "cat-face-with-tears-of-joy",
-    "codePoint": "1f639"
+    "codePoint": "1f639",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "baby-chick",
-    "codePoint": "1f424"
+    "codePoint": "1f424",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   },
   {
     "shortName": "elephant",
-    "codePoint": "1f418"
+    "codePoint": "1f418",
+    "stats": {
+      "attack": 10,
+      "defend": 10,
+      "counter": 10
+    }
   }
 ]

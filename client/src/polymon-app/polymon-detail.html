@@ -25,8 +25,9 @@
 
         box-sizing: border-box;
 
-        @apply --layout-horizontal;
-        justify-content: center;
+        @apply --layout-vertical;
+
+        align-items: center;
       }
 
       :host([active]) {
@@ -49,6 +50,13 @@
         transition-delay: 0.2s;
       }
 
+      :host([active]) #info,
+      :host([active]) #controls {
+        transition-delay: 0.3s;
+        transform: translateY(0);
+        opacity: 1;
+      }
+
       firebase-document {
         display: none;
       }
@@ -64,16 +72,108 @@
         transform-origin: center center;
       }
 
+      #info, #marquee {
+        flex: 1;
+      }
+
+      #marquee {
+        display: flex;
+        @apply --layout-center-center;
+      }
+
       #portrait {
         will-change: transform;
         transition: transform 0.3s;
         transition-delay: 0s;
-        transform-origin: 0 -5px;
+        transform-origin: 0 0;
+      }
+
+      #info {
+        @apply --layout-horizontal;
+        flex-wrap: wrap;
+        width: 100%;
+        z-index: 2;
+        overflow: auto;
+      }
+
+      #info, #controls {
+        transition: transform 0.15s, opacity 0.15s;
+        transition-delay: 0s;
+        transform: translateY(10px);
+        opacity: 0;
+      }
+
+      #info > #stats,
+      #info > #flavor {
+        flex: 1 1 240px;
+      }
+
+      #stats {
+        margin-bottom: 20px;
+      }
+
+      #stats > h1 {
+        font-size: 2.5em;
+        margin: 0 0 0.5em;
+        color: #444;
+      }
+
+      #stats > h2 {
+        margin: 0 0 0.25em 0;
+      }
+
+      #flavor {
+        font-style: italic;
+        margin: 0 24px 1em;
+        color: #444;
+      }
+
+      #controls {
+        display: flex;
+        align-items: flex-end;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 6px;
+      }
+
+      #controls a {
+        width: 100%;
+      }
+
+      #controls polymon-button {
+        width: 100%;
+      }
+
+      .attack {
+        color: #F43865;
+        text-shadow: 0 1px 0 #a31733;
+      }
+
+      .defend {
+        color: #2BA8DE;
+        text-shadow: 0 1px 0 #09537E;
+      }
+
+      .counter {
+        color: #8BDE67;
+        text-shadow: 0 1px 0 #498231;
+      }
+
+      @media (max-height: 600px) {
+        :host {
+          --polymon-portrait-size: 200px;
+        }
       }
 
       @media (min-width: 500px) {
         :host([active][open]) #background {
           transform: scale(30);
+        }
+      }
+
+      @media (min-width: 750px) {
+        :host([active][open]) #background {
+          transform: scale(35);
         }
       }
 
@@ -98,11 +198,33 @@
 
     <div id="background"></div>
 
-    <polymon-portrait
-        id="portrait"
-        polymon="[[polymon]]"
-        caught="[[caught]]">
-    </polymon-portrait>
+    <section id="marquee">
+      <polymon-portrait
+          id="portrait"
+          polymon="[[polymon]]"
+          caught="[[caught]]">
+      </polymon-portrait>
+    </section>
+
+    <section id="info">
+      <section id="stats">
+        <h1>[[__infoText(polymon.name, caught)]]</h1>
+        <h2 class="attack">Attack: <span>[[__infoText(polymon.stats.attack, caught)]]</span></h2>
+        <h2 class="defend">Defend: <span>[[__infoText(polymon.stats.defend, caught)]]</span></h2>
+        <h2 class="counter">Counter: <span>[[__infoText(polymon.stats.counter, caught)]]</span></h2>
+      </section>
+      <section id="flavor">
+        <span>[[__infoText(polymon.flavor, caught)]]</span>
+      </section>
+    </section>
+
+    <section id="controls">
+      <a href="/polydex">
+        <polymon-button class="alt">Back</polymon-button>
+      </a>
+      <!-- TODO(cdata): Trading button goes here! -->
+    </section>
+
   </template>
   <script>
     Polymer({
@@ -146,11 +268,12 @@
       __openOrClose: function() {
         this.deraf('openOrClose', () => {
           if (this.active) {
+            this.$.portrait.style.transform = '';
+
             let selfBoundingRect = this.getBoundingClientRect();
-            // NOTE(cdata): Magic number determined by custom style in this
-            // element's stylesheet:
-            let portraitFullSize = 256;
+            let portraitBoundingRect = this.$.portrait.getBoundingClientRect();
             let originElement = this.originElement;
+            let scale = 64 / portraitBoundingRect.width;
             let top;
             let left;
 
@@ -158,24 +281,22 @@
               let originBoundingRect =
                   this.originElement.getBoundingClientRect();
 
-              top = (originBoundingRect.top - selfBoundingRect.top);
-              left = (originBoundingRect.left - selfBoundingRect.left);
+              top = originBoundingRect.top;
+              left = originBoundingRect.left;
             } else {
-              // NOTE(cdata): The magic number 32 comes from the half-width of
-              // the <polymon-portrait> in the main Polydex view, which has a
-              // full width of 64px:
-              top = (selfBoundingRect.height / 2 - 32);
-              left = (selfBoundingRect.width / 2 - 32);
+              // TODO(cdata): Where does magic number 20 come from?
+              top = (selfBoundingRect.height / 2) - 20;
+              left = (selfBoundingRect.width / 2) - 20;
             }
 
-            this.$.background.style.top = top + 'px';
-            this.$.background.style.left = left + 'px';
+            this.$.background.style.top = (top - selfBoundingRect.top) + 'px';
+            this.$.background.style.left = (left - selfBoundingRect.left) + 'px';
 
-            left = left -
-                (selfBoundingRect.width / 2 - portraitFullSize / 2);
+            left = left - portraitBoundingRect.left;
+            top = top - portraitBoundingRect.top;
 
             this.$.portrait.style.transform =
-                `translate(${left}px,${top}px) scale(0.25)`;
+                `translate(${left}px,${top}px) scale(${scale})`;
 
             // NOTE(cdata): This raf is kind of annoying. Without it, the
             // portrait will attempt to transition from its old initial position
@@ -191,6 +312,20 @@
 
       __polymonPath: function(polymonId) {
         return `/polymons/${polymonId}`;
+      },
+
+      __infoText: function(text, caught) {
+        text = text + '';
+
+        if (!text || caught) {
+          return text;
+        }
+
+        if (text.length < 5) {
+          return '???';
+        }
+
+        return text.replace(/[^\s]/g, '?');
       }
     });
   </script>
