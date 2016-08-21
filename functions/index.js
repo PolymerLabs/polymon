@@ -1,15 +1,47 @@
 const functions = require('firebase-functions');
 
-function value(ref) {
-  return new Promise((resolve, reject) => {
-    ref.once('value', resolve);
-  });
-}
+exports.validateTeam = functions
+    .database()
+    .path('/users/{userId}/team/{teamId}')
+    .on('write', event => {
+      const newTeamPositionId = event.data.key;
+      const newTeamPosition = event.data.val();
+      const teamRef = event.data.ref.parent;
+
+      if (newTeamPosition == null) {
+        console.log('No new team position, ignoring..');
+        return
+      }
+
+      console.log(`Index: ${newTeamPosition.index}`);
+      console.log(`Polydex ID: ${newTeamPosition.polydexId}`);
+
+      return teamRef.once('value').then(snapshot => {
+        let team = snapshot.val();
+        let changes = [];
+
+        for (let teamPositionId in team) {
+          if (teamPositionId === newTeamPositionId) {
+            continue;
+          }
+
+          let teamPosition = team[teamPositionId];
+
+          if (teamPosition.index === newTeamPosition.index ||
+              teamPosition.polydexId === newTeamPosition.polydexId) {
+            console.log(`Removing Polydex entry ${teamPosition.polydexId} from team position ${teamPosition.index}.`);
+            changes.push(teamRef.child(teamPositionId).remove());
+          }
+        }
+
+        return Promise.all(changes);
+      }).then(() => newTeamPosition);
+    });
 
 exports.validateCaughtPolymon = functions
     .database()
     .path('/users/{userId}/catchQueue/{catchId}')
-    .on('write', function(event) {
+    .on('write', event => {
       const userId = event.params.userId;
       const referenceId = event.data.val();
       const catchId = event.data.key;
@@ -28,7 +60,7 @@ exports.validateCaughtPolymon = functions
       console.log(`Catch ID: ${catchId}`);
       console.log(`User ID: ${userId}`);
 
-      return value(referenceRef).then(snapshot => {
+      return referenceRef.once('value').then(snapshot => {
         if (snapshot.exists()) {
           let polymonId = snapshot.val();
 

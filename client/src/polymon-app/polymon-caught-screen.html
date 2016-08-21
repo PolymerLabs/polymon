@@ -1,57 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-styles.html">
 <dom-module id="polymon-caught-screen">
   <template>
-    <style>
-
-      @keyframes rotate {
-        0% {
-          transform: rotate(0deg);
-        }
-
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      @keyframes bounce {
-        0% {
-          transform: rotateZ(3deg) translateY(0px);
-        }
-
-        25% {
-          transform: rotateZ(-2deg) translateY(0px);
-        }
-
-        50% {
-          transform: rotateZ(1deg) translateY(0px);
-        }
-
-        60% {
-          transform: rotateZ(-1deg) translateY(-14px) scale(1.02);
-        }
-
-        70% {
-          transform: rotateZ(2deg) translateY(0px);
-        }
-
-        75% {
-          transform: translateY(-8px) scale(1.01);
-        }
-
-        80% {
-          transform: rotateZ(-1deg) translateY(0px);
-        }
-
-        85% {
-          transform: translateY(0px);
-        }
-
-        100% {
-          transform: rotateZ(3deg) translateY(0px);
-        }
-      }
-
+    <style include="rotate-animation wiggle-animation">
       :host {
         @apply --layout-fit;
         font-family: var(--polymon-font-family);
@@ -65,9 +17,6 @@
       }
 
       h1 {
-        /*color: #3EBBF0;
-        text-shadow: 0 1px 0 #1D6F91;*/
-
         color: #F43865;
         text-shadow: 0 1px 0 #a31733;
       }
@@ -87,7 +36,7 @@
         position: relative;
         width: 250px;
         z-index: 1;
-        animation: bounce 2s;
+        animation: wiggle 2s;
         animation-iteration-count: infinite;
       }
 
