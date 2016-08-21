@@ -9,7 +9,7 @@
 <link rel="import" href="polymon-detail.html">
 <dom-module id="polymon-polydex">
   <template>
-    <style include="polymon-panel active-fade-up wiggle-animation">
+    <style include="polymon-panel active-fade-up wiggle-animation scaled-rotate-animation">
       #controls {
         @apply --layout-horizontal;
       }
@@ -30,7 +30,7 @@
         transition: transform 0.15s, opacity 0.15s;
       }
 
-      :host([editing-team]) #team > polymon-portrait:not(.iron-selected),
+      :host([editing-team]) #team :not(.iron-selected) polymon-portrait,
       :host([editing-team]) #index polymon-portrait:not([caught]) {
         transform: scale(0.9);
         opacity: 0.75;
@@ -50,6 +50,40 @@
         opacity: 0;
         transform: translateY(4px);
         pointer-events: none;
+      }
+
+
+      :host([editing-team]) #team > .iron-selected {
+        position: relative;
+      }
+
+      :host([editing-team]) #team > .iron-selected:before {
+        content: '';
+        @apply --layout-fit;
+        border-radius: calc(var(--polymon-portrait-size, 64px) / 1.5);
+        background-image: linear-gradient(0deg,
+          #F43865 0%,
+          #F43865 10%,
+          #B3719E 10%,
+          #B3719E 30%,
+          #908FBC 30%,
+          #908FBC 70%,
+          #6cabdc 70%,
+          #6cabdc 90%,
+          #55c3f1 90%,
+          #55c3f1 100%);
+
+        animation-duration: 3s;
+        animation-delay: -2.5s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-name: rotate;
+      }
+
+      :host([editing-team]) #team > .iron-selected > polymon-portrait {
+        position: relative;
+        transform: scale(1.1);
+        z-index: 1;
       }
 
       :host([editing-team]) #cancel-team-swap {
@@ -146,11 +180,11 @@
     <h2>Your team &middot; Tap spot to swap</h2>
 
     <iron-selector id="team" selected="{{selectedTeamSpot}}">
-      <polymon-portrait polymon="[[teamPolymon.0]]" caught></polymon-portrait>
-      <polymon-portrait polymon="[[teamPolymon.1]]" caught></polymon-portrait>
-      <polymon-portrait polymon="[[teamPolymon.2]]" caught></polymon-portrait>
-      <polymon-portrait polymon="[[teamPolymon.3]]" caught></polymon-portrait>
-      <polymon-portrait polymon="[[teamPolymon.4]]" caught></polymon-portrait>
+      <template is="dom-repeat" items="[[teamPolymons]]" as="teamPolymon">
+        <div>
+          <polymon-portrait polymon="[[teamPolymon]]" caught></polymon-portrait>
+        </div>
+      </template>
     </iron-selector>
 
     <h2>Available Polymon</h2>
@@ -213,7 +247,7 @@
           }
         },
 
-        teamPolymon: {
+        teamPolymons: {
           type: Array,
           readOnly: true
         },
@@ -341,7 +375,7 @@
       __updateTeamPolymon: function() {
         this.__fetchCaughtPolymon().then(caughtPolymons => {
           let team = Array.from(this.team);
-          let teamPolymon = [{}, {}, {}, {}, {}];
+          let teamPolymons = [{}, {}, {}, {}, {}];
 
           for (let i = 0; team.length && i < caughtPolymons.length; ++i) {
             let caughtPolymon = caughtPolymons[i];
@@ -350,14 +384,14 @@
               let teamPosition = team[j];
 
               if (teamPosition.polydexId === caughtPolymon.polydexId) {
-                teamPolymon[teamPosition.index] = caughtPolymon;
+                teamPolymons[teamPosition.index] = caughtPolymon;
                 team.splice(j, 1);
                 break;
               }
             }
           }
 
-          this._setTeamPolymon(teamPolymon);
+          this._setTeamPolymons(teamPolymons);
         });
       },
 
