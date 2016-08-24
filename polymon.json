@@ -26,9 +26,9 @@
     "shortName": "octopus",
     "codePoint": "1f419",
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 1,
+      "defend": 2,
+      "counter": 4
     },
     "flavor": "It will jump at the opportunity to share its deep wisdom. It likes to share for long periods of time."
   },

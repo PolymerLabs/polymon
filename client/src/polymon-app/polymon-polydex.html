@@ -209,7 +209,7 @@
       <a href="/">
         <polymon-button class="alt">Back</polymon-button>
       </a>
-      <a href="/battle">
+      <a id="battle" href="/battle">
         <polymon-button>Battle</polymon-button>
       </a>
     </section>
@@ -274,7 +274,8 @@
       ],
 
       listeners: {
-        'cancel-team-swap.tap': '__onCancelTeamSwapTap'
+        'cancel-team-swap.tap': '__onCancelTeamSwapTap',
+        'battle.tap': '__onBattleTap'
       },
 
       __onPolymonAnchorClick: function(event) {
@@ -300,6 +301,17 @@
           index: position,
           polydexId: polymon.polydexId
         });
+      },
+
+      __onBattleTap: function() {
+        firebase
+            .app('polymon')
+            .database()
+            .ref(`/users/${this.user.uid}/battleQueue`)
+            .push({
+              action: 'initiate',
+              createdAt: Date.now()
+            });
       },
 
       __onCancelTeamSwapTap: function() {

@@ -13,10 +13,11 @@
     "users": {
       "$uid": {
         ".read": "$uid === auth.uid",
-        ".write": "false",
         "player": {
+          "activeBattleId": {}
         },
         "team": {
+          ".read": "auth != null",
           ".write": "$uid === auth.uid",
           "$teamPosition": {
             ".validate": "newData.child('index').val() < 5 && newData.child('index').val() > -1 && newData.hasChild('polydexId')"
@@ -28,6 +29,20 @@
         },
         "catchQueue": {
           ".write": "$uid === auth.uid"
+        },
+        "battleQueue": {
+          ".write": "$uid === auth.uid"
+        }
+      }
+    },
+    "battles": {
+      "$battle": {
+        ".read": "auth.uid === data.child('initiatingUserId').val() || auth.uid === data.child('defendingUserId').val()",
+        "initiatingUserHeartbeat": {
+          ".write": "auth.uid === data.parent().child('initiatingUserId').val()"
+        },
+        "defendingUserHeartbeat": {
+          ".write": "auth.uid === data.parent().child('defendingUserId').val()"
         }
       }
     }
