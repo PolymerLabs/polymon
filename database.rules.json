@@ -11,38 +11,79 @@
       }
     },
     "users": {
-      "$uid": {
-        ".read": "$uid === auth.uid",
+      "$userId": {
+        ".read": "auth != null && $userId === auth.uid",
         "player": {
           "activeBattleId": {}
         },
         "team": {
-          ".read": "auth != null",
-          ".write": "$uid === auth.uid",
+          ".write": "$userId === auth.uid",
           "$teamPosition": {
             ".validate": "newData.child('index').val() < 5 && newData.child('index').val() > -1 && newData.hasChild('polydexId')"
           }
         },
-        "polydex": {
-        },
-        "achievements": {
-        },
+        "polydex": {},
+        "achievements": {},
         "catchQueue": {
-          ".write": "$uid === auth.uid"
+          ".write": "$userId === auth.uid"
         },
         "battleQueue": {
-          ".write": "$uid === auth.uid"
+          ".write": "$userId === auth.uid"
         }
       }
     },
     "battles": {
       "$battle": {
-        ".read": "auth.uid === data.child('initiatingUserId').val() || auth.uid === data.child('defendingUserId').val()",
-        "initiatingUserHeartbeat": {
-          ".write": "auth.uid === data.parent().child('initiatingUserId').val()"
+
+        "createdAt": {},
+        "startedAt": {},
+        "finishedAt": {},
+
+        "initiatingUserId": {},
+        "defendingUserId": {},
+
+        "currentRound": {},
+        "maxRounds": {},
+
+        "state": {
+          "$userId": {
+            ".validate": "$userId === data.parent().parent().child('initiatingUserId').val() || $userId === data.parent().parent().child('defendingUserId').val()",
+            "heartbeat": {
+              ".validate": "newData.isNumber() && newData.val() <= now && (!data.exists() || newData.val() > data.val())"
+            },
+            "moves": {
+              "$move": {
+                "round": {},
+                "polydexId": {
+                  ".validate": "root.child('users').child($userId).child('polydex').child(data.val()).exists()"
+                },
+                "attributeName": {
+                  ".validate": "newData.isString() && newData.val().matches(/^(attack|defend|counter)$/)"
+                }
+              }
+            }
+          }
         },
-        "defendingUserHeartbeat": {
-          ".write": "auth.uid === data.parent().child('defendingUserId').val()"
+
+        "status": {
+
+          ".read": "auth.uid === root.child('battles').child($battle).child('initiatingUserId').val() || auth.uid === root.child('battles').child($battle).child('defendingUserId').val()",
+
+          "engaged": {},
+
+          "rounds": {
+            "$round": {
+              "$user": {
+                "index": {},
+                "polydexId": {},
+                "attributeName": {},
+                "randomModifier": {},
+                "damageDelta": {}
+              }
+            }
+          },
+
+          "winningUserId": {}
         }
       }
     }

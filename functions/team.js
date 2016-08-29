@@ -1,21 +1,4 @@
-exports.ensureCorrectTeamSize = function(db, userId) {
-  return db.ref(`/users/${userId}/team`)
-      .once('value')
-      .then(snapshot => snapshot.val())
-      .then(team => {
-        let count = Object.keys(team);
-
-        console.log(`User ${userId} has a team with ${count} Polymon..`);
-
-        if (count < 3) {
-          throw new Error(`Team size not big enough (${count}).`);
-        }
-
-        if (count > 5) {
-          throw new Error(`Team is too big (${count}).`);
-        }
-      });
-};
+const { ensureNoActiveBattle } = require('./common');
 
 exports.validateTeam = functions => functions
     .database()
@@ -24,33 +7,44 @@ exports.validateTeam = functions => functions
       const newTeamPositionId = event.data.key;
       const newTeamPosition = event.data.val();
       const teamRef = event.data.ref.parent;
+      const userId = event.params.userId;
 
       if (newTeamPosition == null) {
         console.log('No new team position, ignoring..');
         return null;
       }
 
-      console.log(`Index: ${newTeamPosition.index}`);
+      const db = functions.app.database();
+
+      console.log(`User ID: ${userId}`);
       console.log(`Polydex ID: ${newTeamPosition.polydexId}`);
+      console.log(`Index: ${newTeamPosition.index}`);
 
-      return teamRef.once('value').then(snapshot => {
-        let team = snapshot.val();
-        let changes = [];
+      return ensureNoActiveBattle(db, userId)
+        .then(() => teamRef.once('value'))
+        .then(snapshot => {
+          let team = snapshot.val();
+          let changes = [];
 
-        for (let teamPositionId in team) {
-          if (teamPositionId === newTeamPositionId) {
-            continue;
+          for (let teamPositionId in team) {
+            if (teamPositionId === newTeamPositionId) {
+              continue;
+            }
+
+            let teamPosition = team[teamPositionId];
+
+            if (teamPosition.index === newTeamPosition.index ||
+                teamPosition.polydexId === newTeamPosition.polydexId) {
+              console.log(`Removing Polydex entry ${teamPosition.polydexId} from team position ${teamPosition.index}.`);
+              changes.push(teamRef.child(teamPositionId).remove());
+            }
           }
 
-          let teamPosition = team[teamPositionId];
-
-          if (teamPosition.index === newTeamPosition.index ||
-              teamPosition.polydexId === newTeamPosition.polydexId) {
-            console.log(`Removing Polydex entry ${teamPosition.polydexId} from team position ${teamPosition.index}.`);
-            changes.push(teamRef.child(teamPositionId).remove());
-          }
-        }
-
-        return Promise.all(changes);
-      }).then(() => newTeamPosition);
+          return Promise.all(changes);
+        })
+        .then(() => newTeamPosition)
+        .catch(error => {
+          console.error(error);
+          return event.data.ref.remove();
+        });
     });
