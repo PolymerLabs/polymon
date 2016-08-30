@@ -32,10 +32,22 @@ exports.ensureCorrectTeamSize = function(db, userId) {
       });
 };
 
+exports.ensureHasPolydexEntry = function(db, userId, polydexId) {
+  return db.ref(`/users/${userId}/polydex/${polydexId}`)
+      .once('value')
+      .then(snapshot => {
+        if (!snapshot.exists()) {
+          throw new Error(
+              `User ${userId} does not have Polydex Entry ${polydexId}.`);
+        }
+      });
+};
+
 exports.getUserPolymon = function(db, userId, polydexId) {
   return db.ref(`/users/${userId}/polydex/${polydexId}`)
       .once('value')
       .then(snapshot => snapshot.val())
-      .then(polydexEntry => db.ref(`/polymon/${polydexEntry.polymonId}`)
-          .once('value'));
+      .then(polydexEntry => db.ref(`/polymons/${polydexEntry.polymonId}`)
+          .once('value'))
+      .then(snapshot => snapshot.val());
 };

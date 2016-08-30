@@ -58,7 +58,7 @@
                   ".validate": "root.child('users').child($userId).child('polydex').child(data.val()).exists()"
                 },
                 "attributeName": {
-                  ".validate": "newData.isString() && newData.val().matches(/^(attack|defend|counter)$/)"
+                  ".validate": "newData.isString() && newData.val().matches(/^(attack|focus|counter)$/)"
                 }
               }
             }

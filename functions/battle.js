@@ -1,6 +1,7 @@
 const {
   ensureNoActiveBattle,
   ensureCorrectTeamSize,
+  ensureHasPolydexEntry,
   getUserPolymon
 } = require('./common');
 
@@ -11,55 +12,75 @@ function randomModifier() {
 }
 
 
+/**
+ * Stat comparison rules v2
+ * This iteration implements a rock/paper/scissors approach to stat comparison.
+ * Attack beats Focus
+ * Focus beats Counter
+ * Counter beats Attack
+ * If a user chooses a "winning" stat, the user's chosen stat receives a bonus
+ * modifier of +3.
+ * Then, the final values are compared, with the greater value deciding the
+ * winning player.
+ * The loser receives the difference of the final values in damage.
+ * In the condition that both players chose Focus, the player with the highest
+ * Focus value wins, and receives the difference of the two values in healing.
+ *
+ * This function computes the delta value for the total damage that user one
+ * incurs. If the number is negative, this implies healing.
+ */
 function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
-  const valueOne = polymonOne[moveOne.attributeName] + moveOne.randomModifier;
-  const valueTwo = polymonTwo[moveTwo.attributeName] + moveTwo.randomModifier;
+  const baseValueOne = polymonOne.stats[moveOne.attributeName] + moveOne.randomModifier;
+  const baseValueTwo = polymonTwo.stats[moveTwo.attributeName] + moveTwo.randomModifier;
+
+  const bonus = 3;
+
+  let moveValueOne = baseValueOne;
+  let moveValueTwo = baseValueTwo;
 
   switch (moveOne.attributeName) {
     case 'attack':
       switch (moveTwo.attributeName) {
         case 'attack':
-          // Attack -> Attack: 100% of opposing attack damage passes through.
-          return valueTwo;
-        case 'defend':
-          // Attack -> Defend: Attacker always takes 0 damage.
-          return 0;
+          break;
+        case 'focus':
+          moveValueOne += bonus;
+          break;
         case 'counter':
-          // Attack -> Counter: If counter is greater than attack, attacker
-          // receives the difference in damage. Otherwise, attacker takes 0
-          // damage.
-          return valueTwo > valueOne ? valueTwo - valueOne : 0;
+          moveValueTwo += bonus;
+          break;
       }
-    case 'defend':
+    case 'focus':
       switch (moveTwo.attributeName) {
         case 'attack':
-          // Defend -> Attack: Defender receives the difference in damage. This
-          // may result in negative damage (healing).
-          return valueTwo - valueOne;
-        case 'defend':
-          // Defend -> Defend: Defender always takes 0 damage.
-          return 0;
+          moveValueTwo += bonus;
+          break;
+        case 'focus':
+          // NOTE(cdata): In the Focus -> Focus condition, the greater focus
+          // gets to heal.
+          return moveValueOne > moveValueTwo
+              ? moveValueOne - moveValueTwo
+              : 0;
         case 'counter':
-          // Defend -> Counter: Defender always takes 0 damage.
-          return 0;
+          moveValueOne += bonus;
+          break;
       }
     case 'counter':
       switch (moveTwo.attributeName) {
         case 'attack':
-          // Counter -> Attack: Counterer takes all attack damage, unless the
-          // counter is greater than the attack. Otherwise, counterer takes 0
-          // damage.
-          return valueTwo > valueOne ? valueTwo : 0;
-        case 'defend':
-          // Counter -> Defend: If counter is greater than defend, counterer
-          // heals the difference between defend and counter. Otherwise,
-          // counterer takes 0 damage.
-          return valueOne > valueTwo ? valueTwo - valueOne : 0;
+          moveValueOne += bonus;
+          break;
+        case 'focus':
+          moveValueTwo += bonsu;
+          break;
         case 'counter':
-          // Counter -> Counter: Counterer always takes 0 damage.
-          return 0;
+          break;
       }
   }
+
+  return moveValueOne < moveValueTwo
+      ? moveValueTwo - moveValueOne
+      : 0;
 }
 
 
@@ -256,8 +277,11 @@ function performMove(db, userId, battleId, polydexId, attributeName) {
   // TODO(cdata): assert that the chosen Polymon hasn't already been chosen
   // in a previous round of battle.
 
+  // TODO(cdata): assert that the chosen Polymon is in the user's team.
+
   return ensureHasActiveBattle(db, userId, battleId)
       .then(() => ensureBattleNotFinished(db, battleId))
+      .then(() => ensureHasPolydexEntry(db, userId, polydexId))
       .then(() => db.ref(`/battles/${battleId}`))
       .then(battleRef => battleRef.once('value')
           .then(snapshot => snapshot.val())
@@ -266,7 +290,7 @@ function performMove(db, userId, battleId, polydexId, attributeName) {
             polydexId: polydexId,
             attributeName: attributeName
           })))
-      .then(resolveCurrentRound(db, battleId));
+      .then(() => resolveCurrentRound(db, battleId));
 }
 
 
@@ -287,11 +311,14 @@ function resolveCurrentRound(db, battleId) {
         if (initiatingUserMove == null || defendingUserMove == null) {
           // NOTE(cdata): This implies that we do not yet have moves for the
           // current round from both users.
+          console.log('Cannot proceed until both moves are registered.')
           return null;
         }
 
         const currentRound = battle.currentRound;
-        const lastRound = battle.maxRounds;
+        const lastRound = battle.maxRounds - 1;
+
+        console.log(`Resolving round ${currentRound} of ${lastRound}..`);
 
         // Step 2: Calculate a random modifier for each user.
         initiatingUserMove.randomModifier = randomModifier();
@@ -300,10 +327,13 @@ function resolveCurrentRound(db, battleId) {
         return Promise.all([
           // Step 3: Look up the chosen Polymon for each user.
           getUserPolymon(
-              db, battle.initiatingUserId, battleId, currentRound),
+              db, battle.initiatingUserId, initiatingUserMove.polydexId),
           getUserPolymon(
-              db, battle.defendingUserId, battleId, currentRound)
-        ]).then((initiatingUserPolymon, defendingUserPolymon) => {
+              db, battle.defendingUserId, defendingUserMove.polydexId)
+        ]).then(polymons => {
+          const [initiatingUserPolymon, defendingUserPolymon] = polymons;
+
+          console.log('Comparing user moves..');
 
           // Step 4: Compute the damage for each user based on the chosen move.
           initiatingUserMove.damageDelta =
@@ -315,14 +345,17 @@ function resolveCurrentRound(db, battleId) {
                   defendingUserMove,  defendingUserPolymon,
                   initiatingUserMove, initiatingUserPolymon);
 
-          return db.ref(`/battle/${battleId}/status/rounds`).push({
+          console.log(`User ${battle.initiatingUserId} damage delta: ${initiatingUserMove.damageDelta}`);
+          console.log(`User ${battle.defendingUserId} damage delta: ${defendingUserMove.damageDelta}`);
+
+          return db.ref(`/battles/${battleId}/status/rounds`).push({
             [battle.initiatingUserId]: initiatingUserMove,
             [battle.defendingUserId]: defendingUserMove
           });
         })
         // Step 5: Check if we just completed the last round.
         .then(() => currentRound < lastRound
-            ? db.ref(`/battle/${battleId}/currentRound`).set(currentRound + 1)
+            ? db.ref(`/battles/${battleId}/currentRound`).set(currentRound + 1)
             : finishBattle(db, battleId));
       });
 }
