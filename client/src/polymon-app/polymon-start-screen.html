@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
+<link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-logo.html">
 <link rel="import" href="polymon-carousel.html">
@@ -17,27 +18,27 @@
         transition: opacity 0.3s, transform 0.5s cubic-bezier(.7,-0.29,.28,1.27);
       }
 
-      :host([active]) {
+      :host(:not(.hidden)) {
         opacity: 1;
         pointer-events: all;
         transform: translateY(0);
       }
 
-      :host([active][authenticated]) #for-user {
+      :host(.active.authenticated) #for-user {
         pointer-events: all;
       }
 
-      :host([active]:not([authenticated])) #for-anon {
+      :host(.active:not(.authenticated)) #for-anon {
         pointer-events: all;
       }
 
-      :host([authenticated]) #for-anon {
+      :host(.authenticated) #for-anon {
         opacity: 0;
         pointer-events: none;
         transform: translateY(60px);
       }
 
-      :host([authenticated]) #for-user {
+      :host(.authenticated) #for-user {
         opacity: 1;
         transform: translateY(0px);
         transition-delay: 0.5s;
@@ -87,6 +88,7 @@
       #options a {
         width: 100%;
         text-align: center;
+        -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
       }
 
       #options polymon-button {
@@ -120,22 +122,40 @@
     Polymer({
       is: 'polymon-start-screen',
 
+      behaviors: [PolymonElement],
+
       properties: {
-        active: {
+        hidden: {
           type: Boolean,
-          reflectToAttribute: true,
-          value: false
+          value: false,
+          observer: '__hiddenChanged'
         },
 
         authenticated: {
           type: Boolean,
-          reflectToAttribute: true,
-          value: false
+          value: false,
+          observer: '__authenticatedChanged'
         }
       },
 
       requestLogin: function() {
         this.fire('request-login');
+      },
+
+      __authenticatedChanged: function() {
+        if (this.authenticated) {
+          this.classList.add('authenticated');
+        } else {
+          this.classList.remove('authenticated');
+        }
+      },
+
+      __hiddenChanged: function() {
+        if (this.hidden) {
+          this.classList.add('hidden');
+        } else {
+          this.classList.remove('hidden');
+        }
       }
     });
   </script>

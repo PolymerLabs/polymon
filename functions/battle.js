@@ -401,7 +401,10 @@ function finishBattle(db, battleId) {
         return Promise.all([
           db.ref(`/battles/${battleId}/finishedAt`).set(Date.now()),
           db.ref(`/battles/${battleId}/status/winningUserId`).set(winningId)
-        ]);
+        ]).then(() => Promise.all([
+          db.ref(`/users/${initiatingUserId}/player/activeBattleId`).remove(),
+          db.ref(`/users/${defendingUserId}/player/activeBattleId`).remove()
+        ]));
       });
 }
 

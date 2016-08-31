@@ -7,6 +7,7 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-detail.html">
+
 <dom-module id="polymon-polydex">
   <template>
     <style include="polymon-panel active-fade-up wiggle-animation scaled-rotate-animation">
@@ -30,13 +31,13 @@
         transition: transform 0.15s, opacity 0.15s;
       }
 
-      :host([editing-team]) #team :not(.iron-selected) polymon-portrait,
-      :host([editing-team]) #index polymon-portrait:not([caught]) {
+      :host(.editing-team) #team :not(.iron-selected) polymon-portrait,
+      :host(.editing-team) #index polymon-portrait:not(.caught) {
         transform: scale(0.9);
         opacity: 0.75;
       }
 
-      :host([editing-team]) #index [caught] {
+      :host(.editing-team) #index .caught {
         animation: wiggle 2s;
         animation-iteration-count: infinite;
       }
@@ -45,7 +46,7 @@
         position: relative;
       }
 
-      :host([editing-team]) #controls > a {
+      :host(.editing-team) #controls > a {
         transition-delay: 0s;
         opacity: 0;
         transform: translateY(4px);
@@ -53,11 +54,11 @@
       }
 
 
-      :host([editing-team]) #team > .iron-selected {
+      :host(.editing-team) #team > .iron-selected {
         position: relative;
       }
 
-      :host([editing-team]) #team > .iron-selected:before {
+      :host(.editing-team) #team > .iron-selected:before {
         content: '';
         @apply --layout-fit;
         border-radius: calc(var(--polymon-portrait-size, 64px) / 1.5);
@@ -80,13 +81,13 @@
         animation-name: rotate;
       }
 
-      :host([editing-team]) #team > .iron-selected > polymon-portrait {
+      :host(.editing-team) #team > .iron-selected > polymon-portrait {
         position: relative;
         transform: scale(1.1);
         z-index: 1;
       }
 
-      :host([editing-team]) #cancel-team-swap {
+      :host(.editing-team) #cancel-team-swap {
         transition-delay: 0.15s;
         opacity: 1;
         pointer-events: all;
@@ -98,6 +99,8 @@
         transition-delay: 0.15s;
 
         opacity: 1;
+
+        -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
       }
 
       #cancel-team-swap {
@@ -231,9 +234,9 @@
       properties: {
         editingTeam: {
           type: Boolean,
-          reflectToAttribute: true,
           value: false,
-          computed: '__computeEditingTeam(selectedTeamSpot)'
+          computed: '__computeEditingTeam(selectedTeamSpot)',
+          observer: '__editingTeamChanged'
         },
 
         caughtPolymons: {
@@ -274,8 +277,7 @@
       ],
 
       listeners: {
-        'cancel-team-swap.tap': '__onCancelTeamSwapTap',
-        'battle.tap': '__onBattleTap'
+        'cancel-team-swap.tap': '__onCancelTeamSwapTap'
       },
 
       __onPolymonAnchorClick: function(event) {
@@ -303,6 +305,7 @@
         });
       },
 
+      /*
       __onBattleTap: function() {
         firebase
             .app('polymon')
@@ -313,11 +316,20 @@
               createdAt: Date.now()
             });
       },
+      */
 
       __onCancelTeamSwapTap: function() {
         this.async(() => {
           this.selectedTeamSpot = null;
         }, 100);
+      },
+
+      __editingTeamChanged: function() {
+        if (this.editingTeam) {
+          this.classList.add('editing-team');
+        } else {
+          this.classList.remove('editing-team');
+        }
       },
 
       __computeEditingTeam: function(selectedTeamSpot) {

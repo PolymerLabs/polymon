@@ -1,0 +1,99 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-qr-code.html">
+<link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-battle.html">
+<link rel="import" href="polymon-initiate-battle-screen.html">
+
+<dom-module id="polymon-battle-screen">
+  <template>
+    <style include="polymon-panel active-fade-up">
+      :host {
+      }
+    </style>
+
+    <firebase-document
+        app-name="polymon"
+        path="[[__computeBattlePath(userData.player.activeBattleId)]]"
+        data="{{battleData}}">
+    </firebase-document>
+
+    <app-route
+        route="{{battleRouteTail}}"
+        pattern="/join"
+        data="{{joinRouteData}}"
+        active="{{joinRouteActive}}">
+    </app-route>
+
+    <polymon-initiate-battle-screen
+        active="[[initiating]]"
+        battle-id="[[userData.player.activeBattleId]]">
+    </polymon-initiate-battle-screen>
+
+    <polymon-battle
+        active="[[engaged]]"
+        battle-id="[[userData.player.activeBattleId]]">
+    </polymon-battle>
+
+    <polymon-qr-code-scanner
+        active="[[joining]]"
+        return-to="[[route.prefix]]">
+    </polymon-qr-code-scanner>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-battle-screen',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        userData: {
+          type: Object,
+          notify: true
+        },
+
+        battleData: {
+          type: Object
+        },
+
+        initiating: {
+          type: Boolean,
+          computed: '__computeInitiating(userData.player.activeBattleId, battleData.engaged)'
+        },
+
+        engaged: {
+          type: Boolean,
+          computed: '__computeEngaged(userData.player.activeBattleId, battleData.engaged)'
+        },
+
+        joining: {
+          type: Boolean,
+          computed: '__computeJoining(userData.player.activeBattleId, joinRouteActive)'
+        }
+      },
+
+      __computeBattlePath: function(battleId) {
+        return battleId
+            ? `/battles/${battleId}/status`
+            : null;
+      },
+
+      __computeInitiating: function(activeBattleId, battleEngaged) {
+        return activeBattleId != null && !battleEngaged;
+      },
+
+      __computeEngaged: function(activeBattleId, battleEngaged) {
+        return activeBattleId != null && battleEngaged;
+      },
+
+      __computeJoining: function(activeBattleId, joinRouteActive) {
+        return activeBattleId == null && joinRouteActive;
+      }
+    });
+  </script>
+</dom-module>

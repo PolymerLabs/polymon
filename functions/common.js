@@ -8,7 +8,7 @@ exports.ensureNoActiveBattle = function(db, userId) {
       .then(activeBattleId => {
         if (activeBattleId != null) {
           throw new Error(
-              `User ${userId} already in Battle ${activeBattleId}.`);
+              `User ${userId} in Battle ${activeBattleId}.`);
         }
       });
 };

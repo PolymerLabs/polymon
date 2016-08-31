@@ -12,6 +12,7 @@
         right: 2px;
         bottom: 2px;
         overflow: hidden;
+        border-radius: 6px;
 
         pointer-events: none;
         opacity: 0;
@@ -30,28 +31,28 @@
         align-items: center;
       }
 
-      :host([active]) {
+      :host(.active) {
         pointer-events: all;
         opacity: 1;
         transition-delay: 0s;
       }
 
-      :host([active][open]) #background {
+      :host(.active.open) #background {
         transform: scale(22);
         background-color: #eee;
       }
 
-      :host([active]:not([open])) #portrait {
+      :host(.active:not(.open)) #portrait {
         transition: none;
       }
 
-      :host([active][open]) #portrait {
+      :host(.active.open) #portrait {
         transform: translate(0, 0) scale(1) !important;
         transition-delay: 0.2s;
       }
 
-      :host([active]) #info,
-      :host([active]) #controls {
+      :host(.active) #info,
+      :host(.active) #controls {
         transition-delay: 0.3s;
         transform: translateY(0);
         opacity: 1;
@@ -166,25 +167,25 @@
       }
 
       @media (min-width: 500px) {
-        :host([active][open]) #background {
+        :host(.active.open) #background {
           transform: scale(30);
         }
       }
 
       @media (min-width: 750px) {
-        :host([active][open]) #background {
+        :host(.active.open) #background {
           transform: scale(35);
         }
       }
 
       @media (min-width: 1000px) {
-        :host([active][open]) #background {
+        :host(.active.open) #background {
           transform: scale(50);
         }
       }
 
       @media (min-width: 1500px) {
-        :host([active][open]) #background {
+        :host(.active.open) #background {
           transform: scale(70);
         }
       }
@@ -250,9 +251,9 @@
 
         open: {
           type: Boolean,
-          reflectToAttribute: true,
           readOnly: true,
-          value: false
+          value: false,
+          observer: '__openChanged'
         }
       },
 
@@ -263,6 +264,14 @@
       get originElement() {
         let root = Polymer.dom(this).getOwnerRoot() || document;
         return Polymer.dom(root).querySelector(`#${this.polymonId}`);
+      },
+
+      __openChanged: function() {
+        if (this.open) {
+          this.classList.add('open');
+        } else {
+          this.classList.remove('open');
+        }
       },
 
       __openOrClose: function() {

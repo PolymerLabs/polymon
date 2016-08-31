@@ -54,7 +54,7 @@
         border-radius: 3px;
       }
 
-      :host([pressed]) {
+      :host(.pressed) {
         top: 4px;
         background-color: transparent;
       }
@@ -79,13 +79,36 @@
     </div>
   </template>
   <script>
+    [Polymer.IronControlState, Polymer.IronButtonState[1]].forEach(behavior => {
+      console.log(behavior);
+      for (let propertyName in behavior.properties) {
+        let propertyValue = behavior.properties[propertyName];
+        console.log(propertyName, propertyValue);
+        if (propertyValue && propertyValue.reflectToAttribute) {
+          propertyValue.reflectToAttribute = false;
+        }
+      }
+    });
+
     Polymer({
       is: 'polymon-button',
 
       behaviors: [
         Polymer.IronControlState,
         Polymer.IronButtonState
-      ]
+      ],
+
+      observers: [
+        '__pressedChanged(pressed)'
+      ],
+
+      __pressedChanged: function() {
+        if (this.pressed) {
+          this.classList.add('pressed');
+        } else {
+          this.classList.remove('pressed');
+        }
+      }
     });
   </script>
 </dom-module>

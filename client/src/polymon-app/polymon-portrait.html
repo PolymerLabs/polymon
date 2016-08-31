@@ -14,7 +14,7 @@
         background-color: var(--polymon-portrait-background, #ccc);
       }
 
-      :host(:not([caught])) svg * {
+      :host(:not(.caught)) svg * {
         fill: #888 !important;
       }
 
@@ -41,8 +41,8 @@
 
           caught: {
             type: Boolean,
-            reflectToAttribute: true,
-            value: false
+            value: false,
+            observer: '__caughtChanged'
           }
         },
 
@@ -95,6 +95,14 @@
         __polymonUrl: function(polymon) {
           if (polymon) {
             return `../../images/polymon/${polymon.shortName}.svg`;
+          }
+        },
+
+        __caughtChanged: function() {
+          if (this.caught) {
+            this.classList.add('caught');
+          } else {
+            this.classList.remove('caught');
           }
         }
       });

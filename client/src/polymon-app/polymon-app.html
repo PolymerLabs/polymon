@@ -9,6 +9,8 @@
 <link rel="import" href="polymon-caught-screen.html">
 <link rel="import" href="polymon-polydex.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-battle-screen.html">
+
 <dom-module id="polymon-app">
   <template>
     <style>
@@ -30,9 +32,10 @@
     </firebase-auth>
 
     <firebase-document
-        id="catchQueue"
+        id="userData"
         app-name="polymon"
-        path="[[__catchQueuePath(user)]]">
+        path="[[__computeUserDataPath(user)]]"
+        data="{{userData}}">
     </firebase-document>
 
     <app-location
@@ -57,6 +60,12 @@
         data="{{caughtData}}"
         query-params="{{caughtQueryParams}}">
     </app-route>
+    <app-route
+        pattern="/battle"
+        route="{{route}}"
+        tail="{{battleRoute}}"
+        active="{{battleRouteActive}}">
+    </app-route>
 
     <app-route
         pattern="/polydex"
@@ -73,6 +82,7 @@
 
     <polymon-start-screen
         active="[[rootRouteActive]]"
+        hidden="[[mapRouteActive]]"
         authenticated="[[authenticated]]"
         on-request-login="attemptLogin">
     </polymon-start-screen>
@@ -88,6 +98,13 @@
         route="{{polydexRoute}}"
         user="[[user]]">
     </polymon-polydex>
+
+    <polymon-battle-screen
+        active="[[battleRouteActive]]"
+        route="{{battleRoute}}"
+        user="[[user]]"
+        user-data="{{userData}}">
+    </polymon-battle-screen>
   </template>
 
   <script>
@@ -112,6 +129,12 @@
         'polydex-entry-added': '__onPolydexEntryAdded'
       },
 
+      observers: [
+        // TODO(cdata): Use this to force-resume battles in progress when the
+        // app reloads:
+        // '__activeBattleIdChanged(userData.player.activeBattleId)'
+      ],
+
       attemptLogin: function() {
         this.$.auth.signInWithPopup();
       },
@@ -120,9 +143,10 @@
         let code = event.detail.code;
         let continueTo = event.detail.continueTo;
 
-        if (this.$.catchQueue.ref) {
+        if (this.$.userData.ref) {
           this.set('queryParams.continueTo', continueTo);
-          this.push('unconfirmedCatches', this.$.catchQueue.ref.push(code).key);
+          this.push('unconfirmedCatches',
+              this.$.userData.ref.child('catchQueue').push(code).key);
         }
       },
 
@@ -139,8 +163,10 @@
         }
       },
 
-      __catchQueuePath: function(user) {
-        return user == null ? null : `/users/${user.uid}/catchQueue`;
+      __computeUserDataPath: function(user) {
+        return user
+            ? `/users/${user.uid}`
+            : null;
       }
     });
   </script>
