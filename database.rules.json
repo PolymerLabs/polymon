@@ -17,6 +17,7 @@
           "activeBattleId": {}
         },
         "team": {
+          ".read": "auth != null",
           ".write": "$userId === auth.uid",
           "$teamPosition": {
             ".validate": "newData.child('index').val() < 5 && newData.child('index').val() > -1 && newData.hasChild('polydexId')"

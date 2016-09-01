@@ -9,17 +9,21 @@
 <link rel="import" href="polymon-caught-screen.html">
 <link rel="import" href="polymon-polydex.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-battle-screen.html">
+<link rel="import" href="polymon-new-battle-screen.html">
+<link rel="import" href="polymon-panel.html">
+<link rel="import" href="polymon-qr-code-scanner.html">
 
 <dom-module id="polymon-app">
   <template>
     <style>
       :host {
-        --polymon-font-family: 'kenvector', sans-serif;
+        --polymon-font-family: 'Bungee', sans-serif;
         @apply --layout-fit;
         @apply --layout-vertical;
         background-color: #eee;
         overflow: hidden;
+
+        -webkit-font-smoothing: antialiased;
       }
     </style>
 
@@ -60,18 +64,29 @@
         data="{{caughtData}}"
         query-params="{{caughtQueryParams}}">
     </app-route>
-    <app-route
-        pattern="/battle"
-        route="{{route}}"
-        tail="{{battleRoute}}"
-        active="{{battleRouteActive}}">
-    </app-route>
 
     <app-route
         pattern="/polydex"
         route="{{route}}"
         tail="{{polydexRoute}}"
         active="{{polydexRouteActive}}">
+    </app-route>
+
+    <app-route
+        pattern="/battle/new"
+        route="{{route}}"
+        tail="{{newBattleRoute}}"
+        active="{{newBattleRouteActive}}">
+    </app-route>
+    <app-route
+        pattern="/battle/tutorial"
+        route="{{route}}"
+        active="{{battleTutorialRouteActive}}">
+    </app-route>
+    <app-route
+        pattern="/battle/engage/:id"
+        route="{{route}}"
+        active="{{engageBattleRouteActive}}">
     </app-route>
 
     <polymon-map
@@ -93,18 +108,28 @@
         continue-to="[[caughtQueryParams.continueTo]]">
     </polymon-caught-screen>
 
-    <polymon-polydex
-        active="[[polydexRouteActive]]"
-        route="{{polydexRoute}}"
-        user="[[user]]">
-    </polymon-polydex>
+    <polymon-panel
+        active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]"
+        active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
+      <polymon-polydex
+          active="[[polydexRouteActive]]"
+          route="{{polydexRoute}}"
+          user="[[user]]">
+      </polymon-polydex>
+      <polymon-new-battle-screen
+          active="[[newBattleRouteActive]]"
+          route="{{newBattleRoute}}"
+          user="[[user]]"
+          user-data="{{userData}}">
+      </polymon-new-battle-screen>
+      <polymon-battle-tutorial>
+      </polymon-battle-tutorial>
+    </polymon-panel>
 
-    <polymon-battle-screen
-        active="[[battleRouteActive]]"
-        route="{{battleRoute}}"
-        user="[[user]]"
-        user-data="{{userData}}">
-    </polymon-battle-screen>
+    <polymon-qr-code-scanner
+        id="scanner">
+    </polymon-qr-code-scanner>
+
   </template>
 
   <script>
@@ -130,13 +155,17 @@
       },
 
       observers: [
-        // TODO(cdata): Use this to force-resume battles in progress when the
-        // app reloads:
-        // '__activeBattleIdChanged(userData.player.activeBattleId)'
+        '__activeBattleIdChanged(userData.player.activeBattleId, route.path)'
       ],
 
       attemptLogin: function() {
         this.$.auth.signInWithPopup();
+      },
+
+      __activeBattleIdChanged: function(activeBattleId) {
+        if (activeBattleId != null) {
+          this.set('route.path', `/battle/engage/${activeBattleId}`);
+        }
       },
 
       __onPolymonCode: function(event) {
@@ -167,6 +196,16 @@
         return user
             ? `/users/${user.uid}`
             : null;
+      },
+
+      __computePanelIndex: function(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive) {
+        if (battleTutorialRouteActive) {
+          return 2;
+        } else if (newBattleRouteActive) {
+          return 1;
+        } else if (polydexRouteActive) {
+          return 0;
+        }
       }
     });
   </script>

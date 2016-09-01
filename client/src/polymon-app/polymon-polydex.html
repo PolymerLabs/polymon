@@ -10,7 +10,19 @@
 
 <dom-module id="polymon-polydex">
   <template>
-    <style include="polymon-panel active-fade-up wiggle-animation scaled-rotate-animation">
+    <style include="wiggle-animation scaled-rotate-animation">
+      :host {
+        position: relative;
+        box-sizing: border-box;
+        padding: 8px;
+
+        @apply --layout-vertical;
+        align-items: stretch;
+
+        text-align: center;
+        overflow: hidden;
+      }
+
       #controls {
         @apply --layout-horizontal;
       }
@@ -116,6 +128,7 @@
       }
 
       h2 {
+        font-weight: normal;
         font-size: 1em;
         color: #444;
         text-align: left;
@@ -212,7 +225,7 @@
       <a href="/">
         <polymon-button class="alt">Back</polymon-button>
       </a>
-      <a id="battle" href="/battle">
+      <a id="battle" href="/battle/new">
         <polymon-button>Battle</polymon-button>
       </a>
     </section>

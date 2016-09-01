@@ -30,6 +30,13 @@
         --polymon-button-background-shadow: #E22D54;
       }
 
+      :host(.help) {
+        --polymon-button-shadow: #498231;
+        --polymon-button-border: #62AF42;
+        --polymon-button-background: #8BDE67;
+        --polymon-button-background-shadow: #76CB53;
+      }
+
       :host:before {
         content: '';
         display: block;
@@ -61,17 +68,27 @@
 
       #content {
         position: relative;
-        padding: 6px 20px;
+        padding: 7px 20px 5px;
         margin: 4px 4px 8px 4px;
         border-radius: 2px;
         z-index: 1;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(255, 255, 255, 0.85);
         background-image:
             linear-gradient(
                 transparent 50%,
                 var(--polymon-button-background-shadow) 50%);
         pointer-events: none;
         -webkit-user-select: none;
+
+        text-shadow:
+            2px -2px 0px var(--polymon-button-background-shadow),
+            -2px -2px 0px var(--polymon-button-background-shadow),
+            0px -2px 0px var(--polymon-button-background-shadow),
+            0px 2px 0px var(--polymon-button-background-shadow),
+            2px 0px 0px var(--polymon-button-background-shadow),
+            -2px 0px 0px var(--polymon-button-background-shadow),
+            2px 2px 0px var(--polymon-button-background-shadow),
+            -2px 2px 0px var(--polymon-button-background-shadow);
       }
     </style>
     <div id="content">
@@ -80,10 +97,8 @@
   </template>
   <script>
     [Polymer.IronControlState, Polymer.IronButtonState[1]].forEach(behavior => {
-      console.log(behavior);
       for (let propertyName in behavior.properties) {
         let propertyValue = behavior.properties[propertyName];
-        console.log(propertyName, propertyValue);
         if (propertyValue && propertyValue.reflectToAttribute) {
           propertyValue.reflectToAttribute = false;
         }

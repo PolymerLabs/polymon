@@ -1,0 +1,67 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
+
+<dom-module id="polymon-panel">
+  <template>
+    <style include="panel active-fade-up">
+      :host(.animatable) #container {
+        transition: transform 0.3s cubic-bezier(0.65, 0.05, 0.36, 1);
+      }
+
+      #container {
+        position: absolute;
+        height: 100%;
+        width: 300%;
+        top: 0;
+        left: 0;
+
+        will-change: transform;
+      }
+
+      #container {
+        @apply --layout-horizontal;
+      }
+
+      #container ::content > * {
+        flex: 1 1 calc(100% / 3);
+      }
+    </style>
+    <section id="container">
+      <content id="content"></content>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-panel',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        activeIndex: {
+          type: Number,
+          observer: '__activeIndexChanged'
+        }
+      },
+
+      observers: [
+        '__activeChanged(active)'
+      ],
+
+      __activeIndexChanged: function() {
+        this.$.container.style.transform = `translateX(-${this.activeIndex * 100 / 3}%)`
+      },
+
+      __activeChanged: function() {
+        this.deraf('active-changed', () => {
+          if (this.active) {
+            this.classList.add('animatable');
+          } else {
+            this.classList.remove('animatable');
+          }
+        });
+      }
+    });
+  </script>
+</dom-module>

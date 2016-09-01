@@ -39,6 +39,16 @@
         } else {
           this.classList.remove('active');
         }
+      },
+
+      or: function() {
+        for (let i = 0; i < arguments.length; ++i) {
+          if (arguments[i]) {
+            return true;
+          }
+        }
+
+        return false;
       }
     };
   })();

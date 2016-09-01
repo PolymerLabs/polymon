@@ -1,0 +1,113 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-qr-code-scanner-proxy.html">
+
+<dom-module id="polymon-new-battle-screen">
+  <template>
+    <style>
+      :host {
+        position: relative;
+
+        position: relative;
+        box-sizing: border-box;
+        padding: 8px;
+
+        @apply --layout-vertical;
+        align-items: stretch;
+
+        text-align: center;
+        overflow: hidden;
+      }
+
+      #team {
+        flex: 1;
+      }
+
+      #controls {
+        @apply --layout-vertical;
+        flex: 0 0 auto;
+      }
+
+      #controls > a  {
+        -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+        width: 100%;
+      }
+
+      .bottom-row {
+        @apply --layout-horizontal;
+      }
+
+      .bottom-row > :first-child {
+        flex: 0;
+      }
+
+      .bottom-row > :last-child {
+        flex: 1;
+        margin-left: 8px;
+      }
+
+      polymon-button {
+        width: 100%;
+        margin-top: 8px;
+      }
+    </style>
+
+    <app-route
+        pattern="/scan"
+        route="{{route}}"
+        active="{{scanRouteActive}}">
+    </app-route>
+
+    <polymon-qr-code-scanner-proxy
+        active="[[scanRouteActive]]"
+        return-to="[[route.prefix]]">
+    </polymon-qr-code-scanner-proxy>
+
+    <section id="team">
+    </section>
+
+    <section id="controls">
+      <a id="join" href="/battle/new/scan">
+        <polymon-button>Join a Friend</polymon-button>
+      </a>
+      <a id="start" on-tap="__onStartTap">
+        <polymon-button>Start a Battle</polymon-button>
+      </a>
+      <div class="bottom-row">
+        <a href="/polydex">
+          <polymon-button class="alt">Back</polymon-button>
+        </a>
+        <a href="/battle/tutorial">
+          <polymon-button class="help">Tutorial</polymon-button>
+        </a>
+      </div>
+    </section>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-new-battle-screen',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+
+      },
+
+      __onStartTap: function() {
+        if (this.user) {
+          firebase.app('polymon').database()
+              .ref(`/users/${this.user.uid}/battleQueue`).push({
+                action: 'initiate',
+                createdAt: Date.now()
+              });
+        }
+      }
+    });
+  </script>
+</dom-module>

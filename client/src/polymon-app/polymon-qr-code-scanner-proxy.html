@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="polymon-element.html">
+<script>
+  Polymer({
+    is: 'polymon-qr-code-scanner-proxy',
+
+    behaviors: [PolymonElement],
+
+    properties: {
+      returnTo: {
+        type: String
+      }
+    },
+
+    hostAttributes: {
+      hidden: true
+    },
+
+    observers: [
+      '__activeChanged(active, isAttached)'
+    ],
+
+    __activeChanged: function() {
+      this.deraf('active-changed', () => {
+        if (this.active) {
+          this.fire('polymon-qr-code-scanner-activate', {
+            returnTo: this.returnTo
+          });
+        } else {
+          this.fire('polymon-qr-code-scanner-deactivate');
+        }
+      });
+    }
+  });
+</script>

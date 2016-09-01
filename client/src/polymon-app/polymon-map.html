@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-qr-code-scanner.html">
+<link rel="import" href="polymon-qr-code-scanner-proxy.html">
 <link rel="import" href="polymon-button.html">
 <dom-module id="polymon-map">
   <template>
@@ -65,10 +65,10 @@
         active="{{scanRouteActive}}">
     </app-route>
 
-    <polymon-qr-code-scanner
+    <polymon-qr-code-scanner-proxy
         return-to="[[route.prefix]]"
         active="[[scanRouteActive]]">
-    </polymon-qr-code-scanner>
+    </polymon-qr-code-scanner-proxy>
 
     <google-map
         disable-default-ui

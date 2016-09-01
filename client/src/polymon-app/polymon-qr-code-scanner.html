@@ -105,7 +105,8 @@
 
       properties: {
         returnTo: {
-          type: String
+          type: String,
+          notify: true
         },
 
         scanning: {
@@ -125,6 +126,37 @@
         '__cameraChanged(camera, hasMultipleCameras)',
         '__activeChanged(active)'
       ],
+
+      get ownerHost() {
+        let root = Polymer.dom(this).getOwnerRoot();
+
+        return (root && root.host) || document;
+      },
+
+      attached: function() {
+        this.__ownerHost = this.ownerHost;
+        this.listen(this.__ownerHost,
+            'polymon-qr-code-scanner-activate', '__onActivateRequest');
+        this.listen(this.__ownerHost,
+            'polymon-qr-code-scanner-deactivate', '__onDeactivateRequest');
+      },
+
+      detached: function() {
+        this.unlisten(this.__ownerHost,
+            'polymon-qr-code-scanner-activate', '__onActivateRequest');
+        this.unlisten(this.__ownerHost,
+            'polymon-qr-code-scanner-deactivate', '__onDeactivateRequest')
+        this.__ownerHost = null;
+      },
+
+      __onActivateRequest: function(event) {
+        this.returnTo = event.detail.returnTo;
+        this.active = true;
+      },
+
+      __onDeactivateRequest: function(event) {
+        this.active = false;
+      },
 
       __activeChanged: function() {
         this.debounce('activeChanged', () => {
