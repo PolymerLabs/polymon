@@ -68,7 +68,7 @@
 
         "status": {
 
-          ".read": "auth.uid === root.child('battles').child($battle).child('initiatingUserId').val() || auth.uid === root.child('battles').child($battle).child('defendingUserId').val()",
+          ".read": "root.child('users').child(auth.uid).child('player/activeBattleId').val() === $battle",
 
           "engaged": {},
 

@@ -318,19 +318,6 @@
         });
       },
 
-      /*
-      __onBattleTap: function() {
-        firebase
-            .app('polymon')
-            .database()
-            .ref(`/users/${this.user.uid}/battleQueue`)
-            .push({
-              action: 'initiate',
-              createdAt: Date.now()
-            });
-      },
-      */
-
       __onCancelTeamSwapTap: function() {
         this.async(() => {
           this.selectedTeamSpot = null;

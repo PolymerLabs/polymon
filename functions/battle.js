@@ -423,6 +423,16 @@ function recordHeartbeat(db, userId, battleId) {
 }
 
 
+function withdrawFromBattle(db, userId, battleId) {
+
+  console.log(`User ${userId} attempting withdrawal from Battle ${battleId}`);
+
+  return ensureBattleNotStarted(db, battleId)
+      .then(() => db.ref(`/battles/${battleId}`).remove())
+      .then(() => db.ref(`/users/${userId}/player/activeBattleId`).remove())
+}
+
+
 exports.processBattleQueue = functions => functions
     .database()
     .path('/users/{userId}/battleQueue/{messageId}')
@@ -458,6 +468,9 @@ exports.processBattleQueue = functions => functions
           break;
         case 'ping':
           action = recordHeartbeat(db, userId, message.battleId);
+          break;
+        case 'withdraw':
+          action = withdrawFromBattle(db, userId, message.battleId);
           break;
         default:
           action = Promise.resolve();

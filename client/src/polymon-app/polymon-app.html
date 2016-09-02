@@ -10,6 +10,7 @@
 <link rel="import" href="polymon-polydex.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-new-battle-screen.html">
+<link rel="import" href="polymon-battle-screen.html">
 <link rel="import" href="polymon-panel.html">
 <link rel="import" href="polymon-qr-code-scanner.html">
 
@@ -17,7 +18,10 @@
   <template>
     <style>
       :host {
+        --polymon-blue: #3EBBF0;
         --polymon-font-family: 'Bungee', sans-serif;
+        --polymon-headline-font-family: 'Bungee Inline', sans-serif;
+        --polymon-body-font-family: sans-serif;
         @apply --layout-fit;
         @apply --layout-vertical;
         background-color: #eee;
@@ -129,6 +133,13 @@
     <polymon-qr-code-scanner
         id="scanner">
     </polymon-qr-code-scanner>
+
+    <polymon-battle-screen
+        route="{{route}}"
+        active="[[engageBattleRouteActive]]"
+        user="[[user]]"
+        user-data="{{userData}}">
+    </polymon-battle-screen>
 
   </template>
 
