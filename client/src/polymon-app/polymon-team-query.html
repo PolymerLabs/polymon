@@ -1,0 +1,123 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="polymon-element.html">
+<dom-module id="polymon-team-query">
+  <template>
+    <firebase-query
+        id="polydexQuery"
+        app-name="polymon"
+        path="[[__computeTeamPath(userId)]]"
+        order-by-child="polymonId"
+        data="{{teamData}}">
+    </firebase-query>
+    <firebase-query
+        app-name="polymon"
+        path="[[__computeBattleRoundsPath(battleId)]]"
+        order-by-child="index"
+        data="{{battleRoundsData}}">
+    </firebase-query>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-team-query',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        userId: {
+          type: String
+        },
+
+        battleId: {
+          type: String
+        },
+
+        teamData: {
+          type: Array
+        },
+
+        battleRoundsData: {
+          type: Array
+        },
+
+        polymons: {
+          type: Array,
+          readOnly: true
+        },
+
+        battleStatus: {
+          type: Array,
+          readOnly: true,
+          notify: true
+        }
+      },
+
+      observers: [
+        '__updatePolymons(teamData.*)',
+        '__updateBattleStatus(polymons, battleRoundsData.length)'
+      ],
+
+      hostAttributes: {
+        hidden: true
+      },
+
+      get db() {
+        return this.$.polydexQuery.db;
+      },
+
+      __computeTeamPath: function(userId) {
+        return `/users/${userId}/team`;
+      },
+
+      __computeBattleRoundsPath: function(battleId) {
+        return `/battles/${battleId}/status/rounds`;
+      },
+
+      __updatePolymons: function() {
+        // TODO(cdata): This element only needs `deraf` from the
+        // `PolymerElement` behavior. Consider factoring that out so that we
+        // don't bring in extra cruft to the implementation..
+        this.deraf('update-polymons', () => {
+          if (!this.db) {
+            return;
+          }
+
+          Promise.all(this.teamData.map(teamItem =>
+              this.db.ref(`/polymons/${teamItem.polymonId}`).once('value')))
+              .then(polymons =>
+                  this._setPolymons(polymons.map(polymon => polymon.val())));
+        });
+      },
+
+      __updateBattleStatus: function() {
+        if (!this.userId || !this.polymons || !this.battleRoundsData) {
+          this._setBattleStatus([]);
+          return;
+        }
+
+        let uncheckedMoves = this.battleRoundsData.map(battleRound =>
+            battleRound[this.userId]);
+        let battleStatus = this.teamData.map((teamItem, index) => {
+          let movePerformed = false;
+
+          for (let i = 0; i < uncheckedMoves.length; ++i) {
+            if (uncheckedMoves[i].polydexId === teamItem.$key) {
+              movePerformed = true;
+              uncheckedMoves.splice(i, 1);
+              break;
+            }
+          }
+
+          return {
+            polymon: this.polymons[index],
+            movePerformed
+          };
+        });
+
+        console.log(`Battle status for User ${this.userId}:`, battleStatus);
+
+        this._setBattleStatus(battleStatus);
+      }
+    });
+  </script>
+</dom-module>

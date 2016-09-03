@@ -4,6 +4,7 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-qr-code.html">
+<link rel="import" href="polymon-team-query.html">
 
 <dom-module id="polymon-battle-screen">
   <template>
@@ -18,10 +19,24 @@
       }
 
       #initiate {
-        flex: 1;
-        color: var(--polymon-blue);
+        @apply --layout-fit;
         @apply --layout-vertical;
+        color: var(--polymon-blue);
         padding: 8px;
+
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 0.3s, transform 0.3s;
+        z-index: 1;
+      }
+
+      #battle-field {
+        @apply --layout-fit;
+      }
+
+      :host(.engaged) #initiate {
+        opacity: 0;
+        transform: translateY(-10px);
       }
 
       #initiate > section {
@@ -39,6 +54,7 @@
       }
 
       #initiate h2 {
+        font-weight: normal;
         margin-top: 50px;
       }
 
@@ -68,6 +84,18 @@
         path="[[battlePath]]"
         data="{{battleData}}">
     </firebase-document>
+
+    <polymon-team-query
+        user-id="[[user.uid]]"
+        battle-id="[[userData.player.activeBattleId]]"
+        battle-status="{{userTeamStatus}}">
+    </polymon-team-query>
+    <polymon-team-query
+        user-id="[[opposingUserId]]"
+        battle-id="[[userData.player.activeBattleId]]"
+        battle-status="{{opposingTeamStatus}}">
+    </polymon-team-query>
+
     <section id="initiate">
       <section>
         <h1>Battle Code</h1>
@@ -79,6 +107,9 @@
         <h2>Scan to Join</h2>
       </section>
       <polymon-button id="cancel" class="alt">Cancel</polymon-button>
+    </section>
+    <section id="battle-field">
+
     </section>
   </template>
   <script>
@@ -105,12 +136,18 @@
         battleCode: {
           type: String,
           computed: '__computeBattleCode(userData.player.activeBattleId)'
+        },
+
+        opposingUserId: {
+          type: String,
+          computed: '__computeOpposingUserId(battleData.players.*)'
         }
       },
 
       observers: [
         '__activeBattleIdChanged(userData.player.activeBattleId)',
-        '__battleDataChanged(battleData)'
+        '__battleDataChanged(battleData)',
+        '__updateClassList(battleData.engaged)'
       ],
 
       listeners: {
@@ -129,10 +166,21 @@
         // TODO(cdata): format these as URLs so that we can use Physical Web
         // beacons and copy-paste-able links?
         if (activeBattleId) {
-          return `battle:${activeBattleId}`;
+          return `battle.${activeBattleId}`;
         }
 
         return this.battleCode;
+      },
+
+      __computeOpposingUserId: function() {
+        if (this.battleData && this.battleData.players) {
+          for (let id in this.battleData.players) {
+            let player = this.battleData.players[id];
+            if (player.userId !== this.user.uid) {
+              return player.userId;
+            }
+          }
+        }
       },
 
       __attemptBattleCancel: function() {
@@ -160,7 +208,7 @@
       },
 
       __battleDataChanged: function(battleData) {
-        if (battleData == null || battleData.engaged == null) {
+        if (this.active && (battleData == null || battleData.engaged == null)) {
           window.history.replaceState({}, '', '/');
           this.fire('location-changed', {}, {node: window});
         }
@@ -173,6 +221,14 @@
               battleId: this.userData.player.activeBattleId,
               createdAt: Date.now()
             });
+      },
+
+      __updateClassList: function(engaged) {
+        if (engaged) {
+          this.classList.add('engaged');
+        } else {
+          this.classList.remove('engaged');
+        }
       }
     });
   </script>

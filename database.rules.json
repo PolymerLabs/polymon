@@ -67,14 +67,19 @@
         },
 
         "status": {
-
           ".read": "root.child('users').child(auth.uid).child('player/activeBattleId').val() === $battle",
+
+          "players": {
+            "$player": {
+              "userId": {}
+            }
+          },
 
           "engaged": {},
 
           "rounds": {
             "$round": {
-              "$user": {
+              "$userId": {
                 "index": {},
                 "polydexId": {},
                 "attributeName": {},

@@ -42,7 +42,12 @@ exports.validateTeam = functions => functions
 
           return Promise.all(changes);
         })
-        .then(() => newTeamPosition)
+        .then(() =>
+            db.ref(`/users/${userId}/polydex/${newTeamPosition.polydexId}`)
+                .once('value'))
+        .then(snapshot => snapshot.val())
+        .then(polydexEntry =>
+            event.data.ref.child('polymonId').set(polydexEntry.polymonId))
         .catch(error => {
           console.error(error);
           return event.data.ref.remove();

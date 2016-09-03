@@ -200,9 +200,12 @@
             return;
           }
 
-          self.__scanForQrCode().then(code => {
-            console.log('QR Code Data:', code);
+          self.__scanForQrCode().then(data => {
+            console.log('QR Code Data:', data);
+            let [type, code] = data.split('.');
+
             self.fire('polymon-code', {
+              type,
               code,
               continueTo: self.returnTo
             });

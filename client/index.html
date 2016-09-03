@@ -30,8 +30,10 @@
     </firebase-app>
     <polymon-app id="app"></polymon-app>
     <script>
-      function scanCode(code) {
+      function scanCode(data) {
+        let [type, code] = data.split('.');
         window.app.fire('polymon-code', {
+          type,
           code,
           continueTo: '/'
         });

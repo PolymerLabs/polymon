@@ -208,7 +208,10 @@ function initiateBattle(db, userId) {
         console.log(`Initiating User ID: ${userId}`);
         console.log(`Battle ID: ${battleId}`);
 
-        return db.ref(`/users/${userId}/player/activeBattleId`).set(battleId)
+        return Promise.all([
+          db.ref(`/battles/${battleId}/status/players`).push({ userId }),
+          db.ref(`/users/${userId}/player/activeBattleId`).set(battleId)
+        ]);
       });
 }
 
@@ -251,6 +254,7 @@ function joinBattle(db, userId, battleId) {
         return Promise.all([
           db.ref(`/users/${userId}/player/activeBattleId`).set(battleId),
           db.ref(`/battles/${battleId}/defendingUserId`).set(userId),
+          db.ref(`/battles/${battleId}/status/players`).push({ userId }),
           recordHeartbeat(db, userId, battleId)
         ]);
       })

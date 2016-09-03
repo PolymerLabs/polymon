@@ -12,7 +12,9 @@
     <link rel="import" href="/bower_components/app-route/app-route.html">
     <link rel="import" href="/src/polymon-app/polymon-qr-code.html">
     <style>
-
+      body {
+        background-color: #fff;
+      }
     </style>
   </head>
   <body>
@@ -54,15 +56,15 @@
           <polymon-qr-code
               size="7"
               margin="5"
-              data="[[selectedDatum.reference]]">
+              data="reference.[[selectedDatum.reference]]">
           </polymon-qr-code>
           <span>[[selectedDatum.polymon.shortName]]</span>
-          <span>[[selectedDatum.reference]]</span>
+          <span>reference.[[selectedDatum.reference]]</span>
         </a>
 
         <template is="dom-repeat" items="[[data]]" as="datum">
           <a href="#/polymon/[[datum.polymon.shortName]]" hidden$="[[polymonRouteActive]]">
-            <polymon-qr-code data="[[datum.reference]]"></polymon-qr-code>
+            <polymon-qr-code data="reference.[[datum.reference]]"></polymon-qr-code>
             <span>[[datum.polymon.shortName]]</span>
           </a>
         </template>

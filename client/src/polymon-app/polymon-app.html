@@ -180,13 +180,24 @@
       },
 
       __onPolymonCode: function(event) {
-        let code = event.detail.code;
-        let continueTo = event.detail.continueTo;
+        let { type, code, continueTo } = event.detail;
 
         if (this.$.userData.ref) {
-          this.set('queryParams.continueTo', continueTo);
-          this.push('unconfirmedCatches',
-              this.$.userData.ref.child('catchQueue').push(code).key);
+          switch (type) {
+            case 'reference':
+              this.set('queryParams.continueTo', continueTo);
+              this.push('unconfirmedCatches',
+                this.$.userData.ref.child('catchQueue').push(code).key);
+              break;
+            case 'battle':
+              this.$.userData.ref.child('battleQueue').push({
+                action: 'join',
+                battleId: code,
+                createdAt: Date.now()
+              });
+              break;
+          }
+
         }
       },
 
