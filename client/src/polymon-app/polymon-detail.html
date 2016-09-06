@@ -21,7 +21,7 @@
         transition: opacity 0s;
         transition-delay: 0.5s;
 
-        --polymon-portrait-size: 256px;
+        /*--polymon-portrait-size: 256px;*/
         --polymon-portrait-background: transparent;
 
         box-sizing: border-box;
@@ -166,7 +166,9 @@
 
       @media (max-height: 600px) {
         :host {
-          --polymon-portrait-size: 200px;
+          /* TODO(cdata): Add this back in somehow for shorter screens
+           * e.g., iPhone 5 */
+          /*--polymon-portrait-size: 200px;*/
         }
       }
 
@@ -207,7 +209,8 @@
       <polymon-portrait
           id="portrait"
           polymon="[[polymon]]"
-          caught="[[caught]]">
+          caught="[[caught]]"
+          size="256">
       </polymon-portrait>
     </section>
 

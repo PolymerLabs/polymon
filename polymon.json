@@ -3,6 +3,7 @@
     "name": "Cooptoo",
     "shortName": "goat",
     "codePoint": "1f410",
+    "spriteIndex": 5,
     "stats": {
       "attack": 5,
       "focus": 2,
@@ -14,6 +15,7 @@
     "name": "Ferdinoms",
     "shortName": "dancer",
     "codePoint": "1f483",
+    "spriteIndex": 4,
     "stats": {
       "attack": 3,
       "focus": 5,
@@ -25,6 +27,7 @@
     "name": "Octorvel",
     "shortName": "octopus",
     "codePoint": "1f419",
+    "spriteIndex": 7,
     "stats": {
       "attack": 4,
       "focus": 1,
@@ -36,6 +39,7 @@
     "name": "Tiscript",
     "shortName": "tiger",
     "codePoint": "1f405",
+    "spriteIndex": 5,
     "stats": {
       "attack": 5,
       "focus": 1,
@@ -44,62 +48,9 @@
     "flavor": "When hunting, it will stalk prey with sound typings before anything else."
   },
   {
-    "shortName": "penguin",
-    "codePoint": "1f427",
-    "stats": {
-      "attack": 2,
-      "focus": 5,
-      "counter": 1
-    }
-  },
-  {
-    "shortName": "pile-of-poo",
-    "codePoint": "1f4a9",
-    "stats": {
-      "attack": 4,
-      "focus": 3,
-      "counter": 2
-    }
-  },
-  {
-    "shortName": "ram",
-    "codePoint": "1f40f",
-    "stats": {
-      "attack": 4,
-      "focus": 2,
-      "counter": 4
-    }
-  },
-  {
-    "shortName": "snake",
-    "codePoint": "1f40d",
-    "stats": {
-      "attack": 1,
-      "focus": 2,
-      "counter": 5
-    }
-  },
-  {
-    "shortName": "turtle",
-    "codePoint": "1f422",
-    "stats": {
-      "attack": 1,
-      "focus": 5,
-      "counter": 1
-    }
-  },
-  {
-    "shortName": "honeybee",
-    "codePoint": "1f41d",
-    "stats": {
-      "attack": 4,
-      "focus": 3,
-      "counter": 3
-    }
-  },
-  {
     "shortName": "boar",
     "codePoint": "1f417",
+    "spriteIndex": 1,
     "stats": {
       "attack": 5,
       "focus": 2,
@@ -107,109 +58,19 @@
     }
   },
   {
-    "shortName": "whale",
-    "codePoint": "1f40b",
-    "stats": {
-      "attack": 2,
-      "focus": 5,
-      "counter": 3
-    }
-  },
-  {
     "shortName": "monkey",
     "codePoint": "1f412",
+    "spriteIndex": 6,
     "stats": {
       "attack": 4,
       "focus": 2,
       "counter": 4
-    }
-  },
-  {
-    "shortName": "slice-of-pizza",
-    "codePoint": "1f355",
-    "stats": {
-      "attack": 2,
-      "focus": 3,
-      "counter": 4
-    }
-  },
-  {
-    "shortName": "rabbit",
-    "codePoint": "1f407",
-    "stats": {
-      "attack": 3,
-      "focus": 1,
-      "counter": 4
-    }
-  },
-  {
-    "shortName": "pig",
-    "codePoint": "1f416",
-    "stats": {
-      "attack": 3,
-      "focus": 3,
-      "counter": 3
-    }
-  },
-  {
-    "shortName": "horse",
-    "codePoint": "1f40e",
-    "stats": {
-      "attack": 3,
-      "focus": 2,
-      "counter": 5
-    }
-  },
-  {
-    "shortName": "rat",
-    "codePoint": "1f400",
-    "stats": {
-      "attack": 1,
-      "focus": 1,
-      "counter": 5
-    }
-  },
-  {
-    "name": "Bootooth",
-    "shortName": "ghost",
-    "codePoint": "1f47b",
-    "stats": {
-      "attack": 3,
-      "focus": 2,
-      "counter": 5
-    },
-    "flavor": "Pairs of Bootooth have been known to exchange ideas over thin air."
-  },
-  {
-    "shortName": "first-quarter-moon-with-face",
-    "codePoint": "1f31b",
-    "stats": {
-      "attack": 2,
-      "focus": 5,
-      "counter": 3
-    }
-  },
-  {
-    "shortName": "moyai",
-    "codePoint": "1f5ff",
-    "stats": {
-      "attack": 2,
-      "focus": 5,
-      "counter": 2
-    }
-  },
-  {
-    "shortName": "ship",
-    "codePoint": "1f6a2",
-    "stats": {
-      "attack": 4,
-      "focus": 1,
-      "counter": 3
     }
   },
   {
     "shortName": "cactus",
     "codePoint": "1f335",
+    "spriteIndex": 2,
     "stats": {
       "attack": 1,
       "focus": 3,
@@ -219,6 +80,7 @@
   {
     "shortName": "steaming-bowl",
     "codePoint": "1f35c",
+    "spriteIndex": 8,
     "stats": {
       "attack": 4,
       "focus": 1,
@@ -226,17 +88,9 @@
     }
   },
   {
-    "shortName": "snail",
-    "codePoint": "1f40c",
-    "stats": {
-      "attack": 1,
-      "focus": 5,
-      "counter": 2
-    }
-  },
-  {
     "shortName": "koala",
     "codePoint": "1f428",
+    "spriteIndex": 12,
     "stats": {
       "attack": 2,
       "focus": 3,
@@ -246,6 +100,7 @@
   {
     "shortName": "cat-face-with-tears-of-joy",
     "codePoint": "1f639",
+    "spriteIndex": 3,
     "stats": {
       "attack": 4,
       "focus": 4,
@@ -255,19 +110,11 @@
   {
     "shortName": "baby-chick",
     "codePoint": "1f424",
+    "spriteIndex": 0,
     "stats": {
       "attack": 1,
       "focus": 1,
       "counter": 5
-    }
-  },
-  {
-    "shortName": "elephant",
-    "codePoint": "1f418",
-    "stats": {
-      "attack": 3,
-      "focus": 4,
-      "counter": 2
     }
   }
 ]

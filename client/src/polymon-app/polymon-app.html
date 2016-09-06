@@ -19,6 +19,10 @@
     <style>
       :host {
         --polymon-blue: #3EBBF0;
+        --polymon-blue-2: #2BA8DE;
+        --polymon-blue-3: #238AB6;
+        --polymon-red: #F73463;
+        --polymon-red-2: #E22D54;
         --polymon-font-family: 'Bungee', sans-serif;
         --polymon-headline-font-family: 'Bungee Inline', sans-serif;
         --polymon-body-font-family: sans-serif;
@@ -62,7 +66,7 @@
         active="{{mapRouteActive}}">
     </app-route>
     <app-route
-        pattern="/caught/:shortName"
+        pattern="/caught/:polymonId"
         route="{{route}}"
         active="{{caughtRouteActive}}"
         data="{{caughtData}}"
@@ -209,7 +213,7 @@
 
           if (catchId === polydexEntry.catchId) {
             this.unconfirmedCatches.splice(i, 1);
-            this.set('route.path', `/caught/${polymon.shortName}`);
+            this.set('route.path', `/caught/${polydexEntry.polymonId}`);
           }
         }
       },

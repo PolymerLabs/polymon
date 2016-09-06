@@ -5,108 +5,81 @@
   <template>
     <style>
       :host {
-        display: flex;
-        width: var(--polymon-portrait-size, 64px);
-        height: var(--polymon-portrait-size, 64px);
-        border-radius: calc(var(--polymon-portrait-size, 64px) / 2);
+        display: block;
+        border-radius: 32px;
         margin: 4px;
 
         background-color: var(--polymon-portrait-background, #ccc);
       }
 
-      :host(:not(.caught)) svg * {
-        fill: #888 !important;
-      }
-
-      svg {
-        flex: 1;
+      #image {
+        width: 100%;
         height: 100%;
-        top: 0;
-        left: 0;
+        background-image: url(/images/polymon_sprite_sheet.svg);
+        background-repeat: no-repeat;
+        transform-origin: 0 0;
       }
     </style>
+    <div id="image"></div>
   </template>
   <script>
-    (() => {
-      const images = {};
+    Polymer({
+      is: 'polymon-portrait',
 
-      Polymer({
-        is: 'polymon-portrait',
-
-        properties: {
-          polymon: {
-            type: Object,
-            observer: '__applyPolymonImage'
-          },
-
-          caught: {
-            type: Boolean,
-            value: false,
-            observer: '__caughtChanged'
-          }
+      properties: {
+        polymon: {
+          type: Object,
+          observer: '__applyPolymonImage'
         },
 
-        get imageCache() {
-          return images;
+        caught: {
+          type: Boolean,
+          value: false
         },
 
-        __allocateImage: function() {
-          let shortName = this.polymon.shortName;
-
-          if (images[shortName] && images[shortName].length) {
-            return images[shortName].pop();
-          }
-
-          let icon = Polymer.DomModule
-              .import('polymon-iconset', `#${shortName}`);
-
-          if (icon) {
-            return icon.cloneNode(true);
-          }
-        },
-
-        __freeImage: function(icon) {
-          let shortName = icon.id;
-
-          if (!images[shortName]) {
-            images[shortName] = [];
-          }
-
-          images[shortName].push(icon);
-        },
-
-        __applyPolymonImage: function(polymon) {
-          if (this.__icon) {
-            Polymer.dom(this.root).removeChild(this.__icon);
-            this.__freeImage(this.__icon);
-          }
-
-          if (!polymon) {
-            return;
-          }
-
-          this.__icon = this.__allocateImage();
-
-          if (this.__icon) {
-            Polymer.dom(this.root).appendChild(this.__icon);
-          }
-        },
-
-        __polymonUrl: function(polymon) {
-          if (polymon) {
-            return `../../images/polymon/${polymon.shortName}.svg`;
-          }
-        },
-
-        __caughtChanged: function() {
-          if (this.caught) {
-            this.classList.add('caught');
-          } else {
-            this.classList.remove('caught');
-          }
+        size: {
+          type: Number,
+          value: 64
         }
-      });
-    })();
+      },
+
+      observers: [
+        '__applyPolymonImage(polymon, caught, size)'
+      ],
+
+      __applyPolymonImage: function(polymon) {
+        this.debounce('apply-polymon-image', () => {
+          let polymon = this.polymon;
+          let index = polymon && polymon.spriteIndex;
+          let size = this.size;
+
+          if (index == null) {
+            index = -1;
+          }
+
+          let top = Math.floor(index / 10) * -size;
+          let left = (index % 10) * -size;
+
+          if (!this.caught) {
+            top -= 2 * size;
+          }
+
+          this.style.width = `${size}px`;
+          this.style.height = `${size}px`;
+          this.style.borderRadius = `${size / 2}px`;
+          this.$.image.style.backgroundSize = `${size * 10}px ${size * 7}px`;
+          this.$.image.style.backgroundPosition = `${left}px ${top}px`;
+        });
+      },
+
+      __caughtChanged: function() {
+        if (this.caught) {
+          this.classList.add('caught');
+        } else {
+          this.classList.remove('caught');
+        }
+      }
+    });
 
   </script>
 </dom-module>
