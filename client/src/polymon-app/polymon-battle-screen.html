@@ -1,6 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="polymon-initiate-battle-screen.html">
+<link rel="import" href="polymon-battle-field.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-styles.html">
@@ -22,250 +25,9 @@
         --polymon-portrait-background: transparent;
       }
 
-      /** Battle Initiation **/
-      /* TODO(cdata): Factor this out into its own element */
-      #initiate {
-        @apply --layout-fit;
-        @apply --layout-vertical;
-        color: var(--polymon-blue);
-        padding: 8px;
-
-        opacity: 1;
-        transform: translateY(0);
-        transition: opacity 0.3s, transform 0.3s;
-        z-index: 2;
-
-        background-color: #000;
-      }
-
-      #battle-field {
-        @apply --layout-fit;
-      }
-
-      :host(.engaged) #initiate {
-        opacity: 0;
-        transform: translateY(-10px);
+      :host(:not(.active)) > * {
         pointer-events: none;
       }
-
-      #initiate > section {
-        flex: 1;
-        @apply --layout-vertical;
-        @apply --layout-center-center;
-      }
-
-      #initiate h1 {
-        font-weight: normal;
-        font-size: 2.5em;
-        font-family: var(--polymon-headline-font-family);
-        margin-top: 10px;
-        margin-bottom: 50px;
-      }
-
-      #initiate h2 {
-        font-weight: normal;
-        margin-top: 50px;
-      }
-
-      polymon-qr-code {
-        display: block;
-        border: 32px solid var(--polymon-blue);
-        border-radius: 8px;
-      }
-
-      #initiate > polymon-button {
-        flex: 0;
-        width: 100%;
-      }
-
-      @media (max-height: 640px) {
-        #initiate h1 {
-          margin-bottom: 20px;
-        }
-
-        #initiate h2 {
-          margin-top: 20px;
-        }
-      }
-
-      /** Battle Field **/
-      @keyframes float {
-        0% {
-          transform: translateY(0);
-        }
-
-        100% {
-          transform: translateY(10px);
-        }
-      }
-
-      @keyframes float-background {
-        0% {
-          transform: scale(0.4) translateY(0);
-        }
-
-        100% {
-          transform: scale(0.4) translateY(10px);
-        }
-      }
-
-      #battle-field {
-        @apply --layout-vertical;
-        justify-content: space-between;
-      }
-
-      .landscape {
-        @apply --layout-fit;
-        background-image: linear-gradient(0deg,
-            #e7f8ff 0%,
-            #e7f8ff 15%,
-            #c1e9fa 15%,
-            #c1e9fa 20%,
-            #a0ddf7 20%,
-            #a0ddf7 35%,
-            #6dcaf2 35%,
-            #6dcaf2 60%,
-            #3ebbf0 60%,
-            #3ebbf0 100%);
-
-        overflow: hidden;
-      }
-
-      .island {
-        position: absolute;
-        background-image: url(/images/polymon_sprite_sheet.svg);
-        background-size: 1280px 896px;
-        background-repeat: none;
-        width: 640px;
-        height: 384px;
-
-        animation-timing-function: ease-in-out;
-        animation-iteration-count: infinite;
-      }
-
-      .user.island {
-        top: 57%;
-        left: calc(-300px + 20%);
-        background-position: 0 -512px;
-
-        animation-name: float;
-        animation-direction: alternate;
-        animation-duration: 10s;
-      }
-
-      .opposing.island {
-        top: 20%;
-        left: calc(70% - 275px);
-        background-position: -640px -512px;
-        transform: scale(0.4);
-
-        animation-name: float-background;
-        animation-direction: alternate-reverse;
-        animation-duration: 12s;
-      }
-
-      .island > polymon-portrait {
-        position: absolute;
-      }
-
-
-      .user.island > :nth-of-type(1) {
-        transform: translate(225px, -25px) scale(-1, 1);
-      }
-
-      .user.island > :nth-of-type(2) {
-        transform: translate(280px, -20px) scale(-0.9, 0.9);
-      }
-
-      .user.island > :nth-of-type(3) {
-        transform: translate(345px, -20px) scale(-0.9, 0.9);
-      }
-
-      .user.island > :nth-of-type(4) {
-        transform: translate(415px, -35px) scale(-1.15, 1.15);
-      }
-
-      .user.island > :nth-of-type(5) {
-        transform: translate(480px, -40px) scale(-1.35, 1.35);
-      }
-
-
-      .opposing.island > :nth-of-type(1) {
-        transform: translate(105px, -25px) scale(1.1);
-      }
-
-      .opposing.island > :nth-of-type(2) {
-        transform: translate(160px, -20px) scale(1.15);
-      }
-
-      .opposing.island > :nth-of-type(3) {
-        transform: translate(225px, -15px) scale(1.30);
-      }
-
-      .opposing.island > :nth-of-type(4) {
-        transform: translate(295px, -15px) scale(1.1);
-      }
-
-      .opposing.island > :nth-of-type(5) {
-        transform: translate(360px, -20px) scale(1);
-      }
-
-      .ui {
-        @apply --layout-fit;
-      }
-
-      .ui > .bottom {
-        position: absolute;
-        width: 100%;
-        bottom: 0;
-      }
-
-      .ui .status {
-        padding: 10px;
-        font-size: 30px;
-        line-height: 30px;
-        text-align: right;
-      }
-
-      .ui .status .health {
-        color: #EA443D;
-        text-shadow: 0px 1px 0px #C81E20;
-      }
-
-      .ui .status .health :first-child {
-        margin-right: 8px;
-      }
-
-      .ui .attributes {
-        @apply --layout-horizontal;
-        flex-wrap: wrap;
-        padding: 4px;
-
-        background-color: #333;
-        border-top: 4px solid #444;
-      }
-
-      .ui .attributes > polymon-button {
-        flex: 1;
-        margin: 0px 4px 4px;
-        transition: transform 0.3s;
-      }
-
-      .ui .attributes > h2 {
-        flex: 1 0 100%;
-        margin: 6px 8px 8px;
-        font-size: 16px;
-        color: #aaa;
-      }
-
-      .ui .attributes > polymon-button.iron-selected {
-        /*transform: scale(1);*/
-      }
-
-      .ui .attributes > polymon-button:not(.iron-selected) {
-        /*transform: scale(0.85);*/
-      }
-
     </style>
 
     <firebase-document
@@ -285,70 +47,20 @@
         battle-status="{{opposingTeamStatus}}">
     </polymon-team-query>
 
-    <section id="initiate">
-      <section>
-        <h1>Battle Code</h1>
-        <polymon-qr-code
-            size="7"
-            margin="2"
-            data="[[battleCode]]">
-        </polymon-qr-code>
-        <h2>Scan to Join</h2>
-      </section>
-      <polymon-button id="cancel" class="alt">Cancel</polymon-button>
-    </section>
-    <section id="battle-field">
-      <section class="landscape">
-        <section class="opposing island">
-          <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
-            <polymon-portrait
-                polymon="[[teamPosition.polymon]]"
-                caught="[[!teamPosition.movePerformed]]">
-            </polymon-portrait>
-          </template>
-        </section>
-        <section class="user island">
-          <template is="dom-repeat" items="[[userTeamStatus]]" as="teamPosition">
-            <polymon-portrait
-                polymon="[[teamPosition.polymon]]"
-                caught="[[!teamPosition.movePerformed]]">
-            </polymon-portrait>
-          </template>
-        </section>
-      </section>
-      <section class="ui">
-        <section class="top"></section>
-        <section class="bottom">
-          <section class="panel">
-            <section class="status">
-              <span class="health"><span>❤</span><span>20</span></span>
-            </section>
-            <iron-selector class="attributes">
-              <h2>1. Choose a move</h2>
-              <polymon-button class="alt">Attack</polymon-button>
-              <polymon-button class="help">Focus</polymon-button>
-              <polymon-button>Counter</polymon-button>
-            </iron-selector>
-          </section>
-        </section>
-      </section>
-      <!-- <section class="portraits" id="opposing-team-portraits">
-        <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
-          <polymon-portrait
-              polymon="[[teamPosition.polymon]]"
-              caught="[[!teamPosition.movePerformed]]">
-          </polymon-portrait>
-        </template>
-      </section>
-      <section class="portraits" id="user-team-portraits">
-        <template is="dom-repeat" items="[[userTeamStatus]]" as="teamPosition">
-          <polymon-portrait
-              polymon="[[teamPosition.polymon]]"
-              caught="[[!teamPosition.movePerformed]]">
-          </polymon-portrait>
-        </template>
-      </section> -->
-    </section>
+    <polymon-initiate-battle-screen
+        user="[[user]]"
+        user-data="[[userData]]"
+        active="[[!battleData.engaged]]"
+        battle-id="[[userData.player.activeBattleId]]">
+    </polymon-initiate-battle-screen>
+
+    <polymon-battle-field
+        user-team-status="[[userTeamStatus]]"
+        opposing-team-status="[[opposingTeamStatus]]"
+        waiting="[[playerState.waiting]]"
+        on-polymon-move="__onPolymonMove">
+    </polymon-battle-field>
+
   </template>
   <script>
     Polymer({
@@ -361,6 +73,11 @@
           type: Object
         },
 
+        playerState: {
+          type: Object,
+          computed: '__computePlayerState(battleData.players.*)'
+        },
+
         battlePath: {
           type: String,
           computed: '__computeBattlePath(userData.player.activeBattleId)'
@@ -371,11 +88,6 @@
           value: null
         },
 
-        battleCode: {
-          type: String,
-          computed: '__computeBattleCode(userData.player.activeBattleId)'
-        },
-
         opposingUserId: {
           type: String,
           computed: '__computeOpposingUserId(battleData.players.*)'
@@ -384,12 +96,13 @@
 
       observers: [
         '__activeBattleIdChanged(userData.player.activeBattleId)',
-        '__battleDataChanged(battleData)',
-        '__updateClassList(battleData.engaged)'
+        '__battleDataChanged(battleData)'
       ],
 
-      listeners: {
-        'cancel.tap': '__attemptBattleCancel'
+      __computePlayerState: function() {
+        if (this.battleData) {
+          return this.battleData.players[this.user.uid];
+        }
       },
 
       __computeBattlePath: function(activeBattleId) {
@@ -400,34 +113,14 @@
         return this.battlePath;
       },
 
-      __computeBattleCode: function(activeBattleId) {
-        // TODO(cdata): format these as URLs so that we can use Physical Web
-        // beacons and copy-paste-able links?
-        if (activeBattleId) {
-          return `battle.${activeBattleId}`;
-        }
-
-        return this.battleCode;
-      },
-
       __computeOpposingUserId: function() {
         if (this.battleData && this.battleData.players) {
           for (let id in this.battleData.players) {
-            let player = this.battleData.players[id];
-            if (player.userId !== this.user.uid) {
-              return player.userId;
+            if (this.user.uid !== id) {
+              return id;
             }
           }
         }
-      },
-
-      __attemptBattleCancel: function() {
-        firebase.app('polymon').database()
-            .ref(`/users/${this.user.uid}/battleQueue`).push({
-              action: 'withdraw',
-              battleId: this.userData.player.activeBattleId,
-              createdAt: Date.now()
-            });
       },
 
       __activeBattleIdChanged: function(activeBattleId) {
@@ -446,7 +139,10 @@
       },
 
       __battleDataChanged: function(battleData) {
-        if (this.active && (battleData == null || battleData.engaged == null)) {
+        if (this.active &&
+            (battleData == null ||
+             battleData.engaged == null ||
+             battleData.winningUserId != null)) {
           window.history.replaceState({}, '', '/');
           this.fire('location-changed', {}, {node: window});
         }
@@ -461,12 +157,15 @@
             });
       },
 
-      __updateClassList: function(engaged) {
-        if (engaged) {
-          this.classList.add('engaged');
-        } else {
-          this.classList.remove('engaged');
-        }
+      __onPolymonMove: function(event) {
+        let {polydexId, attributeName} = event.detail;
+        firebase.app('polymon').database()
+            .ref(`/users/${this.user.uid}/battleQueue`).push({
+              action: 'move',
+              battleId: this.userData.player.activeBattleId,
+              polydexId,
+              attributeName
+            });
       }
     });
   </script>

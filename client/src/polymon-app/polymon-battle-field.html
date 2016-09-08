@@ -1,0 +1,405 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-qr-code.html">
+<dom-module id="polymon-battle-field">
+  <template>
+    <style>
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+
+        100% {
+          transform: translateY(10px);
+        }
+      }
+
+      :host {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        justify-content: space-between;
+      }
+
+      :host(.zoom-to-opponent) .ui #bottom {
+        transition-delay: 0s;
+        transform: translateY(500px);
+      }
+
+      :host(.zoom-to-opponent) .landscape .foreground {
+        transform: translate(-1000px, 600px) scale(3);
+      }
+
+      :host(.zoom-to-opponent) .landscape .background {
+        transform: translateY(200px) scale(1);
+      }
+
+      .landscape {
+        @apply --layout-fit;
+        background-image: linear-gradient(0deg,
+            #e7f8ff 0%,
+            #e7f8ff 15%,
+            #c1e9fa 15%,
+            #c1e9fa 20%,
+            #a0ddf7 20%,
+            #a0ddf7 35%,
+            #6dcaf2 35%,
+            #6dcaf2 60%,
+            #3ebbf0 60%,
+            #3ebbf0 100%);
+
+        overflow: hidden;
+      }
+
+      .landscape .foreground,
+      .landscape .background {
+        @apply --layout-fit;
+        transition: transform 0.5s;
+      }
+
+      .landscape .background {
+        transform: translateX(100px) scale(0.4);
+      }
+
+      .island {
+        position: absolute;
+        background-image: url(/images/polymon_sprite_sheet.svg);
+        background-size: 1280px 896px;
+        background-repeat: no-repeat;
+        width: 640px;
+        height: 384px;
+
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-name: float;
+
+        transition: transform 0.5s;
+      }
+
+      .user.island {
+        top: 45%;
+        left: calc(-300px + 20%);
+        background-position: 0 -512px;
+
+        animation-direction: alternate;
+        animation-duration: 10s;
+      }
+
+      .opposing.island {
+        top: 10%;
+        left: calc(50% - 260px);
+        background-position: -640px -512px;
+
+        animation-direction: alternate-reverse;
+        animation-duration: 12s;
+      }
+
+      .island > polymon-portrait {
+        position: absolute;
+      }
+
+      .user.island > :nth-of-type(1) {
+        transform: translate(225px, -25px) scale(-1, 1);
+      }
+
+      .user.island > :nth-of-type(2) {
+        transform: translate(280px, -20px) scale(-0.9, 0.9);
+      }
+
+      .user.island > :nth-of-type(3) {
+        transform: translate(345px, -20px) scale(-0.9, 0.9);
+      }
+
+      .user.island > :nth-of-type(4) {
+        transform: translate(415px, -35px) scale(-1.15, 1.15);
+      }
+
+      .user.island > :nth-of-type(5) {
+        transform: translate(480px, -40px) scale(-1.35, 1.35);
+      }
+
+      .opposing.island > :nth-of-type(1) {
+        transform: translate(105px, -25px) scale(1.1);
+      }
+
+      .opposing.island > :nth-of-type(2) {
+        transform: translate(160px, -20px) scale(1.15);
+      }
+
+      .opposing.island > :nth-of-type(3) {
+        transform: translate(225px, -15px) scale(1.30);
+      }
+
+      .opposing.island > :nth-of-type(4) {
+        transform: translate(295px, -15px) scale(1.1);
+      }
+
+      .opposing.island > :nth-of-type(5) {
+        transform: translate(360px, -20px) scale(1);
+      }
+
+      .ui {
+        @apply --layout-fit;
+      }
+
+      .ui #bottom {
+        transition: transform 0.3s;
+        /*transition-delay: 0.2s;*/
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+      }
+
+      .ui #controls {
+        background-color: rgba(255, 255, 255, 0.6);
+      }
+
+      .ui #status {
+        padding: 10px;
+        font-size: 30px;
+        line-height: 30px;
+        @apply --layout-horizontal;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+
+      .ui #status .health {
+        color: #EA443D;
+        text-shadow: 0px 1px 0px #C81E20;
+      }
+
+      #status .waiting-text {
+        font-size: 16px;
+        line-height: 16px;
+        color: #2BA8DE;
+        text-shadow: 0px 1px 0px #166E93;
+        visibility: hidden;
+      }
+
+      :host(.waiting) #status .waiting-text {
+        visibility: visible;
+      }
+
+      .ui #status .health :first-child {
+        margin-right: 8px;
+      }
+
+      .ui #attributes,
+      .ui #polymons {
+        @apply --layout-horizontal;
+        flex-wrap: wrap;
+        padding: 0 4px;
+      }
+
+      .ui #attributes {
+        padding-top: 4px;
+      }
+
+      .ui #attributes > polymon-button {
+        flex: 1;
+        margin: 0px 4px 8px;
+        transition: transform 0.3s;
+      }
+
+      .ui #polymons {
+        justify-content: space-around;
+      }
+
+      #panel h2 {
+        box-sizing: border-box;
+        flex: 1 0 100%;
+        margin: 0;
+        padding: 8px;
+        font-size: 16px;
+        color: #5A4942;
+      }
+
+      .attribute {
+        display: flex;
+        position: absolute;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: 32px;
+        height: 32px;
+        margin-top: 20px;
+        margin-left: 40px;
+        border-radius: 16px;
+        font-size: 16px;
+        background-color: #fff;
+        color: #fff;
+        visibility: hidden;
+      }
+
+      .attribute.attack {
+        visibility: visible;
+        background-color: #E22D54;
+        border-bottom: 2px solid #A51430;
+      }
+      .attribute.focus {
+        visibility: visible;
+        background-color: #76CB53;
+        border-bottom: 2px solid #498231;
+      }
+      .attribute.counter {
+        visibility: visible;
+        background-color: #3EBBF0;
+        border-bottom: 2px solid #166E93;
+      }
+    </style>
+
+    <section class="landscape">
+      <div class="background">
+        <div class="opposing island">
+          <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
+            <polymon-portrait
+                polymon="[[teamPosition.polymon]]"
+                caught="[[!teamPosition.movePerformed]]">
+            </polymon-portrait>
+          </template>
+        </div>
+      </div>
+      <div class="foreground">
+        <div class="user island">
+          <template is="dom-repeat" items="[[userTeamStatus]]" as="teamPosition">
+            <polymon-portrait
+                polymon="[[teamPosition.polymon]]"
+                caught="[[!teamPosition.movePerformed]]">
+            </polymon-portrait>
+          </template>
+        </div>
+      </div>
+    </section>
+    <!-- TODO(cdata): This whole thing should probably be its own element -->
+    <section class="ui">
+      <div class="top">
+
+      </div>
+      <div id="bottom">
+        <div id="panel">
+          <div id="status">
+            <span class="waiting-text">Waiting for opponent...</span>
+            <span class="health"><span>❤</span><span>20</span></span>
+          </div>
+          <div id="controls">
+            <iron-selector
+                id="attributes"
+                selectable="polymon-button"
+                attr-for-selected="id"
+                selected="{{selectedAttribute}}">
+              <h2>1. Choose a move</h2>
+              <polymon-button id="attack" class="alt" toggles>Attack</polymon-button>
+              <polymon-button id="focus" class="help" toggles>Focus</polymon-button>
+              <polymon-button id="counter" toggles>Counter</polymon-button>
+            </iron-selector>
+            <iron-selector
+                id="polymons"
+                selectable="polymon-portrait"
+                attr-for-selected="id"
+                selected="{{selectedPolydexId}}">
+              <h2>2. Choose a Polymon</h2>
+              <template
+                  is="dom-repeat"
+                  items="[[userTeamStatus]]"
+                  as="teamPosition"
+                  on-dom-change="__updateControlsPosition">
+                <polymon-portrait
+                    id="[[teamPosition.polydexId]]"
+                    polymon="[[teamPosition.polymon]]"
+                    caught="[[!teamPosition.movePerformed]]">
+                  <div class$="[[selectedAttribute]] attribute">[[__attributeFor(selectedAttribute, teamPosition.polymon)]]</div>
+                </polymon-portrait>
+              </template>
+            </iron-selector>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-battle-field',
+
+      behaviors: [
+        PolymonElement,
+        Polymer.IronResizableBehavior
+      ],
+
+      properties: {
+        userTeamStatus: {
+          type: Object
+        },
+
+        opposingTeamStatus: {
+          type: Object
+        },
+
+        selectedAttribute: {
+          type: String
+        },
+
+        selectedPolydexId: {
+          type: String
+        },
+
+        waiting: {
+          type: Boolean,
+          value: false,
+          observer: '__waitingChanged'
+        }
+      },
+
+      observers: [
+        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting)',
+        '__submitMove(selectedAttribute, selectedPolydexId)'
+      ],
+
+      listeners: {
+        'iron-resize': '__updateControlsPosition',
+      },
+
+      __updateControlsPosition: function() {
+        this.deraf('update-controls-position', () => {
+          if (this.waiting) {
+            let controlsRect = this.$.controls.getBoundingClientRect();
+            this.$.bottom.style.transform = `translateY(${controlsRect.height}px)`;
+          } else if (this.selectedAttribute == null) {
+            let polymonsRect = this.$.polymons.getBoundingClientRect();
+            this.$.bottom.style.transform = `translateY(${polymonsRect.height}px)`;
+          } else if (this.$.bottom.style.transform) {
+            this.$.bottom.style.transform = '';
+          }
+        });
+      },
+
+      __attributeFor: function(selectedAttribute, polymon) {
+        if (selectedAttribute != null && polymon != null) {
+          return polymon.stats[selectedAttribute];
+        }
+
+        return 0;
+      },
+
+      __submitMove: function() {
+        if (this.selectedAttribute != null && this.selectedPolydexId != null) {
+          this.fire('polymon-move', {
+            attributeName: this.selectedAttribute,
+            polydexId: this.selectedPolydexId
+          });
+          // TODO (cdata): submit move here
+        }
+      },
+
+      __waitingChanged: function() {
+        if (this.waiting) {
+          this.classList.add('waiting');
+        } else {
+          this.classList.remove('waiting');
+        }
+      }
+    });
+  </script>
+</dom-module>

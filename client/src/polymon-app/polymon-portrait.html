@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="polymon-imageset.html">
 <dom-module id="polymon-portrait">
   <template>
     <style>
@@ -20,7 +19,9 @@
         transform-origin: 0 0;
       }
     </style>
-    <div id="image"></div>
+    <div id="image">
+      <content></content>
+    </div>
   </template>
   <script>
     Polymer({

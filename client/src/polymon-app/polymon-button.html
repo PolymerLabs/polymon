@@ -66,6 +66,44 @@
         background-color: transparent;
       }
 
+      @keyframes background-slide {
+        0% {
+          background-position-y: 0px;
+        }
+
+        100% {
+          background-position-y: -39px;
+        }
+      }
+
+      :host(.iron-selected):after {
+        top: 4px;
+        left: 4px;
+        right: 4px;
+        bottom: 8px;
+      }
+
+      :host(.iron-selected):before {
+        background-image: linear-gradient(0deg,
+            #FC0E1B 0%,
+            #FC0E1B 16.666666%,
+            #FD9927 16.666666%,
+            #FD9927 33.333334%,
+            #FEFD38 33.333334%,
+            #FEFD38 50%,
+            #33FD2F 50%,
+            #33FD2F 66.666666%,
+            #1E98FB 66.666666%,
+            #1E98FB 83.333334%,
+            #6632FB 83.333334%,
+            #6632FB 100%);
+
+        animation-name: background-slide;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
       #content {
         position: relative;
         padding: 7px 20px 5px;
@@ -79,6 +117,7 @@
                 var(--polymon-button-background-shadow) 50%);
         pointer-events: none;
         -webkit-user-select: none;
+        background-position-y: 0;
 
         text-shadow:
             2px -2px 0px var(--polymon-button-background-shadow),
@@ -114,7 +153,8 @@
       ],
 
       observers: [
-        '__pressedChanged(pressed)'
+        '__pressedChanged(pressed)',
+        '__activated(toggles, active)'
       ],
 
       __pressedChanged: function() {
@@ -122,6 +162,14 @@
           this.classList.add('pressed');
         } else {
           this.classList.remove('pressed');
+        }
+      },
+
+      __activated: function(toggles, active) {
+        if (toggles && active) {
+          this.classList.add('active');
+        } else {
+          this.classList.remove('active');
         }
       }
     });

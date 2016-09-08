@@ -70,8 +70,9 @@
           ".read": "root.child('users').child(auth.uid).child('player/activeBattleId').val() === $battle",
 
           "players": {
-            "$player": {
-              "userId": {}
+            "$userId": {
+              "ready": {},
+              "waiting": {}
             }
           },
 
@@ -79,7 +80,7 @@
 
           "rounds": {
             "$round": {
-              "$userId": {
+              "$user": {
                 "index": {},
                 "polydexId": {},
                 "attributeName": {},

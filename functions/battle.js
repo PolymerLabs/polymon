@@ -185,6 +185,26 @@ function ensureHasActiveBattle(db, userId, battleId) {
 
 
 /**
+ *
+ */
+function ensureNotWaiting(db, userId, battleId) {
+  return db.ref(`/battles/${battleId}/status/players/${userId}/waiting`)
+      .once('value')
+      .then(snapshot => {
+        if (!snapshot.exists()) {
+          throw new Error(`User ${userId} has not joined Battle ${battleId}.`);
+        }
+
+        if (snapshot.val() === true) {
+          throw new Error(
+              `User ${userId} is waiting for opponent's next move in Battle ${battleId}.`);
+        }
+      });
+}
+
+
+
+/**
  * Initiates a new battle, with the provided user set as the initiating user.
  */
 function initiateBattle(db, userId) {
@@ -209,7 +229,10 @@ function initiateBattle(db, userId) {
         console.log(`Battle ID: ${battleId}`);
 
         return Promise.all([
-          db.ref(`/battles/${battleId}/status/players`).push({ userId }),
+          db.ref(`/battles/${battleId}/status/players/${userId}`).set({
+            ready: true,
+            waiting: false
+          }),
           db.ref(`/users/${userId}/player/activeBattleId`).set(battleId)
         ]);
       });
@@ -227,6 +250,7 @@ function assignBattleMaxRounds(db, battleId) {
         db.ref(`/users/${userIds[0]}/team`).once('value'),
         db.ref(`/users/${userIds[1]}/team`).once('value')
       ]))
+      .then(snapshots => snapshots.map(snapshot => snapshot.val()))
       .then(teams =>
           Math.max(Object.keys(teams[0]).length, Object.keys(teams[1]).length))
       .then(maxRounds => {
@@ -254,7 +278,10 @@ function joinBattle(db, userId, battleId) {
         return Promise.all([
           db.ref(`/users/${userId}/player/activeBattleId`).set(battleId),
           db.ref(`/battles/${battleId}/defendingUserId`).set(userId),
-          db.ref(`/battles/${battleId}/status/players`).push({ userId }),
+          db.ref(`/battles/${battleId}/status/players/${userId}`).set({
+            ready: true,
+            waiting: false
+          }),
           recordHeartbeat(db, userId, battleId)
         ]);
       })
@@ -284,16 +311,20 @@ function performMove(db, userId, battleId, polydexId, attributeName) {
   // TODO(cdata): assert that the chosen Polymon is in the user's team.
 
   return ensureHasActiveBattle(db, userId, battleId)
+      .then(() => ensureNotWaiting(db, userId, battleId))
       .then(() => ensureBattleNotFinished(db, battleId))
       .then(() => ensureHasPolydexEntry(db, userId, polydexId))
       .then(() => db.ref(`/battles/${battleId}`))
       .then(battleRef => battleRef.once('value')
           .then(snapshot => snapshot.val())
-          .then(battle => battleRef.child(`state/${userId}/moves`).push({
-            index: battle.currentRound,
-            polydexId: polydexId,
-            attributeName: attributeName
-          })))
+          .then(battle => Promise.all([
+            battleRef.child(`state/${userId}/moves`).push({
+              index: battle.currentRound,
+              polydexId: polydexId,
+              attributeName: attributeName
+            }),
+            battleRef.child(`status/players/${userId}/waiting`).set(true)
+          ])))
       .then(() => resolveCurrentRound(db, battleId));
 }
 
@@ -355,7 +386,10 @@ function resolveCurrentRound(db, battleId) {
           return db.ref(`/battles/${battleId}/status/rounds`).push({
             [battle.initiatingUserId]: initiatingUserMove,
             [battle.defendingUserId]: defendingUserMove
-          });
+          }).then(() => Promise.all([
+            db.ref(`/battles/${battleId}/status/players/${battle.initiatingUserId}/waiting`).set(false),
+            db.ref(`/battles/${battleId}/status/players/${battle.defendingUserId}/waiting`).set(false)
+          ]));
         })
         // Step 5: Check if we just completed the last round.
         .then(() => currentRound < lastRound
