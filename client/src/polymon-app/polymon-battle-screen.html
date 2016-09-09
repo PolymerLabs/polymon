@@ -50,7 +50,7 @@
     <polymon-initiate-battle-screen
         user="[[user]]"
         user-data="[[userData]]"
-        active="[[!battleData.engaged]]"
+        active="[[initiatingBattle]]"
         battle-id="[[userData.player.activeBattleId]]">
     </polymon-initiate-battle-screen>
 
@@ -91,6 +91,12 @@
         opposingUserId: {
           type: String,
           computed: '__computeOpposingUserId(battleData.players.*)'
+        },
+
+        initiatingBattle: {
+          type: Boolean,
+          value: false,
+          readOnly: true
         }
       },
 
@@ -100,7 +106,7 @@
       ],
 
       __computePlayerState: function() {
-        if (this.battleData) {
+        if (this.battleData && this.battleData.players) {
           return this.battleData.players[this.user.uid];
         }
       },
@@ -145,6 +151,11 @@
              battleData.winningUserId != null)) {
           window.history.replaceState({}, '', '/');
           this.fire('location-changed', {}, {node: window});
+        } else if (battleData && battleData.engaged != null) {
+          // NOTE(cdata): This controls the visibility of the QR code screen
+          // that is used to share a battle with another player so that they
+          // can join it:
+          this._setInitiatingBattle(battleData.engaged === false);
         }
       },
 

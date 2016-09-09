@@ -24,9 +24,9 @@
         justify-content: space-between;
       }
 
-      :host(.zoom-to-opponent) .ui #bottom {
+      :host(.zoom-to-opponent) #bottom {
         transition-delay: 0s;
-        transform: translateY(500px);
+        transform: translateY(500px) !important;
       }
 
       :host(.zoom-to-opponent) .landscape .foreground {
@@ -35,6 +35,30 @@
 
       :host(.zoom-to-opponent) .landscape .background {
         transform: translateY(200px) scale(1);
+        pointer-events: none;
+      }
+
+      :host(.zoom-to-opponent) .landscape .background .info-button {
+        /* TODO(cdata): I think pointer-events might need to be disabled on
+        /* this button when the battle-field is inactive. */
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      :host(.zoom-to-opponent) #top {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+      }
+
+      :host(.loading) #bottom {
+        transition: none;
+        transform: translateY(600px);
+      }
+
+      :host(.waiting) #status .waiting-text {
+        visibility: visible;
       }
 
       .landscape {
@@ -58,6 +82,10 @@
       .landscape .background {
         @apply --layout-fit;
         transition: transform 0.5s;
+      }
+
+      .landscape .foreground {
+        pointer-events: none;
       }
 
       .landscape .background {
@@ -141,11 +169,37 @@
         transform: translate(360px, -20px) scale(1);
       }
 
-      .ui {
-        @apply --layout-fit;
+      .info-button {
+        display: flex;
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
+        top: -180px;
+        left: 10px;
+        position: absolute;
+
+        color: rgba(255, 255, 255, 0.8);
+        border-bottom: 6px solid rgba(255, 255, 255, 0.5);
+        border-radius: 12px;
+        height: 80px;
+        font-size: 28px;
+        padding: 27px 24px 24px;
+        background: rgba(255, 255, 255, 0.25);
+
+        cursor: pointer;
+
+        transition: transform 0.3s, opacity 0.3s;
+        transform: translateY(-10px);
+        opacity: 1;
       }
 
-      .ui #bottom {
+      #ui {
+        @apply --layout-fit;
+        pointer-events: none;
+      }
+
+      #bottom {
+        pointer-events: all;
         transition: transform 0.3s;
         /*transition-delay: 0.2s;*/
         position: absolute;
@@ -153,11 +207,11 @@
         bottom: 0;
       }
 
-      .ui #controls {
+      #controls {
         background-color: rgba(255, 255, 255, 0.6);
       }
 
-      .ui #status {
+      #status {
         padding: 10px;
         font-size: 30px;
         line-height: 30px;
@@ -166,7 +220,7 @@
         align-items: flex-end;
       }
 
-      .ui #status .health {
+      #status .health {
         color: #EA443D;
         text-shadow: 0px 1px 0px #C81E20;
       }
@@ -179,32 +233,29 @@
         visibility: hidden;
       }
 
-      :host(.waiting) #status .waiting-text {
-        visibility: visible;
-      }
 
-      .ui #status .health :first-child {
+      #status .health :first-child {
         margin-right: 8px;
       }
 
-      .ui #attributes,
-      .ui #polymons {
+      #attributes,
+      #polymons {
         @apply --layout-horizontal;
         flex-wrap: wrap;
         padding: 0 4px;
       }
 
-      .ui #attributes {
+      #attributes {
         padding-top: 4px;
       }
 
-      .ui #attributes > polymon-button {
+      #attributes > polymon-button {
         flex: 1;
         margin: 0px 4px 8px;
         transition: transform 0.3s;
       }
 
-      .ui #polymons {
+      #polymons {
         justify-content: space-around;
       }
 
@@ -219,14 +270,12 @@
 
       .attribute {
         display: flex;
-        position: absolute;
         align-items: center;
         justify-content: center;
         box-sizing: border-box;
         width: 32px;
         height: 32px;
-        margin-top: 20px;
-        margin-left: 40px;
+
         border-radius: 16px;
         font-size: 16px;
         background-color: #fff;
@@ -249,11 +298,90 @@
         background-color: #3EBBF0;
         border-bottom: 2px solid #166E93;
       }
+
+      #bottom .attribute {
+        position: absolute;
+        margin-top: 20px;
+        margin-left: 40px;
+      }
+
+      #top {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        justify-content: space-between;
+
+        opacity: 0;
+        transform: translateY(10px);
+        transition: transform 0.3s, opacity 0.3s;
+      }
+
+      #top polymon-button {
+        margin: 8px;
+        flex: 1;
+      }
+
+      #opponent-stat-controls {
+        @apply --layout-horizontal;
+        flex: 1;
+        align-items: flex-end;
+      }
+
+      #opponent-stats {
+        position: absolute;
+        top: 15%;
+        width: 100%;
+        @apply --layout-horizontal;
+        justify-content: center;
+      }
+
+      #opponent-stats .attribute {
+        margin-left: 4px;
+      }
+
+      #opponent-stats .attributes {
+        @apply --layout-vertical;
+        background-color: rgba(255, 255, 255, 0.6);
+        border-radius: 8px;
+        padding: 8px;
+        margin: 0px 4px;
+      }
+
+      #opponent-stats .attributes > span {
+        @apply --layout-horizontal;
+        @apply --layout-center-center;
+        margin-bottom: 4px;
+      }
+
+      #opponent-stats .attributes > span.attack {
+        color: #e22d54;
+      }
+
+      #opponent-stats .attributes > span.focus {
+        color: #76cb53;
+      }
+
+      #opponent-stats .attributes > span.counter {
+        color: #3ebbf0;
+      }
+
+      #opponent-stats .attributes > span:last-child {
+        margin-bottom: 0;
+      }
+
+
+      @media (max-width: 350px) {
+        #opponent-stats .attributes {
+          margin: 0px;
+          border-radius: 0px;
+          flex: 1;
+        }
+      }
     </style>
 
     <section class="landscape">
       <div class="background">
         <div class="opposing island">
+          <div class="info-button" on-tap="__onInfoButtonTap">opponent stats</div>
           <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
             <polymon-portrait
                 polymon="[[teamPosition.polymon]]"
@@ -274,9 +402,20 @@
       </div>
     </section>
     <!-- TODO(cdata): This whole thing should probably be its own element -->
-    <section class="ui">
-      <div class="top">
-
+    <section id="ui">
+      <div id="top">
+        <section id="opponent-stats">
+          <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
+            <div class="attributes" data-move-performed$="[[teamPosition.movePerformed]]">
+              <span class="attack">A <span class="attack attribute">[[teamPosition.polymon.stats.attack]]</span></span>
+              <span class="focus">F <span class="focus attribute">[[teamPosition.polymon.stats.focus]]</span></span>
+              <span class="counter">C <span class="counter attribute">[[teamPosition.polymon.stats.counter]]</span></span>
+            </div>
+          </template>
+        </section>
+        <section id="opponent-stat-controls">
+          <polymon-button class="alt" on-tap="__onInfoReturnButtonTap">back</polymon-button>
+        </section>
       </div>
       <div id="bottom">
         <div id="panel">
@@ -330,15 +469,16 @@
 
       properties: {
         userTeamStatus: {
-          type: Object
+          type: Array
         },
 
         opposingTeamStatus: {
-          type: Object
+          type: Array
         },
 
         selectedAttribute: {
-          type: String
+          type: String,
+          value: null
         },
 
         selectedPolydexId: {
@@ -349,11 +489,17 @@
           type: Boolean,
           value: false,
           observer: '__waitingChanged'
+        },
+
+        loading: {
+          type: Boolean,
+          computed: '__computeLoading(userTeamStatus, opposingTeamStatus)',
+          observer: '__loadingChanged'
         }
       },
 
       observers: [
-        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting)',
+        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting, loading)',
         '__submitMove(selectedAttribute, selectedPolydexId)'
       ],
 
@@ -361,15 +507,41 @@
         'iron-resize': '__updateControlsPosition',
       },
 
+      __computeLoading: function(userTeamStatus, opposingTeamStatus) {
+        return !userTeamStatus ||
+            !opposingTeamStatus ||
+            !userTeamStatus.length ||
+            !opposingTeamStatus.length;
+      },
+
+      __loadingChanged: function(loading) {
+        if (loading) {
+          this.classList.add('loading');
+        } else {
+          this.classList.remove('loading');
+        }
+      },
+
       __updateControlsPosition: function() {
         this.deraf('update-controls-position', () => {
-          if (this.waiting) {
+          if (this.loading) {
+            // We are loading, so the controls should stay in their default
+            // position (which is offscreen).
+            return;
+          } else if (this.waiting) {
+            // Waiting means the controls should be flush with the bottom of
+            // the screen. Health is visible, and so is a message that indicates
+            // that we are waiting for the opponent's move.
             let controlsRect = this.$.controls.getBoundingClientRect();
             this.$.bottom.style.transform = `translateY(${controlsRect.height}px)`;
           } else if (this.selectedAttribute == null) {
+            // If the user has not yet selected an attribute, the controls
+            // obscure the selector for Polymon.
             let polymonsRect = this.$.polymons.getBoundingClientRect();
             this.$.bottom.style.transform = `translateY(${polymonsRect.height}px)`;
           } else if (this.$.bottom.style.transform) {
+            // Otherwise, there is no transform on the controls, so that the
+            // full control panel is visible to the user.
             this.$.bottom.style.transform = '';
           }
         });
@@ -399,6 +571,14 @@
         } else {
           this.classList.remove('waiting');
         }
+      },
+
+      __onInfoButtonTap: function() {
+        this.classList.add('zoom-to-opponent');
+      },
+
+      __onInfoReturnButtonTap: function() {
+        this.classList.remove('zoom-to-opponent');
       }
     });
   </script>

@@ -203,6 +203,29 @@ function ensureNotWaiting(db, userId, battleId) {
 }
 
 
+function assignBattleMaxRounds(db, battleId) {
+  return ensureBattleNotStarted(db, battleId)
+      .then(() => Promise.all([
+        db.ref(`/battles/${battleId}/initiatingUserId`).once('value'),
+        db.ref(`/battles/${battleId}/defendingUserId`).once('value'),
+      ]))
+      .then(snapshots => snapshots.map(snapshot => snapshot.val()))
+      .then(userIds => Promise.all([
+        db.ref(`/users/${userIds[0]}/team`).once('value'),
+        db.ref(`/users/${userIds[1]}/team`).once('value')
+      ]))
+      .then(snapshots => snapshots.map(snapshot => snapshot.val()))
+      .then(teams =>
+          Math.max(Object.keys(teams[0]).length, Object.keys(teams[1]).length))
+      .then(maxRounds => {
+        console.log(`Setting Battle ${battleId} Max Rounds to ${maxRounds}..`);
+        return Promise.all([
+          db.ref(`/battles/${battleId}/currentRound`).set(0),
+          db.ref(`/battles/${battleId}/maxRounds`).set(maxRounds)
+        ]);
+      });
+}
+
 
 /**
  * Initiates a new battle, with the provided user set as the initiating user.
@@ -231,33 +254,9 @@ function initiateBattle(db, userId) {
         return Promise.all([
           db.ref(`/battles/${battleId}/status/players/${userId}`).set({
             ready: true,
-            waiting: false
+            waiting: true
           }),
           db.ref(`/users/${userId}/player/activeBattleId`).set(battleId)
-        ]);
-      });
-}
-
-
-function assignBattleMaxRounds(db, battleId) {
-  return ensureBattleNotStarted(db, battleId)
-      .then(() => Promise.all([
-        db.ref(`/battles/${battleId}/initiatingUserId`).once('value'),
-        db.ref(`/battles/${battleId}/defendingUserId`).once('value'),
-      ]))
-      .then(snapshots => snapshots.map(snapshot => snapshot.val()))
-      .then(userIds => Promise.all([
-        db.ref(`/users/${userIds[0]}/team`).once('value'),
-        db.ref(`/users/${userIds[1]}/team`).once('value')
-      ]))
-      .then(snapshots => snapshots.map(snapshot => snapshot.val()))
-      .then(teams =>
-          Math.max(Object.keys(teams[0]).length, Object.keys(teams[1]).length))
-      .then(maxRounds => {
-        console.log(`Setting Battle ${battleId} Max Rounds to ${maxRounds}..`);
-        return Promise.all([
-          db.ref(`/battles/${battleId}/currentRound`).set(0),
-          db.ref(`/battles/${battleId}/maxRounds`).set(maxRounds)
         ]);
       });
 }
@@ -286,10 +285,14 @@ function joinBattle(db, userId, battleId) {
         ]);
       })
       .then(() => assignBattleMaxRounds(db, battleId))
-      .then(() => Promise.all([
+      .then(() => db.ref(`/battles/${battleId}/initiatingUserId`).once('value'))
+      .then(snapshot => snapshot.val())
+      .then(initiatingUserId => Promise.all([
         // NOTE(cdata): This will cause the battle to be considered started.
         db.ref(`/battles/${battleId}/startedAt`).set(Date.now()),
-        db.ref(`/battles/${battleId}/status/engaged`).set(true)
+        db.ref(`/battles/${battleId}/status/engaged`).set(true),
+        db.ref(`/battles/${battleId}/status/players/${initiatingUserId}/waiting`)
+            .set(false)
       ]));
 }
 
@@ -452,7 +455,7 @@ function finishBattle(db, battleId) {
  */
 function recordHeartbeat(db, userId, battleId) {
 
-  console.log('Recording heartbeat for User ${userId} in Battle ${battleId}..');
+  console.log(`Recording heartbeat for User ${userId} in Battle ${battleId}..`);
 
   return ensureHasActiveBattle(db, userId, battleId)
       .then(() => ensureBattleNotFinished(db, battleId))
