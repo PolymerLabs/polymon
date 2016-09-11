@@ -1,0 +1,1362 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="polymon-element.html">
+<dom-module id="polymon-battle-round-visualizer">
+  <template>
+    <style>
+      /**
+       * NOTE(cdata): The (many) keyframe animations that follow assume a common
+       * 10 second duration. Collectively they represent the animations of the
+       * battle visualization sequence. They have been coordinated by hand, so
+       * modify them with care.
+       */
+      @keyframes flash {
+        0% {
+          opacity: 0;
+        }
+
+        24.9% {
+          opacity: 0;
+        }
+
+        25% {
+          opacity: 0.75;
+        }
+
+        26.5% {
+          opacity: 0;
+        }
+
+        29.9% {
+          opacity: 0;
+        }
+
+        30% {
+          opacity: 1;
+        }
+
+        34% {
+          opacity: 0;
+        }
+
+        66.9% {
+          opacity: 0;
+        }
+
+        67% {
+          opacity: 1
+        }
+
+        72% {
+          opacity: 0;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(100%);
+        }
+
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes attackTop {
+        0% {
+          transform: translate(45%, 0);
+        }
+
+        25% {
+          transform: translate(47%, -4%);
+        }
+
+        25.5% {
+          transform: translate(-55%, 6%) scaleX(-1);
+        }
+
+        29.9% {
+          transform: translate(-57%, 8%)  scaleX(-1);
+        }
+
+        30% {
+          transform: translate(45%, -8%);
+        }
+
+        100% {
+          transform: translate(49%, -16%);
+        }
+      }
+
+
+      @keyframes attackBottom {
+        0% {
+          transform: translate(-45%, 10%) scaleX(-1);
+        }
+
+        25% {
+          transform: translate(-47%, 14%) scaleX(-1);
+        }
+
+        25.5% {
+          transform: translate(55%, 4%) scaleX(1);
+        }
+
+        29.9% {
+          transform: translate(57%, 2%)  scaleX(1);
+        }
+
+        30% {
+          transform: translate(-45%, 18%) scaleX(-1);
+        }
+
+        100% {
+          transform: translate(-49%, 26%) scaleX(-1);
+        }
+      }
+
+      @keyframes shudder {
+        0% {
+          transform: translateX(0);
+        }
+
+        25% {
+          transform: translateX(0);
+        }
+
+        25.25% {
+          transform: translateX(0.5%);
+        }
+
+        25.5% {
+          transform: translateX(-1%);
+        }
+
+        25.75% {
+          transform: translateX(1%);
+        }
+
+        26% {
+          transform: translateX(-2.5%);
+        }
+
+        26.25% {
+          transform: translateX(2.5%);
+        }
+
+        26.5% {
+          transform: translateX(-1%);
+        }
+
+        26.75% {
+          transform: translateX(1%);
+        }
+
+        27% {
+          transform: translateX(-0.5%);
+        }
+
+        27.25% {
+          transform: translateX(0.25%);
+        }
+
+        27.5% {
+          transform: translateX(0%);
+        }
+
+
+
+        30% {
+          transform: translateX(0);
+        }
+
+        30.25% {
+          transform: translateX(0.5%);
+        }
+
+        30.5% {
+          transform: translateX(-1%);
+        }
+
+        30.75% {
+          transform: translateX(1%);
+        }
+
+        31% {
+          transform: translateX(-2.5%);
+        }
+
+        31.25% {
+          transform: translateX(2.5%);
+        }
+
+        31.5% {
+          transform: translateX(-1%);
+        }
+
+        31.75% {
+          transform: translateX(1%);
+        }
+
+        32% {
+          transform: translateX(-0.5%);
+        }
+
+        32.25% {
+          transform: translateX(0.25%);
+        }
+
+        32.5% {
+          transform: translateX(0%);
+        }
+      }
+
+      @keyframes moveTop {
+        0% {
+          transform: translateX(-10000px);
+        }
+
+        25% {
+          transform: translateX(-10000px);
+        }
+
+        25.5% {
+          transform: translateX(0px);
+        }
+
+        100% {
+          transform: translateX(10px);
+        }
+      }
+
+      @keyframes moveBottom {
+        0% {
+          transform: translateX(-10000px);
+        }
+
+        30% {
+          transform: translateX(-10000px);
+        }
+
+        30.5% {
+          transform: translateX(0px);
+        }
+
+        100% {
+          transform: translateX(-10px);
+        }
+      }
+
+      @keyframes total {
+        0% {
+          transform: translateX(-10000px);
+        }
+
+        30% {
+          transform: translateX(-10000px);
+        }
+
+        30.5% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes unmodifiedTotalTickOne {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        38% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        40% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @keyframes unmodifiedTotalTickTwo {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        38% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        40% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        42% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @keyframes unmodifiedTotalTickThree {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        40% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        44% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @keyframes unmodifiedTotalTickFour {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        44% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes modifiedTotalTickOne {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        50% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        52% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes modifiedTotalTickFour {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        44% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        50% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        52% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes modifiedTotalTickFive {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        50% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        52% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes coverTop {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        10% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        11% {
+          transform: translateX(-100%);
+          opacity: 1;
+        }
+
+        11.1% {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+
+        89.9% {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+
+        90% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        90.1% {
+          transform: translateX(100%);
+          opacity: 1;
+        }
+
+        91.5% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes coverBottom {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        10% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        11% {
+          transform: translateX(100%);
+          opacity: 1;
+        }
+
+        11.1% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        89.9% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        90% {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+
+        90.1% {
+          transform: translateX(-100%);
+          opacity: 1;
+        }
+
+        91.5% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fateBottom {
+        0% {
+          transform: translate(200%, 25%);
+        }
+
+        40% {
+          transform: translate(200%, 25%);
+        }
+
+        45% {
+          transform: translate(5%, 25%);
+        }
+
+        100% {
+          transform: translate(-5%, 25%);
+        }
+      }
+
+      @keyframes fateTop {
+        0% {
+          transform: translate(-150%, -25%);
+        }
+
+        40% {
+          transform: translate(-150%, -25%);
+        }
+
+        45% {
+          transform: translate(-5%, -25%);
+        }
+
+        100% {
+          transform: translate(5%, -25%);
+        }
+      }
+
+      @keyframes breakdownTop {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        63% {
+          transform: translateX(0%);
+          opacity: 1;
+        }
+
+        68% {
+          transform: translateX(5%);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateX(5%);
+          opacity: 0;
+        }
+      }
+
+      @keyframes breakdownBottom {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        63% {
+          transform: translateX(0%);
+          opacity: 1;
+        }
+
+        68% {
+          transform: translateX(-5%);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateX(-5%);
+          opacity: 0;
+        }
+      }
+
+      @keyframes healthLostTop {
+        0% {
+          transform: translateX(5%);
+          opacity: 0;
+        }
+
+        66.9% {
+          transform: translateX(5%);
+          opacity: 0;
+        }
+
+        70% {
+          transform: translateX(4%);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateX(-5%);
+          opacity: 1;
+        }
+      }
+
+      @keyframes healthLostBottom {
+        0% {
+          transform: translateX(-5%);
+          opacity: 0;
+        }
+
+        66.9% {
+          transform: translateX(-5%);
+          opacity: 0;
+        }
+
+        70% {
+          transform: translateX(-4%);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateX(5%);
+          opacity: 1;
+        }
+      }
+
+      :host {
+        @apply --layout-fit;
+        background-color: #000;
+      }
+
+      :host(:not(.animating)) {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      :host(:not(.animating)) * {
+        animation-name: none;
+      }
+
+      #scene,
+      .screen,
+      .strike,
+      .image,
+      .move,
+      .cover,
+      .results .total,
+      .results .total > span,
+      .fate,
+      .health-lost,
+      .breakdown {
+        position: absolute;
+        transform-origin: center center;
+        animation-duration: 10s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+      }
+
+      #scene {
+        @apply --layout-fit;
+        overflow: hidden;
+        transform-origin: top center;
+        margin: auto;
+        animation-name: shudder;
+      }
+
+      .screen, .strike {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        animation-name: flash;
+      }
+
+      .screen {
+        background-color: #fff;
+        z-index: 2;
+      }
+
+      .strike {
+        background-color: #fff;
+        -webkit-clip-path: polygon(65% 100%, 50% 42.5%, 35% 0, 50% 57.5%, 65% 100%);
+        -moz-clip-path: polygon(65% 100%, 50% 42.5%, 35% 0, 50% 57.5%, 65% 100%);
+        clip-path: polygon(65% 100%, 50% 42.5%, 35% 0, 50% 57.5%, 65% 100%);
+        z-index: 1;
+      }
+
+      .image {
+        width: 100%;
+        height: 100%;
+        background-size: 300px;
+        background-repeat: no-repeat;
+        z-index: 2;
+      }
+
+      #top, .bottom {
+        position: relative;
+        overflow: hidden;
+      }
+
+      #top .image {
+        animation-name: attackTop;
+        background-image: url('https://cdn.rawgit.com/googlei18n/noto-emoji/master/svg/emoji_u1f405.svg');
+      }
+
+      #bottom .image {
+        animation-name: attackBottom;
+        background-image: url('https://cdn.rawgit.com/googlei18n/noto-emoji/master/svg/emoji_u1f410.svg');
+      }
+
+      #top, #bottom {
+        overflow: hidden;
+      }
+
+      #top {
+        height: 60%;
+        background-image:
+            linear-gradient(
+                #EA443D 0%,
+                #EA443D 20%,
+                #DE793A 20%,
+                #DE793A 35%,
+                #ECC041 35%,
+                #ECC041 45%,
+                #FEFAD2 45%,
+                #FEFAD2 55%,
+                #ECC041 55%,
+                #ECC041 65%,
+                #DE793A 65%,
+                #DE793A 80%,
+                #EA443D 80%,
+                #EA443D 100%);
+        -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 66.66666667%, 0 0);
+        -moz-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 66.66666667%, 0 0);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 66.66666667%, 0 0);
+      }
+
+      #bottom {
+        transform: translateY(-33.33333333%);
+        height: 60%;
+        background-image:
+            linear-gradient(
+                #0D61AC 0%,
+                #0D61AC 20%,
+                #1896D7 20%,
+                #1896D7 35%,
+                #6ACDF3 35%,
+                #6ACDF3 45%,
+                #F7FCFE 45%,
+                #F7FCFE 55%,
+                #6ACDF3 55%,
+                #6ACDF3 65%,
+                #1896D7 65%,
+                #1896D7 80%,
+                #0D61AC 80%,
+                #0D61AC 100%);
+        -webkit-clip-path: polygon(0 0, 100% 33.33333334%, 100% 100%, 0 100%, 0 0);
+        /* NOTE(cdata): Bug for Firefox support:
+         * https://bugzilla.mozilla.org/show_bug.cgi?id=1247229
+         * Curretly works behind a flag... */
+        -moz-clip-path: polygon(0 0, 100% 33.33333334%, 100% 100%, 0 100%, 0 0);
+        clip-path: polygon(0 0, 100% 33.33333334%, 100% 100%, 0 100%, 0 0);
+      }
+
+      /**
+       * NOTE(cdata): This is sort of a hack to make up for lack of full `clip-path`
+       * support in some browsers (notably Firefox). In those browsers, the diagonal
+       * line across the middle of the scene will not be clipped properly, so we cover
+       * it with a big empty space instead to create kind of a letter-boxing effect.
+       *
+       * This hack uses `clip-path` to make itself disappear in browsers that don't
+       * need it.
+       */
+      #bottom:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 33.33333334%;
+        background-color: #000;
+        -webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0, 0 0);
+        -moz-clip-path: polygon(0 0, 100% 33.33333334%, 100% 100%, 0 100%, 0 0);
+        clip-path: polygon(0 0, 100% 33.33333334%, 100% 100%, 0 100%, 0 0);
+      }
+
+      .speedline {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        animation-name: float;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+
+        z-index: 1;
+      }
+
+      .speedline:after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent transparent transparent currentColor;
+
+      }
+
+      .speedline.alt:after {
+        right: 0;
+        border-color: transparent currentColor transparent transparent;
+      }
+
+      .speedline.s1:after {
+        border-width: 1px 0 1px 150px;
+      }
+
+      .speedline.s1.alt:after {
+        border-width: 1px 150px 1px 0;
+      }
+
+      .speedline.s2:after {
+        border-width: 1px 0 1px 300px;
+      }
+
+      .speedline.s2.alt:after {
+        border-width: 1px 300px 1px 0;
+      }
+
+      .speedline.s3:after {
+        border-width: 2px 0 2px 600px;
+      }
+
+      .speedline.s3.alt:after {
+        border-width: 3px 600px 3px 0;
+      }
+
+
+
+      #top .speedline:nth-of-type(4n - 3):after {
+        color: #C2311E;
+      }
+
+      #top .speedline:nth-of-type(4n - 2):after {
+        color: #F1A02D;
+      }
+
+      #top .speedline:nth-of-type(4n - 1):after {
+        color: #C81E20;
+      }
+
+      #top .speedline:nth-of-type(4n):after {
+        color: #F68B2C;
+      }
+
+
+      #bottom .speedline:nth-of-type(4n - 3):after {
+        color: #0E44C0;
+      }
+
+      #bottom .speedline:nth-of-type(4n - 2):after {
+        color: #23D1EE;
+      }
+
+      #bottom .speedline:nth-of-type(4n - 1):after {
+        color: #126FCE;
+      }
+
+      #bottom .speedline:nth-of-type(4n):after {
+        color: #23CEEC;
+      }
+
+      .results {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      #top .results {
+        transform: rotate(18deg) translate(5%, 65%);
+      }
+
+      #bottom .results {
+        transform-origin: right;
+        transform: rotate(18deg) translate(-5%, 31.7777776%);
+      }
+
+      .results .move,
+      .health-lost {
+        font-size: 64px;
+        white-space: nowrap;
+        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.33);
+      }
+
+      #top .results .move {
+        animation-name: moveTop;
+        bottom: 0px;
+      }
+
+      #top .results.bonus .move:before {
+        content: 'BONUS +3';
+        display: block;
+        font-size: 20px;
+
+        margin-bottom: -14px;
+        margin-left: 80px;
+        text-align: left;
+      }
+
+      #bottom .results .move {
+        right: 0px;
+        animation-name: moveBottom;
+      }
+
+      #bottom .results.bonus .move:after {
+        content: 'BONUS +3';
+        display: block;
+        font-size: 20px;
+
+        margin-top: -14px;
+        margin-right: 80px;
+        text-align: right;
+      }
+
+      .results .total {
+        font-family: 'Bungee Inline';
+        font-size: 120px;
+        position: absolute;
+        color: rgba(0, 0, 0, 0.75);
+        text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.33);
+
+        animation-name: total;
+      }
+
+      .results .total > span:last-of-type {
+        position: relative;
+      }
+
+      .results .total > span:not(:nth-of-type(1)) {
+        opacity: 0;
+      }
+
+      .results.bonus .total > span:nth-of-type(1) {
+        animation-name: unmodifiedTotalTickOne;
+      }
+
+      .results.bonus .total > span:nth-of-type(2) {
+        animation-name: unmodifiedTotalTickTwo;
+      }
+
+      .results.bonus .total > span:nth-of-type(3) {
+        animation-name: unmodifiedTotalTickThree;
+      }
+
+      .results.bonus .total > span:nth-of-type(4) {
+        animation-name: unmodifiedTotalTickFour;
+      }
+
+      .results.modified:not(.bonus) .total > span:first-child {
+        animation-name: modifiedTotalTickOne;
+      }
+
+      .results.bonus.modified .total > span:nth-of-type(4) {
+        animation-name: modifiedTotalTickFour;
+      }
+
+      .results.modified .total > span:last-child {
+        animation-name: modifiedTotalTickFive;
+      }
+
+      #top .results .total {
+        left: 10%;
+        bottom: 30%;
+      }
+
+      #bottom .results .total {
+        right: 10%;
+        top: 30%;
+      }
+
+      .cover {
+        background-color: #000;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+      }
+
+      #top .cover {
+        animation-name: coverTop;
+      }
+
+      #bottom .cover {
+        animation-name: coverBottom;
+      }
+
+
+      .fate {
+        display: flex;
+        position: absolute;
+
+        top: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .fate > span {
+        vertical-align: middle;
+      }
+
+      .fate > span:first-child {
+        line-height: 40px;
+        margin-right: 4px;
+        font-size: 52px;
+        color: rgba(0, 0, 0, 0.75);
+        text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.33);
+      }
+
+      .fate > span:last-child {
+        display: inline-block;
+        min-width: 28px;
+        text-align: center;
+        position: relative;
+        font-size: 20px;
+        padding: 0.4em;
+        color: rgba(255, 255, 255, 0.9);
+        border-radius: 2px;
+        background-color: rgba(0, 0, 0, 0.75);
+      }
+
+      #bottom .fate {
+        align-items: flex-start;
+        justify-content: flex-end;
+        transform: translate(-5%, 20%);
+
+        animation-name: fateBottom;
+      }
+
+      #top .fate {
+        align-items: flex-end;
+        animation-name: fateTop;
+      }
+
+      .breakdown {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        animation-timing-function: ease-in;
+      }
+
+      #top .breakdown {
+        animation-name: breakdownTop;
+      }
+
+      #bottom .breakdown {
+        animation-name: breakdownBottom;
+      }
+
+      .health-lost {
+        display: flex;
+        font-size: 48px;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+      }
+
+      #top .health-lost {
+        align-items: flex-end;
+      }
+
+      .bottom-winner #top .health-lost {
+        animation-name: healthLostTop;
+      }
+
+      #top .health-lost > span {
+        margin-bottom: 0.25em;
+      }
+
+      #top-winner #bottom .health-lost {
+        animation-name: healthLostBottom;
+      }
+
+      #bottom .health-lost > span {
+        margin-top: 0.25em;
+      }
+
+    </style>
+
+    <!-- optional classes: bottom-winner, top-winner -->
+    <div id="scene" class$="[[__sceneClass(userResult, opponentResult)]]">
+      <div id="top">
+        <div class="image"></div>
+        <!-- optional classes: bonus, modified -->
+        <div class$="results [[__resultsClass(opponentResult)]]">
+          <div class="breakdown">
+            <span class="move">[[opponentResult.attributeName]] [[opponentResult.attributeValue]]</span>
+            <span class="total">
+              <span>[[opponentResult.attributeValue]]</span>
+              <template is="dom-repeat" items="[[opponentResult.scoreSequence]]" as="score">
+                <span>[[score]]</span>
+              </template>
+            </span>
+            <span class="fate">
+              <span>Fate</span>
+              <span>[[opponentResult.fate]]</span>
+            </span>
+          </div>
+          <div class="health-lost">
+            <span>[[opponentResult.healthDelta]] health</span>
+          </div>
+        </div>
+        <div class="cover"></div>
+      </div>
+      <div id="bottom">
+        <div class="image"></div>
+        <!-- optional classes: bonus, modified -->
+        <div class$="results [[__resultsClass(userResult)]]">
+          <div class="breakdown">
+            <span class="move">[[userResult.attributeName]] [[userResult.attributeValue]]</span>
+            <span class="total">
+              <span>[[userResult.attributeValue]]</span>
+              <template is="dom-repeat" items="[[userResult.scoreSequence]]" as="score">
+                <span>[[score]]</span>
+              </template>
+            </span>
+            <span class="fate">
+              <span>Fate</span>
+              <span>[[userResult.fate]]</span>
+            </span>
+          </div>
+          <div class="health-lost">
+            <span>[[userResult.healthDelta]] health</span>
+          </div>
+        </div>
+        <div class="cover"></div>
+      </div>
+      <div class="strike"></div>
+      <div class="screen"></div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-battle-round-visualizer',
+
+      behaviors: [
+        PolymonElement,
+        Polymer.IronResizableBehavior
+      ],
+
+      properties: {
+        round: {
+          type: Object
+        },
+
+        userId: {
+          type: String
+        },
+
+        opposingUserId: {
+          type: String
+        },
+
+        userResult: {
+          type: Object,
+          computed: '__computePlayerResult(userId, round, userTeamStatus, active)'
+        },
+
+        opponentResult: {
+          type: Object,
+          computed: '__computePlayerResult(opposingUserId, round, opponentTeamStatus, active)'
+        },
+
+        userTeamStatus: {
+          type: Object
+        },
+
+        opposingTeamStatus: {
+          type: Object
+        }
+      },
+
+      listeners: {
+        'iron-resize': '__updateMetrics',
+      },
+
+      play: function() {
+        return Promise.resolve();
+      },
+
+      __computePlayerResult: function(playerId, round, teamStatus, active) {
+        if (!active) {
+          return;
+        }
+
+        let playerMove = round[playerId];
+        let fate = (playerMove.randomModifier > 0 ? '+' : '') +
+            playerMove.randomModifier;
+        let healthDelta =
+            (playerMove.damageDelta > 0
+            ? '-'
+            : playerMove.damageDelta < 0
+            ? '+'
+            : '') + playerMove.damageDelta;
+
+        let attributeValue = -1;
+
+        for (let j = 0; j < teamStatus.length; ++j) {
+          let teamPosition = teamStatus[j];
+
+          if (teamPosition.polydexId === playerMove.polydexId) {
+            attributeValue =
+                teamPosition.polymon.stats[playerMove.attributeName];
+          }
+        }
+
+        let scoreSequence = [];
+
+        if (playerMove.gotBonus) {
+          for (let i = 0; i < 3; ++i) {
+            scoreSequence.push(playerMove.attributeValue + i + 1);
+          }
+        }
+
+        if (playerMove.randomModifier) {
+          scoreSequence.push(
+              scoreSequence[scoreSequence.length - 1] +
+              playerMove.randomModifier);
+        }
+
+        return Object.assign({
+          fate,
+          healthDelta,
+          attributeValue,
+          scoreSequence
+        }, playerMove);
+      },
+
+      __sceneClass: function(userResult, opponentResult) {
+        return userResult.damageDelta > opponentResult.damageDelta
+            ? 'top-winner'
+            : 'bottom-winner';
+      },
+
+      __resultsClass: function(result) {
+        var classes = [];
+
+        if (result.randomModifier !== 0) {
+          classes.push('modified');
+        }
+
+        if (result.gotBonus) {
+          classes.push('bonus');
+        }
+
+        return classes.join(' ');
+      },
+
+      __updateMetrics() {
+        this.deraf('update-metrics', () => {
+          var rect = this.$.scene.getBoundingClientRect();
+          var x1 = rect.width;
+          var y1 = 0;
+          var x2 = rect.width;
+          var y2 = rect.height * 0.2;
+
+          function dot(x1, y1, x2, y2) {
+            return x1 * x2 + y1 * y2;
+          }
+
+          function mag(x, y) {
+            return Math.sqrt(x * x + y * y);
+          }
+
+          var cosTheta = dot(x1, y1, x2, y2) / (mag(x1, y1) * mag(x2, y2));
+          var theta = Math.acos(cosTheta);
+          var degrees = theta * 180 / Math.PI;
+
+          var results = Polymer.dom(this.root).querySelectorAll('#scene .results');
+
+          results[0].style.transform =
+              'rotate(' + degrees + 'deg) translate(5%, -15.66666667%)';
+          results[1].style.transform =
+              'rotate(' + degrees + 'deg) translate(-5%, 31.77777776%)';
+        });
+      },
+
+      __populateSpeedLines: function() {
+        for (var i = 0; i < 30; ++i) {
+          var container = i < 15 ? this.$.top : this.$.bottom;
+          var index = Math.floor(Math.random() * 3) + 1;
+          var alt = Math.floor(Math.random() * 2);
+          var div = document.createElement('div');
+
+          div.classList.add('speedline');
+          div.classList.add('s' + index);
+
+          if (alt === 1) {
+            div.classList.add('alt');
+          }
+
+          div.style.animationDelay = Math.floor(Math.random() * -10) * 3 + 's';
+          div.style.animationDuration = (0.5 - (Math.random() * 0.4)) + 's';
+
+          Polymer.dom(container).insertBefore(div, container.firstElementChild);
+        }
+      }
+    });
+  </script>
+</dom-module>

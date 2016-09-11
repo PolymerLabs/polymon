@@ -66,42 +66,18 @@
         background-color: transparent;
       }
 
-      @keyframes background-slide {
-        0% {
-          background-position-y: 0px;
-        }
-
-        100% {
-          background-position-y: -39px;
-        }
-      }
-
-      :host(.iron-selected):after {
-        top: 4px;
-        left: 4px;
-        right: 4px;
-        bottom: 8px;
+      :host(.iron-selected) {
+        background-color: var(--polymon-button-border);
       }
 
       :host(.iron-selected):before {
-        background-image: linear-gradient(0deg,
-            #FC0E1B 0%,
-            #FC0E1B 16.666666%,
-            #FD9927 16.666666%,
-            #FD9927 33.333334%,
-            #FEFD38 33.333334%,
-            #FEFD38 50%,
-            #33FD2F 50%,
-            #33FD2F 66.666666%,
-            #1E98FB 66.666666%,
-            #1E98FB 83.333334%,
-            #6632FB 83.333334%,
-            #6632FB 100%);
+        background-color: #fff;
+      }
 
-        animation-name: background-slide;
-        animation-duration: 1s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
+      :host(.iron-selected) #content {
+        text-shadow: none;
+        background-image: none;
+        color: #fff;
       }
 
       #content {

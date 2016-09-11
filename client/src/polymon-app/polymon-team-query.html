@@ -10,12 +10,6 @@
         order-by-child="polymonId"
         data="{{teamData}}">
     </firebase-query>
-    <firebase-query
-        app-name="polymon"
-        path="[[__computeBattleRoundsPath(battleId)]]"
-        order-by-child="index"
-        data="{{battleRoundsData}}">
-    </firebase-query>
   </template>
   <script>
     Polymer({
@@ -36,7 +30,7 @@
           type: Array
         },
 
-        battleRoundsData: {
+        battleRounds: {
           type: Array
         },
 
@@ -54,7 +48,7 @@
 
       observers: [
         '__updatePolymons(teamData.*)',
-        '__updateBattleStatus(polymons, battleRoundsData.length)'
+        '__updateBattleStatus(polymons, battleRounds.length)'
       ],
 
       hostAttributes: {
@@ -67,10 +61,6 @@
 
       __computeTeamPath: function(userId) {
         return `/users/${userId}/team`;
-      },
-
-      __computeBattleRoundsPath: function(battleId) {
-        return `/battles/${battleId}/status/rounds`;
       },
 
       __updatePolymons: function() {
@@ -90,18 +80,18 @@
       },
 
       __updateBattleStatus: function() {
-        if (!this.userId || !this.polymons || !this.battleRoundsData) {
+        if (!this.userId || !this.polymons || !this.battleRounds) {
           this._setBattleStatus([]);
           return;
         }
 
-        let uncheckedMoves = this.battleRoundsData.map(battleRound =>
+        let uncheckedMoves = this.battleRounds.map(battleRound =>
             battleRound[this.userId]);
         let battleStatus = this.teamData.map((teamItem, index) => {
           let movePerformed = false;
 
           for (let i = 0; i < uncheckedMoves.length; ++i) {
-            if (uncheckedMoves[i].polydexId === teamItem.$key) {
+            if (uncheckedMoves[i].polydexId === teamItem.polydexId) {
               movePerformed = true;
               uncheckedMoves.splice(i, 1);
               break;

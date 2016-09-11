@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="polymon-initiate-battle-screen.html">
 <link rel="import" href="polymon-battle-field.html">
+<link rel="import" href="polymon-battle-round-visualizer.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-styles.html">
@@ -36,14 +37,24 @@
         data="{{battleData}}">
     </firebase-document>
 
+    <firebase-query
+        app-name="polymon"
+        path="[[battleRoundsPath]]"
+        order-by-child="index"
+        data="{{battleRounds}}">
+    </firebase-query>
+
     <polymon-team-query
         user-id="[[user.uid]]"
         battle-id="[[userData.player.activeBattleId]]"
+        battle-rounds="[[battleRounds]]"
         battle-status="{{userTeamStatus}}">
     </polymon-team-query>
+
     <polymon-team-query
         user-id="[[opposingUserId]]"
         battle-id="[[userData.player.activeBattleId]]"
+        battle-rounds="[[battleRounds]]"
         battle-status="{{opposingTeamStatus}}">
     </polymon-team-query>
 
@@ -57,10 +68,17 @@
     <polymon-battle-field
         user-team-status="[[userTeamStatus]]"
         opposing-team-status="[[opposingTeamStatus]]"
-        waiting="[[playerState.waiting]]"
+        waiting="[[waiting]]"
         on-polymon-move="__onPolymonMove">
     </polymon-battle-field>
 
+    <polymon-battle-round-visualizer
+        id="roundVisualizer"
+        user-id="[[user.uid]]"
+        opposing-user-id="[[opposingUserID]]"
+        user-team-status="[[userTeamStatus]]"
+        opposing-team-status="[[opposingTeamStatus]]">
+    </polymon-battle-round-visualizer>
   </template>
   <script>
     Polymer({
@@ -83,6 +101,11 @@
           computed: '__computeBattlePath(userData.player.activeBattleId)'
         },
 
+        battleRoundsPath: {
+          type: String,
+          computed: '__computeBattleRoundsPath(battlePath)'
+        },
+
         battleData: {
           type: Object,
           value: null
@@ -97,12 +120,20 @@
           type: Boolean,
           value: false,
           readOnly: true
+        },
+
+        waiting: {
+          type: Boolean,
+          value: true,
+          readOnly: true
         }
       },
 
       observers: [
         '__activeBattleIdChanged(userData.player.activeBattleId)',
-        '__battleDataChanged(battleData)'
+        '__battleDataChanged(battleData)',
+        '__battleStateChanged(battleData.engaged, playerState.waiting)',
+        '__battleRoundsChanged(battleRounds.length)'
       ],
 
       __computePlayerState: function() {
@@ -117,6 +148,14 @@
         }
 
         return this.battlePath;
+      },
+
+      __computeBattleRoundsPath: function(battlePath) {
+        if (battlePath != null) {
+          return `${battlePath}/rounds`;
+        }
+
+        return this.battleRoundsPath;
       },
 
       __computeOpposingUserId: function() {
@@ -137,10 +176,18 @@
 
         if (activeBattleId != null) {
           this.__heartbeatInterval = setInterval(() => {
-            this.__sendHeartbeat();
-          }, 5000);
+            // TODO(cdata): Add this back in when we build functionality to
+            // detect game abandonment and / or distracted players..
+            // this.__sendHeartbeat();
+          }, 15000);
         } else {
           this.__battleDataChanged(this.battleData);
+        }
+      },
+
+      __battleStateChanged: function(engaged, waiting) {
+        if (engaged && waiting) {
+          this._setWaiting(true);
         }
       },
 
@@ -169,6 +216,11 @@
       },
 
       __onPolymonMove: function(event) {
+        if (this.waiting) {
+          // NOTE(cdata): This should also be guarded against in Firebase,
+          // but we can opportunistically pre-empt it here as well..
+          return;
+        }
         let {polydexId, attributeName} = event.detail;
         firebase.app('polymon').database()
             .ref(`/users/${this.user.uid}/battleQueue`).push({
@@ -177,6 +229,18 @@
               polydexId,
               attributeName
             });
+      },
+
+      __battleRoundsChanged: function() {
+        this._setWaiting(true);
+
+        this.deraf('battle-rounds-changed', function() {
+          // this.$.roundVisualizer.play(
+          //     this.battleRounds[this.battleRounds.length - 1])
+          //         .then(function() {
+          //           this._setWaiting(false);
+          //         }.bind(this));
+        });
       }
     });
   </script>

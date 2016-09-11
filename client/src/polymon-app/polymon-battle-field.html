@@ -94,8 +94,8 @@
 
       .island {
         position: absolute;
-        background-image: url(/images/polymon_sprite_sheet.svg);
-        background-size: 1280px 896px;
+        background-image: url(/images/polymon_sprite_sheet.png);
+        background-size: 1280px 1280px;
         background-repeat: no-repeat;
         width: 640px;
         height: 384px;
@@ -127,6 +127,11 @@
 
       .island > polymon-portrait {
         position: absolute;
+        transition: opacity 0.3s;
+      }
+
+      .island > polymon-portrait:not(.caught) {
+        opacity: 0;
       }
 
       .user.island > :nth-of-type(1) {
@@ -187,6 +192,8 @@
         background: rgba(255, 255, 255, 0.25);
 
         cursor: pointer;
+        -webkit-user-select: none;
+        user-select: none;
 
         transition: transform 0.3s, opacity 0.3s;
         transform: translateY(-10px);
@@ -278,6 +285,7 @@
 
         border-radius: 16px;
         font-size: 16px;
+        line-height: 16px;
         background-color: #fff;
         color: #fff;
         visibility: hidden;
@@ -344,6 +352,9 @@
         border-radius: 8px;
         padding: 8px;
         margin: 0px 4px;
+        line-height: 16px;
+        -webkit-user-select: none;
+        user-select: none;
       }
 
       #opponent-stats .attributes > span {
@@ -368,12 +379,30 @@
         margin-bottom: 0;
       }
 
+      #opponent-stats .attributes[data-move-performed] {
+        opacity: 0;
+      }
+
 
       @media (max-width: 350px) {
+        #opponent-stats {
+          background-color: rgba(255, 255, 255, 0.6);
+        }
+
         #opponent-stats .attributes {
           margin: 0px;
-          border-radius: 0px;
+          background-color: transparent;
           flex: 1;
+        }
+      }
+
+      @media (max-height: 350px) {
+        #opponent-stats {
+          top: 5%;
+        }
+
+        :host(.zoom-to-opponent) .landscape .background {
+          transform: translateY(140px) scale(1);
         }
       }
     </style>

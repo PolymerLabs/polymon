@@ -99,6 +99,8 @@
   },
   {
     "shortName": "cat-face-with-tears-of-joy",
+    "name": "Meownicat",
+    "flavor": "Meownicat is a byproduct of unchecked Unicode experiments. It is perceptive and smells faintly of blueberries.",
     "codePoint": "1f639",
     "spriteIndex": 3,
     "stats": {

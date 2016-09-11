@@ -97,6 +97,10 @@
         active="{{engageBattleRouteActive}}">
     </app-route>
 
+    <polymon-qr-code-scanner
+        id="scanner">
+    </polymon-qr-code-scanner>
+
     <polymon-map
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
@@ -110,6 +114,7 @@
         on-request-login="attemptLogin">
     </polymon-start-screen>
 
+    <!-- TODO(cdata): Consider moving this to the map screen? -->
     <polymon-caught-screen
         active="[[caughtRouteActive]]"
         data="[[caughtData]]"
@@ -133,10 +138,6 @@
       <polymon-battle-tutorial>
       </polymon-battle-tutorial>
     </polymon-panel>
-
-    <polymon-qr-code-scanner
-        id="scanner">
-    </polymon-qr-code-scanner>
 
     <polymon-battle-screen
         route="{{route}}"

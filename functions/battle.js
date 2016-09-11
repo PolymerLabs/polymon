@@ -37,6 +37,7 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
 
   let moveValueOne = baseValueOne;
   let moveValueTwo = baseValueTwo;
+  let gotBonus = false;
 
   switch (moveOne.attributeName) {
     case 'attack':
@@ -45,6 +46,7 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
           break;
         case 'focus':
           moveValueOne += bonus;
+          gotBonus = true;
           break;
         case 'counter':
           moveValueTwo += bonus;
@@ -58,17 +60,22 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
         case 'focus':
           // NOTE(cdata): In the Focus -> Focus condition, the greater focus
           // gets to heal.
-          return moveValueOne > moveValueTwo
-              ? moveValueOne - moveValueTwo
-              : 0;
+          return [
+            moveValueOne > moveValueTwo
+                ? moveValueOne - moveValueTwo
+                : 0,
+            false
+          ];
         case 'counter':
           moveValueOne += bonus;
+          gotBonus = true;
           break;
       }
     case 'counter':
       switch (moveTwo.attributeName) {
         case 'attack':
           moveValueOne += bonus;
+          gotBonus = true;
           break;
         case 'focus':
           moveValueTwo += bonsu;
@@ -78,9 +85,12 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
       }
   }
 
-  return moveValueOne < moveValueTwo
+  return [
+    moveValueOne < moveValueTwo
       ? moveValueTwo - moveValueOne
-      : 0;
+      : 0,
+    gotBonus
+  ];
 }
 
 
@@ -304,6 +314,8 @@ function joinBattle(db, userId, battleId) {
  * information.
  */
 function performMove(db, userId, battleId, polydexId, attributeName) {
+  // TODO(cdata): assert that the latest move has already been processed.
+  // Otherwise the battle system might get confused by thrashy UI.
 
   // TODO(cdata): assert shape of the move here? Maybe not necessary because
   // the database rules will validate it when we try to set it.
@@ -374,19 +386,26 @@ function resolveCurrentRound(db, battleId) {
           console.log('Comparing user moves..');
 
           // Step 4: Compute the damage for each user based on the chosen move.
-          initiatingUserMove.damageDelta =
+          const [initiatingUserDamageDelta, intiatingUserGotBonus] =
               compareMoves(
                   initiatingUserMove, initiatingUserPolymon,
                   defendingUserMove,  defendingUserPolymon);
-          defendingUserMove.damageDelta =
+          const [defendingUserDamageDelta, defendingUserGotBonus] =
               compareMoves(
                   defendingUserMove,  defendingUserPolymon,
                   initiatingUserMove, initiatingUserPolymon);
+
+          initiatingUserMove.damageDelta = initiatingUserDamageDelta;
+          initiatingUserMove.gotBonus = initiatingUserGotBonus;
+
+          defendingUserMove.damageDelta = defendingUserDamageDelta;
+          defendingUserMove.gotBonus = defendingUserGotBonus;
 
           console.log(`User ${battle.initiatingUserId} damage delta: ${initiatingUserMove.damageDelta}`);
           console.log(`User ${battle.defendingUserId} damage delta: ${defendingUserMove.damageDelta}`);
 
           return db.ref(`/battles/${battleId}/status/rounds`).push({
+            index: currentRound,
             [battle.initiatingUserId]: initiatingUserMove,
             [battle.defendingUserId]: defendingUserMove
           }).then(() => Promise.all([

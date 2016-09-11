@@ -35,7 +35,8 @@
 
         caught: {
           type: Boolean,
-          value: false
+          value: false,
+          observer: '__caughtChanged'
         },
 
         size: {
@@ -68,7 +69,7 @@
           this.style.width = `${size}px`;
           this.style.height = `${size}px`;
           this.style.borderRadius = `${size / 2}px`;
-          this.$.image.style.backgroundSize = `${size * 10}px ${size * 7}px`;
+          this.$.image.style.backgroundSize = `${size * 10}px ${size * 10}px`;
           this.$.image.style.backgroundPosition = `${left}px ${top}px`;
         });
       },
