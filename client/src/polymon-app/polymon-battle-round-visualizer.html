@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-portrait.html">
 <dom-module id="polymon-battle-round-visualizer">
   <template>
     <style>
@@ -274,7 +275,7 @@
         }
       }
 
-      @keyframes unmodifiedTotalTickOne {
+      @keyframes basicTotalTickOne {
         0% {
           transform: translateY(0);
           opacity: 1;
@@ -296,7 +297,7 @@
         }
       }
 
-      @keyframes unmodifiedTotalTickTwo {
+      @keyframes basicTotalTickTwo {
         0% {
           transform: translateY(0);
           opacity: 0;
@@ -323,7 +324,7 @@
         }
       }
 
-      @keyframes unmodifiedTotalTickThree {
+      @keyframes basicTotalTickThree {
         0% {
           transform: translateY(0);
           opacity: 0;
@@ -350,7 +351,7 @@
         }
       }
 
-      @keyframes unmodifiedTotalTickFour {
+      @keyframes basicTotalTickFour {
         0% {
           transform: translateY(0);
           opacity: 0;
@@ -671,13 +672,13 @@
         background-color: #000;
       }
 
-      :host(:not(.animating)) {
+      :host(:not(.active)) {
         opacity: 0;
         pointer-events: none;
       }
 
-      :host(:not(.animating)) * {
-        animation-name: none;
+      :host(:not(.active)) * {
+        animation-name: none !important;
       }
 
       #scene,
@@ -695,7 +696,7 @@
         transform-origin: center center;
         animation-duration: 10s;
         animation-timing-function: linear;
-        animation-iteration-count: infinite;
+        /*animation-iteration-count: infinite;*/
       }
 
       #scene {
@@ -743,12 +744,12 @@
 
       #top .image {
         animation-name: attackTop;
-        background-image: url('https://cdn.rawgit.com/googlei18n/noto-emoji/master/svg/emoji_u1f405.svg');
+        /*background-image: url('https://cdn.rawgit.com/googlei18n/noto-emoji/master/svg/emoji_u1f405.svg');*/
       }
 
       #bottom .image {
         animation-name: attackBottom;
-        background-image: url('https://cdn.rawgit.com/googlei18n/noto-emoji/master/svg/emoji_u1f410.svg');
+        /*background-image: url('https://cdn.rawgit.com/googlei18n/noto-emoji/master/svg/emoji_u1f410.svg');*/
       }
 
       #top, #bottom {
@@ -880,16 +881,15 @@
       }
 
 
-
-      #top .speedline:nth-of-type(4n - 3):after {
+      #top .speedline:nth-of-type(4n -3):after {
         color: #C2311E;
       }
 
-      #top .speedline:nth-of-type(4n - 2):after {
+      #top .speedline:nth-of-type(4n -2):after {
         color: #F1A02D;
       }
 
-      #top .speedline:nth-of-type(4n - 1):after {
+      #top .speedline:nth-of-type(4n -1):after {
         color: #C81E20;
       }
 
@@ -898,15 +898,15 @@
       }
 
 
-      #bottom .speedline:nth-of-type(4n - 3):after {
+      #bottom .speedline:nth-of-type(4n -3):after {
         color: #0E44C0;
       }
 
-      #bottom .speedline:nth-of-type(4n - 2):after {
+      #bottom .speedline:nth-of-type(4n -2):after {
         color: #23D1EE;
       }
 
-      #bottom .speedline:nth-of-type(4n - 1):after {
+      #bottom .speedline:nth-of-type(4n -1):after {
         color: #126FCE;
       }
 
@@ -989,19 +989,19 @@
       }
 
       .results.bonus .total > span:nth-of-type(1) {
-        animation-name: unmodifiedTotalTickOne;
+        animation-name: basicTotalTickOne;
       }
 
       .results.bonus .total > span:nth-of-type(2) {
-        animation-name: unmodifiedTotalTickTwo;
+        animation-name: basicTotalTickTwo;
       }
 
       .results.bonus .total > span:nth-of-type(3) {
-        animation-name: unmodifiedTotalTickThree;
+        animation-name: basicTotalTickThree;
       }
 
       .results.bonus .total > span:nth-of-type(4) {
-        animation-name: unmodifiedTotalTickFour;
+        animation-name: basicTotalTickFour;
       }
 
       .results.modified:not(.bonus) .total > span:first-child {
@@ -1012,7 +1012,7 @@
         animation-name: modifiedTotalTickFour;
       }
 
-      .results.modified .total > span:last-child {
+      .results.modified .total > span:last-of-type {
         animation-name: modifiedTotalTickFive;
       }
 
@@ -1129,7 +1129,7 @@
         margin-bottom: 0.25em;
       }
 
-      #top-winner #bottom .health-lost {
+      .top-winner #bottom .health-lost {
         animation-name: healthLostBottom;
       }
 
@@ -1142,7 +1142,13 @@
     <!-- optional classes: bottom-winner, top-winner -->
     <div id="scene" class$="[[__sceneClass(userResult, opponentResult)]]">
       <div id="top">
-        <div class="image"></div>
+        <div class="image">
+          <polymon-portrait
+              polymon="[[opponentResult.polymon]]"
+              size="300"
+              caught>
+          </polymon-portrait>
+        </div>
         <!-- optional classes: bonus, modified -->
         <div class$="results [[__resultsClass(opponentResult)]]">
           <div class="breakdown">
@@ -1165,7 +1171,13 @@
         <div class="cover"></div>
       </div>
       <div id="bottom">
-        <div class="image"></div>
+        <div class="image">
+          <polymon-portrait
+              polymon="[[userResult.polymon]]"
+              size="300"
+              caught>
+          </polymon-portrait>
+        </div>
         <!-- optional classes: bonus, modified -->
         <div class$="results [[__resultsClass(userResult)]]">
           <div class="breakdown">
@@ -1202,7 +1214,8 @@
 
       properties: {
         round: {
-          type: Object
+          type: Object,
+          readOnly: true
         },
 
         userId: {
@@ -1215,12 +1228,12 @@
 
         userResult: {
           type: Object,
-          computed: '__computePlayerResult(userId, round, userTeamStatus, active)'
+          computed: '__computePlayerResult(userId, round, userTeamStatus)'
         },
 
         opponentResult: {
           type: Object,
-          computed: '__computePlayerResult(opposingUserId, round, opponentTeamStatus, active)'
+          computed: '__computePlayerResult(opposingUserId, round, opposingTeamStatus)'
         },
 
         userTeamStatus: {
@@ -1236,14 +1249,46 @@
         'iron-resize': '__updateMetrics',
       },
 
-      play: function() {
-        return Promise.resolve();
+      ready: function() {
+        this.__populateSpeedLines();
       },
 
-      __computePlayerResult: function(playerId, round, teamStatus, active) {
-        if (!active) {
-          return;
-        }
+      play: function(round) {
+        let lastVisualizationPlays =
+            this.__visualizationPlays || Promise.resolve();
+
+
+        let visualizationPlays = lastVisualizationPlays.then(() =>
+            new Promise(resolve => {
+              let onAnimationend = event => {
+                console.log('GOT ANIMATION END', event.animationName);
+                if (/shudder/.test(event.animationName)) {
+                  return;
+                }
+
+                console.log('FINISHING');
+                this.active = false;
+                this.$.scene.removeEventListener('animationend', onAnimationend);
+                this.$.scene.removeEventListener('webkitanimationend', onAnimationend);
+                resolve();
+              };
+
+              this.$.scene.addEventListener('animationend', onAnimationend);
+              this.$.scene.addEventListener('webkitanimationend', onAnimationend);
+
+              this._setRound(round);
+              this.active = true;
+
+              Polymer.dom(this.root).removeChild(this.$.scene);
+
+              Polymer.dom(this.root).appendChild(this.$.scene);
+            }));
+
+        return this.__visualizationPlays = visualizationPlays;
+      },
+
+      __computePlayerResult: function(playerId, round, teamStatus) {
+        console.log('COMPUTING PLAYER MOVE', playerId);
 
         let playerMove = round[playerId];
         let fate = (playerMove.randomModifier > 0 ? '+' : '') +
@@ -1256,11 +1301,13 @@
             : '') + playerMove.damageDelta;
 
         let attributeValue = -1;
+        let polymon = null;
 
         for (let j = 0; j < teamStatus.length; ++j) {
           let teamPosition = teamStatus[j];
 
           if (teamPosition.polydexId === playerMove.polydexId) {
+            polymon = teamPosition.polymon;
             attributeValue =
                 teamPosition.polymon.stats[playerMove.attributeName];
           }
@@ -1270,21 +1317,31 @@
 
         if (playerMove.gotBonus) {
           for (let i = 0; i < 3; ++i) {
-            scoreSequence.push(playerMove.attributeValue + i + 1);
+            scoreSequence.push(attributeValue + i + 1);
           }
         }
 
         if (playerMove.randomModifier) {
-          scoreSequence.push(
-              scoreSequence[scoreSequence.length - 1] +
-              playerMove.randomModifier);
+          let modifier;
+
+          if (playerMove.gotBonus) {
+            modifier = scoreSequence[scoreSequence.length - 1] +
+                playerMove.randomModifier;
+          } else {
+            modifier = attributeValue +  playerMove.randomModifier;
+          }
+
+          scoreSequence.push(modifier);
         }
+
+        console.log(fate, healthDelta, attributeValue, scoreSequence);
 
         return Object.assign({
           fate,
           healthDelta,
           attributeValue,
-          scoreSequence
+          scoreSequence,
+          polymon
         }, playerMove);
       },
 
@@ -1328,7 +1385,7 @@
           var theta = Math.acos(cosTheta);
           var degrees = theta * 180 / Math.PI;
 
-          var results = Polymer.dom(this.root).querySelectorAll('#scene .results');
+          var results = Polymer.dom(this.$.scene).querySelectorAll('#scene .results');
 
           results[0].style.transform =
               'rotate(' + degrees + 'deg) translate(5%, -15.66666667%)';
@@ -1338,14 +1395,19 @@
       },
 
       __populateSpeedLines: function() {
+        let top = Polymer.dom(this.$.top);
+        let bottom = Polymer.dom(this.$.bottom);
+
         for (var i = 0; i < 30; ++i) {
-          var container = i < 15 ? this.$.top : this.$.bottom;
+          var container = i < 15 ? top : bottom;
           var index = Math.floor(Math.random() * 3) + 1;
           var alt = Math.floor(Math.random() * 2);
           var div = document.createElement('div');
 
-          div.classList.add('speedline');
-          div.classList.add('s' + index);
+          container.insertBefore(div, container.firstElementChild);
+
+          Polymer.dom(div).classList.add('speedline');
+          Polymer.dom(div).classList.add('s' + index);
 
           if (alt === 1) {
             div.classList.add('alt');
@@ -1354,7 +1416,6 @@
           div.style.animationDelay = Math.floor(Math.random() * -10) * 3 + 's';
           div.style.animationDuration = (0.5 - (Math.random() * 0.4)) + 's';
 
-          Polymer.dom(container).insertBefore(div, container.firstElementChild);
         }
       }
     });

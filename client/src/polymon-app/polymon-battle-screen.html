@@ -75,7 +75,7 @@
     <polymon-battle-round-visualizer
         id="roundVisualizer"
         user-id="[[user.uid]]"
-        opposing-user-id="[[opposingUserID]]"
+        opposing-user-id="[[opposingUserId]]"
         user-team-status="[[userTeamStatus]]"
         opposing-team-status="[[opposingTeamStatus]]">
     </polymon-battle-round-visualizer>
@@ -124,7 +124,7 @@
 
         waiting: {
           type: Boolean,
-          value: true,
+          value: false,
           readOnly: true
         }
       },
@@ -188,6 +188,8 @@
       __battleStateChanged: function(engaged, waiting) {
         if (engaged && waiting) {
           this._setWaiting(true);
+        } else {
+          this._setWaiting(false);
         }
       },
 
@@ -232,15 +234,20 @@
       },
 
       __battleRoundsChanged: function() {
-        this._setWaiting(true);
+        if (this.battleRounds && this.battleRounds.length === 0) {
+          this._setWaiting(false);
+        } else {
+          this._setWaiting(true);
 
-        this.deraf('battle-rounds-changed', function() {
-          // this.$.roundVisualizer.play(
-          //     this.battleRounds[this.battleRounds.length - 1])
-          //         .then(function() {
-          //           this._setWaiting(false);
-          //         }.bind(this));
-        });
+          this.deraf('battle-rounds-changed', () => {
+            this.$.roundVisualizer.play(
+                this.battleRounds[this.battleRounds.length - 1])
+                    .then(function() {
+                      console.log('DONE');
+                      this._setWaiting(false);
+                    }.bind(this));
+          });
+        }
       }
     });
   </script>

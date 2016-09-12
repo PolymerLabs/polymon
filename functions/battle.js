@@ -39,6 +39,9 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
   let moveValueTwo = baseValueTwo;
   let gotBonus = false;
 
+  console.log(`Move one: ${moveOne.attributeName} ${moveValueOne}`);
+  console.log(`Move two: ${moveTwo.attributeName} ${moveValueTwo}`);
+
   switch (moveOne.attributeName) {
     case 'attack':
       switch (moveTwo.attributeName) {
@@ -52,6 +55,7 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
           moveValueTwo += bonus;
           break;
       }
+      break;
     case 'focus':
       switch (moveTwo.attributeName) {
         case 'attack':
@@ -60,6 +64,7 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
         case 'focus':
           // NOTE(cdata): In the Focus -> Focus condition, the greater focus
           // gets to heal.
+          console.log('Heal condition!')
           return [
             moveValueOne > moveValueTwo
                 ? moveValueOne - moveValueTwo
@@ -71,6 +76,7 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
           gotBonus = true;
           break;
       }
+      break;
     case 'counter':
       switch (moveTwo.attributeName) {
         case 'attack':
@@ -83,7 +89,12 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
         case 'counter':
           break;
       }
+      break;
   }
+
+  console.log(`Move one ${gotBonus ? 'received' : 'did not receive'} bonus.`);
+  console.log(`Move one final value: ${moveValueOne}`);
+  console.log(`Move two final value: ${moveValueTwo}`);
 
   return [
     moveValueOne < moveValueTwo
@@ -386,7 +397,7 @@ function resolveCurrentRound(db, battleId) {
           console.log('Comparing user moves..');
 
           // Step 4: Compute the damage for each user based on the chosen move.
-          const [initiatingUserDamageDelta, intiatingUserGotBonus] =
+          const [initiatingUserDamageDelta, initiatingUserGotBonus] =
               compareMoves(
                   initiatingUserMove, initiatingUserPolymon,
                   defendingUserMove,  defendingUserPolymon);

@@ -536,6 +536,11 @@
         'iron-resize': '__updateControlsPosition',
       },
 
+      resetControls: function() {
+        this.selectedPolydexId = null;
+        this.selectedAttribute = null;
+      },
+
       __computeLoading: function(userTeamStatus, opposingTeamStatus) {
         return !userTeamStatus ||
             !opposingTeamStatus ||
@@ -597,6 +602,7 @@
       __waitingChanged: function() {
         if (this.waiting) {
           this.classList.add('waiting');
+          this.resetControls();
         } else {
           this.classList.remove('waiting');
         }
