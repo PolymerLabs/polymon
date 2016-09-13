@@ -5,6 +5,7 @@
 <link rel="import" href="polymon-initiate-battle-screen.html">
 <link rel="import" href="polymon-battle-field.html">
 <link rel="import" href="polymon-battle-round-visualizer.html">
+<link rel="import" href="polymon-battle-victory-screen.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-styles.html">
@@ -46,14 +47,14 @@
 
     <polymon-team-query
         user-id="[[user.uid]]"
-        battle-id="[[userData.player.activeBattleId]]"
+        battle-id="[[battleId]]"
         battle-rounds="[[battleRounds]]"
         battle-status="{{userTeamStatus}}">
     </polymon-team-query>
 
     <polymon-team-query
         user-id="[[opposingUserId]]"
-        battle-id="[[userData.player.activeBattleId]]"
+        battle-id="[[battleId]]"
         battle-rounds="[[battleRounds]]"
         battle-status="{{opposingTeamStatus}}">
     </polymon-team-query>
@@ -68,9 +69,19 @@
     <polymon-battle-field
         user-team-status="[[userTeamStatus]]"
         opposing-team-status="[[opposingTeamStatus]]"
+        user-state="[[userState]]"
+        opponent-state="[[opponentState]]"
+        active="[[active]]"
         waiting="[[waiting]]"
+        battle-finished="[[battleFinished]]"
         on-polymon-move="__onPolymonMove">
     </polymon-battle-field>
+
+    <polymon-battle-victory-screen
+        active="[[battleFinished]]"
+        user="[[user]]"
+        battle-data="[[battleData]]">
+    </polymon-battle-victory-screen>
 
     <polymon-battle-round-visualizer
         id="roundVisualizer"
@@ -79,6 +90,7 @@
         user-team-status="[[userTeamStatus]]"
         opposing-team-status="[[opposingTeamStatus]]">
     </polymon-battle-round-visualizer>
+
   </template>
   <script>
     Polymer({
@@ -87,18 +99,27 @@
       behaviors: [PolymonElement],
 
       properties: {
+        battleId: {
+          type: String
+        },
+
         userData: {
           type: Object
         },
 
-        playerState: {
+        userState: {
           type: Object,
-          computed: '__computePlayerState(battleData.players.*)'
+          readOnly: true
+        },
+
+        opponentState: {
+          type: Object,
+          readOnly: true
         },
 
         battlePath: {
           type: String,
-          computed: '__computeBattlePath(userData.player.activeBattleId)'
+          computed: '__computeBattlePath(battleId)'
         },
 
         battleRoundsPath: {
@@ -126,25 +147,46 @@
           type: Boolean,
           value: false,
           readOnly: true
+        },
+
+        battleFinished: {
+          type: Boolean,
+          computed: '__computeBattleFinished(battleData.*)'
         }
       },
 
       observers: [
         '__activeBattleIdChanged(userData.player.activeBattleId)',
-        '__battleDataChanged(battleData)',
-        '__battleStateChanged(battleData.engaged, playerState.waiting)',
-        '__battleRoundsChanged(battleRounds.length)'
+        '__battleDataChanged(active, battleData)',
+        '__battleStateChanged(battleData.engaged, userState.waiting)',
+        '__battleRoundsChanged(battleRounds.length)',
+        '__updatePlayerState(battleData.players.*, opposingUserId)'
       ],
 
-      __computePlayerState: function() {
-        if (this.battleData && this.battleData.players) {
-          return this.battleData.players[this.user.uid];
-        }
+      __updatePlayerState: function() {
+        this.deraf('update-player-status', () => {
+          if (this.battleData && this.battleData.players) {
+            this._setUserState(this.battleData.players[this.user.uid]);
+
+            if (this.opposingUserId) {
+              this._setOpponentState(
+                  this.battleData.players[this.opposingUserId]);
+            }
+          }
+        });
       },
 
-      __computeBattlePath: function(activeBattleId) {
-        if (activeBattleId != null) {
-          return `/battles/${activeBattleId}/status`;
+      __computeBattleFinished: function() {
+        if (this.battleData && this.battleData.winningUserId) {
+          return true;
+        }
+
+        return false;
+      },
+
+      __computeBattlePath: function(battleId) {
+        if (battleId != null) {
+          return `/battles/${battleId}/status`;
         }
 
         return this.battlePath;
@@ -193,19 +235,17 @@
         }
       },
 
-      __battleDataChanged: function(battleData) {
-        if (this.active &&
-            (battleData == null ||
-             battleData.engaged == null ||
-             battleData.winningUserId != null)) {
-          window.history.replaceState({}, '', '/');
-          this.fire('location-changed', {}, {node: window});
-        } else if (battleData && battleData.engaged != null) {
-          // NOTE(cdata): This controls the visibility of the QR code screen
-          // that is used to share a battle with another player so that they
-          // can join it:
-          this._setInitiatingBattle(battleData.engaged === false);
-        }
+      __battleDataChanged: function() {
+        this.deraf('battle-data-changed', () => {
+          let {active, battleData} = this;
+
+          if (battleData && battleData.engaged != null) {
+            // NOTE(cdata): This controls the visibility of the QR code screen
+            // that is used to share a battle with another player so that they
+            // can join it:
+            this._setInitiatingBattle(active && battleData.engaged === false);
+          }
+        });
       },
 
       __sendHeartbeat: function() {

@@ -1,11 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-portrait.html">
 <dom-module id="polymon-battle-round-visualizer">
   <template>
-    <style>
+    <style include="active-fade-up">
       /**
        * NOTE(cdata): The (many) keyframe animations that follow assume a common
        * 10 second duration. Collectively they represent the animations of the
@@ -1261,12 +1262,10 @@
         let visualizationPlays = lastVisualizationPlays.then(() =>
             new Promise(resolve => {
               let onAnimationend = event => {
-                console.log('GOT ANIMATION END', event.animationName);
                 if (/shudder/.test(event.animationName)) {
                   return;
                 }
 
-                console.log('FINISHING');
                 this.active = false;
                 this.$.scene.removeEventListener('animationend', onAnimationend);
                 this.$.scene.removeEventListener('webkitanimationend', onAnimationend);
@@ -1288,8 +1287,6 @@
       },
 
       __computePlayerResult: function(playerId, round, teamStatus) {
-        console.log('COMPUTING PLAYER MOVE', playerId);
-
         let playerMove = round[playerId];
         let fate = (playerMove.randomModifier > 0 ? '+' : '') +
             playerMove.randomModifier;
@@ -1333,8 +1330,6 @@
 
           scoreSequence.push(modifier);
         }
-
-        console.log(fate, healthDelta, attributeValue, scoreSequence);
 
         return Object.assign({
           fate,

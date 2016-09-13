@@ -67,12 +67,13 @@
         },
 
         "status": {
-          ".read": "root.child('users').child(auth.uid).child('player/activeBattleId').val() === $battle",
+          ".read": "auth.uid === data.parent().child('initiatingUserId').val() || auth.uid === data.parent().child('defendingUserId').val()",
 
           "players": {
             "$userId": {
               "ready": {},
-              "waiting": {}
+              "waiting": {},
+              "health": {}
             }
           },
 
@@ -83,6 +84,7 @@
               "$user": {
                 "index": {},
                 "polydexId": {},
+                "gotBonus": {},
                 "attributeName": {},
                 "randomModifier": {},
                 "damageDelta": {}

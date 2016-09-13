@@ -84,7 +84,7 @@ function compareMoves(moveOne, polymonOne, moveTwo, polymonTwo) {
           gotBonus = true;
           break;
         case 'focus':
-          moveValueTwo += bonsu;
+          moveValueTwo += bonus;
           break;
         case 'counter':
           break;
@@ -242,8 +242,21 @@ function assignBattleMaxRounds(db, battleId) {
         console.log(`Setting Battle ${battleId} Max Rounds to ${maxRounds}..`);
         return Promise.all([
           db.ref(`/battles/${battleId}/currentRound`).set(0),
-          db.ref(`/battles/${battleId}/maxRounds`).set(maxRounds)
+          db.ref(`/battles/${battleId}/maxRounds`).set(maxRounds - 1)
         ]);
+      });
+}
+
+
+function userTakesDamage(db, battleId, userId, damage) {
+  let playerHealthPath = `/battles/${battleId}/status/players/${userId}/health`;
+
+  return db.ref(playerHealthPath).once('value')
+      .then(snapshot => snapshot.val())
+      .then(health => {
+        let newHealth = health - damage;
+        return db.ref(playerHealthPath).set(health - damage)
+            .then(() => newHealth);
       });
 }
 
@@ -275,7 +288,8 @@ function initiateBattle(db, userId) {
         return Promise.all([
           db.ref(`/battles/${battleId}/status/players/${userId}`).set({
             ready: true,
-            waiting: true
+            waiting: true,
+            health: 15
           }),
           db.ref(`/users/${userId}/player/activeBattleId`).set(battleId)
         ]);
@@ -300,7 +314,8 @@ function joinBattle(db, userId, battleId) {
           db.ref(`/battles/${battleId}/defendingUserId`).set(userId),
           db.ref(`/battles/${battleId}/status/players/${userId}`).set({
             ready: true,
-            waiting: false
+            waiting: false,
+            health: 15
           }),
           recordHeartbeat(db, userId, battleId)
         ]);
@@ -336,6 +351,7 @@ function performMove(db, userId, battleId, polydexId, attributeName) {
 
   // TODO(cdata): assert that the chosen Polymon is in the user's team.
 
+
   return ensureHasActiveBattle(db, userId, battleId)
       .then(() => ensureNotWaiting(db, userId, battleId))
       .then(() => ensureBattleNotFinished(db, battleId))
@@ -356,6 +372,9 @@ function performMove(db, userId, battleId, polydexId, attributeName) {
 
 
 function resolveCurrentRound(db, battleId) {
+  // TODO(cdata): refactor this whole function; it's getting really difficult to
+  // read...
+
   return db.ref(`/battles/${battleId}`).once('value')
       .then(snapshot => snapshot.val())
       .then(battle => Promise.all([
@@ -367,7 +386,7 @@ function resolveCurrentRound(db, battleId) {
             db, battle.defendingUserId, battleId, battle.currentRound)
       ]))
       .then(results => {
-        let [battle, initiatingUserMove, defendingUserMove] = results;
+        const [battle, initiatingUserMove, defendingUserMove] = results;
 
         if (initiatingUserMove == null || defendingUserMove == null) {
           // NOTE(cdata): This implies that we do not yet have moves for the
@@ -377,7 +396,8 @@ function resolveCurrentRound(db, battleId) {
         }
 
         const currentRound = battle.currentRound;
-        const lastRound = battle.maxRounds - 1;
+        const lastRound = battle.maxRounds;
+        const {initiatingUserId, defendingUserId} = battle;
 
         console.log(`Resolving round ${currentRound} of ${lastRound}..`);
 
@@ -388,9 +408,9 @@ function resolveCurrentRound(db, battleId) {
         return Promise.all([
           // Step 3: Look up the chosen Polymon for each user.
           getUserPolymon(
-              db, battle.initiatingUserId, initiatingUserMove.polydexId),
+              db, initiatingUserId, initiatingUserMove.polydexId),
           getUserPolymon(
-              db, battle.defendingUserId, defendingUserMove.polydexId)
+              db, defendingUserId, defendingUserMove.polydexId)
         ]).then(polymons => {
           const [initiatingUserPolymon, defendingUserPolymon] = polymons;
 
@@ -412,22 +432,37 @@ function resolveCurrentRound(db, battleId) {
           defendingUserMove.damageDelta = defendingUserDamageDelta;
           defendingUserMove.gotBonus = defendingUserGotBonus;
 
-          console.log(`User ${battle.initiatingUserId} damage delta: ${initiatingUserMove.damageDelta}`);
-          console.log(`User ${battle.defendingUserId} damage delta: ${defendingUserMove.damageDelta}`);
+          console.log(`User ${initiatingUserId} damage delta: ${initiatingUserMove.damageDelta}`);
+          console.log(`User ${defendingUserId} damage delta: ${defendingUserMove.damageDelta}`);
 
           return db.ref(`/battles/${battleId}/status/rounds`).push({
             index: currentRound,
             [battle.initiatingUserId]: initiatingUserMove,
             [battle.defendingUserId]: defendingUserMove
           }).then(() => Promise.all([
-            db.ref(`/battles/${battleId}/status/players/${battle.initiatingUserId}/waiting`).set(false),
-            db.ref(`/battles/${battleId}/status/players/${battle.defendingUserId}/waiting`).set(false)
+            db.ref(`/battles/${battleId}/status/players/${initiatingUserId}/waiting`)
+                .set(false),
+            db.ref(`/battles/${battleId}/status/players/${defendingUserId}/waiting`)
+                .set(false)
+          ])).then(() => Promise.all([
+            userTakesDamage(db, battleId, initiatingUserId, initiatingUserDamageDelta),
+            userTakesDamage(db, battleId, defendingUserId, defendingUserDamageDelta)
           ]));
         })
-        // Step 5: Check if we just completed the last round.
-        .then(() => currentRound < lastRound
-            ? db.ref(`/battles/${battleId}/currentRound`).set(currentRound + 1)
-            : finishBattle(db, battleId));
+        // Step 5: Check if we just completed the last round, or if someone's
+        // health dropped below 1.
+        .then(healths => {
+          let [initiatingUserHealth, defendingUserHealth] = healths;
+
+          if (currentRound === lastRound ||
+              initiatingUserHealth <= 0 ||
+              defendingUserHealth <= 0) {
+            return finishBattle(db, battleId);
+          }
+
+          return db.ref(`/battles/${battleId}/currentRound`)
+              .set(currentRound + 1);
+        });
       });
 }
 
@@ -442,6 +477,9 @@ function finishBattle(db, battleId) {
         const { initiatingUserId, defendingUserId } = battle;
 
         console.log(`Finishing Battle ${battleId}`);
+
+        // TODO(cdata): Now we can just check the player's health, which is
+        // being aggregated over time by the `resolveCurrentRound` function.
 
         const [ initiatingUserDamage, defendingUserDamage ] =
             Object.keys(battle.status.rounds)

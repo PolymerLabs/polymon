@@ -94,6 +94,7 @@
     <app-route
         pattern="/battle/engage/:id"
         route="{{route}}"
+        data="{{engageBattleData}}"
         active="{{engageBattleRouteActive}}">
     </app-route>
 
@@ -140,9 +141,9 @@
     </polymon-panel>
 
     <polymon-battle-screen
-        route="{{route}}"
         active="[[engageBattleRouteActive]]"
         user="[[user]]"
+        battle-id="[[engageBattleData.id]]"
         user-data="{{userData}}">
     </polymon-battle-screen>
 

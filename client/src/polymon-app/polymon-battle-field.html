@@ -46,15 +46,21 @@
         transform: translateY(-10px);
       }
 
-      :host(.zoom-to-opponent) #top {
+      :host(.battle-finished) .info-button,
+      :host(.loading) .info-button {
+        opacity: 0;
+      }
+
+      :host(.active.zoom-to-opponent) #top {
         opacity: 1;
         transform: translateY(0);
         pointer-events: all;
       }
 
-      :host(.loading) #bottom {
+      :host(.loading) #bottom,
+      :host(.battle-finished) #bottom {
         transition: none;
-        transform: translateY(600px);
+        transform: translateY(600px) !important;
       }
 
       :host(.waiting) #status .waiting-text {
@@ -205,10 +211,12 @@
         pointer-events: none;
       }
 
-      #bottom {
+      :host(.active) #bottom {
         pointer-events: all;
+      }
+
+      #bottom {
         transition: transform 0.3s;
-        /*transition-delay: 0.2s;*/
         position: absolute;
         width: 100%;
         bottom: 0;
@@ -218,18 +226,38 @@
         background-color: rgba(255, 255, 255, 0.6);
       }
 
-      #status {
+      #status,
+      #opponent-status {
         padding: 10px;
-        font-size: 30px;
-        line-height: 30px;
+        font-size: 40px;
+        line-height: 40px;
         @apply --layout-horizontal;
         justify-content: space-between;
         align-items: flex-end;
       }
 
-      #status .health {
+      .health {
         color: #EA443D;
         text-shadow: 0px 1px 0px #C81E20;
+      }
+
+      #status .health {
+        text-align: right;
+      }
+
+      #status .health :not(:last-child) {
+        margin-left: 8px;
+      }
+
+      #opponent-status .health :not(:last-child) {
+        margin-right: 8px;
+      }
+
+      .subtitle {
+        display: block;
+        text-shadow: none;
+        font-size: 10px;
+        line-height: 10px;
       }
 
       #status .waiting-text {
@@ -240,10 +268,6 @@
         visibility: hidden;
       }
 
-
-      #status .health :first-child {
-        margin-right: 8px;
-      }
 
       #attributes,
       #polymons {
@@ -264,6 +288,10 @@
 
       #polymons {
         justify-content: space-around;
+      }
+
+      #polymons > polymon-portrait:not(.caught) {
+        display: none;
       }
 
       #panel h2 {
@@ -332,6 +360,10 @@
         @apply --layout-horizontal;
         flex: 1;
         align-items: flex-end;
+      }
+
+      #opponent-status {
+
       }
 
       #opponent-stats {
@@ -433,6 +465,9 @@
     <!-- TODO(cdata): This whole thing should probably be its own element -->
     <section id="ui">
       <div id="top">
+        <section id="opponent-status">
+          <span class="health"><span class="subtitle">Opponent health</span><span>❤</span><span>[[opponentState.health]]</span></span>
+        </section>
         <section id="opponent-stats">
           <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
             <div class="attributes" data-move-performed$="[[teamPosition.movePerformed]]">
@@ -450,7 +485,7 @@
         <div id="panel">
           <div id="status">
             <span class="waiting-text">Waiting for opponent...</span>
-            <span class="health"><span>❤</span><span>20</span></span>
+            <span class="health"><span>❤</span><span>[[userState.health]]</span><span class="subtitle">Your health</span></span>
           </div>
           <div id="controls">
             <iron-selector
@@ -497,6 +532,14 @@
       ],
 
       properties: {
+        userState: {
+          type: Object
+        },
+
+        opponentState: {
+          type: Object
+        },
+
         userTeamStatus: {
           type: Array
         },
@@ -524,6 +567,11 @@
           type: Boolean,
           computed: '__computeLoading(userTeamStatus, opposingTeamStatus)',
           observer: '__loadingChanged'
+        },
+
+        battleFinished: {
+          type: Boolean,
+          observer: '__battleFinishedChanged'
         }
       },
 
@@ -553,6 +601,14 @@
           this.classList.add('loading');
         } else {
           this.classList.remove('loading');
+        }
+      },
+
+      __battleFinishedChanged: function(battleFinished) {
+        if (battleFinished) {
+          this.classList.add('battle-finished');
+        } else {
+          this.classList.remove('battle-finished');
         }
       },
 
