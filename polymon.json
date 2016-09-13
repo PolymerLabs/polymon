@@ -3,10 +3,11 @@
     "name": "Cooptoo",
     "shortName": "goat",
     "codePoint": "1f410",
+    "spriteIndex": 5,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 5,
+      "focus": 2,
+      "counter": 1
     },
     "flavor": "One time it tried to chew through a closed shadow root. Now it mostly prefers script tags."
   },
@@ -14,10 +15,11 @@
     "name": "Ferdinoms",
     "shortName": "dancer",
     "codePoint": "1f483",
+    "spriteIndex": 4,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 3,
+      "focus": 5,
+      "counter": 2
     },
     "flavor": "And those who were seen dancing were thought to be insane by those who could not hear the music."
   },
@@ -25,10 +27,11 @@
     "name": "Octorvel",
     "shortName": "octopus",
     "codePoint": "1f419",
+    "spriteIndex": 7,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 4,
+      "focus": 1,
+      "counter": 3
     },
     "flavor": "It will jump at the opportunity to share its deep wisdom. It likes to share for long periods of time."
   },
@@ -36,238 +39,84 @@
     "name": "Tiscript",
     "shortName": "tiger",
     "codePoint": "1f405",
+    "spriteIndex": 5,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 5,
+      "focus": 1,
+      "counter": 3
     },
     "flavor": "When hunting, it will stalk prey with sound typings before anything else."
   },
   {
-    "shortName": "penguin",
-    "codePoint": "1f427",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "pile-of-poo",
-    "codePoint": "1f4a9",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "ram",
-    "codePoint": "1f40f",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "snake",
-    "codePoint": "1f40d",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "turtle",
-    "codePoint": "1f422",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "honeybee",
-    "codePoint": "1f41d",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
     "shortName": "boar",
     "codePoint": "1f417",
+    "spriteIndex": 1,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "whale",
-    "codePoint": "1f40b",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 5,
+      "focus": 2,
+      "counter": 2
     }
   },
   {
     "shortName": "monkey",
     "codePoint": "1f412",
+    "spriteIndex": 6,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "slice-of-pizza",
-    "codePoint": "1f355",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "rabbit",
-    "codePoint": "1f407",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "pig",
-    "codePoint": "1f416",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "horse",
-    "codePoint": "1f40e",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "rat",
-    "codePoint": "1f400",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "name": "Bootooth",
-    "shortName": "ghost",
-    "codePoint": "1f47b",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    },
-    "flavor": "Pairs of Bootooth have been known to exchange ideas over thin air."
-  },
-  {
-    "shortName": "first-quarter-moon-with-face",
-    "codePoint": "1f31b",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "moyai",
-    "codePoint": "1f5ff",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "ship",
-    "codePoint": "1f6a2",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 4,
+      "focus": 2,
+      "counter": 4
     }
   },
   {
     "shortName": "cactus",
     "codePoint": "1f335",
+    "spriteIndex": 2,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 1,
+      "focus": 3,
+      "counter": 5
     }
   },
   {
     "shortName": "steaming-bowl",
     "codePoint": "1f35c",
+    "spriteIndex": 8,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "snail",
-    "codePoint": "1f40c",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 4,
+      "focus": 1,
+      "counter": 4
     }
   },
   {
     "shortName": "koala",
     "codePoint": "1f428",
+    "spriteIndex": 12,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 2,
+      "focus": 3,
+      "counter": 4
     }
   },
   {
     "shortName": "cat-face-with-tears-of-joy",
+    "name": "Meownicat",
+    "flavor": "Meownicat is a byproduct of unchecked Unicode experiments. It is perceptive and smells faintly of blueberries.",
     "codePoint": "1f639",
+    "spriteIndex": 3,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 4,
+      "focus": 4,
+      "counter": 2
     }
   },
   {
     "shortName": "baby-chick",
     "codePoint": "1f424",
+    "spriteIndex": 0,
     "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
-    }
-  },
-  {
-    "shortName": "elephant",
-    "codePoint": "1f418",
-    "stats": {
-      "attack": 10,
-      "defend": 10,
-      "counter": 10
+      "attack": 1,
+      "focus": 1,
+      "counter": 5
     }
   }
 ]

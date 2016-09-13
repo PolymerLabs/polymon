@@ -1,0 +1,123 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-qr-code.html">
+<dom-module id="polymon-initiate-battle-screen">
+  <template>
+    <style include="active-fade-up">
+      :host {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        color: var(--polymon-blue);
+        padding: 8px;
+
+        z-index: 2;
+
+        background-color: #000;
+      }
+
+      :host > section {
+        flex: 1;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+      }
+
+      h1 {
+        font-weight: normal;
+        font-size: 2.5em;
+        font-family: var(--polymon-headline-font-family);
+        margin-top: 10px;
+        margin-bottom: 50px;
+      }
+
+      h2 {
+        font-weight: normal;
+        margin-top: 50px;
+      }
+
+
+      polymon-qr-code {
+        display: block;
+        border: 32px solid var(--polymon-blue);
+        border-radius: 8px;
+      }
+
+      polymon-button {
+        flex: 0;
+        width: 100%;
+      }
+
+
+      @media (max-height: 640px) {
+        h1 {
+          margin-bottom: 20px;
+        }
+
+        h2 {
+          margin-top: 20px;
+        }
+      }
+    </style>
+
+    <section>
+      <h1>Battle Code</h1>
+      <polymon-qr-code
+          size="7"
+          margin="2"
+          data="[[battleCode]]">
+      </polymon-qr-code>
+      <h2>Scan to Join</h2>
+    </section>
+
+    <polymon-button id="cancel" class="alt">Cancel</polymon-button>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-initiate-battle-screen',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        battleId: {
+          type: String
+        },
+
+        battleCode: {
+          type: String,
+          computed: '__computeBattleCode(battleId)'
+        },
+
+        userData: {
+          type: Object
+        }
+      },
+
+      listeners: {
+        'cancel.tap': '__attemptBattleCancel'
+      },
+
+      __computeBattleCode: function(activeBattleId) {
+        // TODO(cdata): format these as URLs so that we can use Physical Web
+        // beacons and copy-paste-able links?
+        if (activeBattleId) {
+          return `battle.${activeBattleId}`;
+        }
+
+        return this.battleCode;
+      },
+
+
+      __attemptBattleCancel: function() {
+        firebase.app('polymon').database()
+            .ref(`/users/${this.user.uid}/battleQueue`).push({
+              action: 'withdraw',
+              battleId: this.userData.player.activeBattleId,
+              createdAt: Date.now()
+            });
+      },
+    });
+  </script>
+</dom-module>

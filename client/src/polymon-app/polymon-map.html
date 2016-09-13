@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-qr-code-scanner.html">
+<link rel="import" href="polymon-qr-code-scanner-proxy.html">
 <link rel="import" href="polymon-button.html">
 <dom-module id="polymon-map">
   <template>
@@ -15,12 +15,12 @@
         opacity: 0.5;
       }
 
-      :host([active]) {
+      :host(.active) {
         -webkit-filter: saturate(100%);
         opacity: 1;
       }
 
-      :host([active]) #controls {
+      :host(.active) #controls {
         transition-delay: 0.3s;
         transform: translateY(0px);
       }
@@ -37,6 +37,10 @@
         transition: transform 0.3s;
         transition-delay: 0s;
         transform: translateY(100px);
+      }
+
+      #controls a {
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
       }
 
       #controls > :last-child {
@@ -61,10 +65,10 @@
         active="{{scanRouteActive}}">
     </app-route>
 
-    <polymon-qr-code-scanner
+    <polymon-qr-code-scanner-proxy
         return-to="[[route.prefix]]"
         active="[[scanRouteActive]]">
-    </polymon-qr-code-scanner>
+    </polymon-qr-code-scanner-proxy>
 
     <google-map
         disable-default-ui

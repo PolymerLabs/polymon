@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-user-media.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-film-strip.html">
 <link rel="import" href="third-party/jsqrcode.html">
+<link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <dom-module id="polymon-qr-code-scanner">
   <template>
@@ -19,15 +20,16 @@
         pointer-events: none;
         transform: translateY(10px);
         transition: transform 0.3s, opacity 0.15s;
+        z-index: 1;
       }
 
-      :host([active]) {
+      :host(.active) {
         opacity: 1;
         pointer-events: all;
         transform: translateY(0);
       }
 
-      :host([active]) #warning {
+      :host(.active) #warning {
         opacity: 1;
         transform: translateY(-10px);
       }
@@ -64,9 +66,13 @@
       #cancel {
         width: 100%;
       }
+
+      a {
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+      }
     </style>
     <span id="warning">
-      Please enable your camera so that Polymon can scan for QR codes!
+      Please enable your camera in order to scan for QR codes!
     </span>
     <section id="camera">
       <meat-scope-devices
@@ -96,15 +102,12 @@
     Polymer({
       is: 'polymon-qr-code-scanner',
 
-      properties: {
-        active: {
-          type: Boolean,
-          reflectToAttribute: true,
-          value: false
-        },
+      behaviors: [PolymonElement],
 
+      properties: {
         returnTo: {
-          type: String
+          type: String,
+          notify: true
         },
 
         scanning: {
@@ -124,6 +127,37 @@
         '__cameraChanged(camera, hasMultipleCameras)',
         '__activeChanged(active)'
       ],
+
+      get ownerHost() {
+        let root = Polymer.dom(this).getOwnerRoot();
+
+        return (root && root.host) || document;
+      },
+
+      attached: function() {
+        this.__ownerHost = this.ownerHost;
+        this.listen(this.__ownerHost,
+            'polymon-qr-code-scanner-activate', '__onActivateRequest');
+        this.listen(this.__ownerHost,
+            'polymon-qr-code-scanner-deactivate', '__onDeactivateRequest');
+      },
+
+      detached: function() {
+        this.unlisten(this.__ownerHost,
+            'polymon-qr-code-scanner-activate', '__onActivateRequest');
+        this.unlisten(this.__ownerHost,
+            'polymon-qr-code-scanner-deactivate', '__onDeactivateRequest')
+        this.__ownerHost = null;
+      },
+
+      __onActivateRequest: function(event) {
+        this.returnTo = event.detail.returnTo;
+        this.active = true;
+      },
+
+      __onDeactivateRequest: function(event) {
+        this.active = false;
+      },
 
       __activeChanged: function() {
         this.debounce('activeChanged', () => {
@@ -166,9 +200,12 @@
             return;
           }
 
-          self.__scanForQrCode().then(code => {
-            console.log('QR Code Data:', code);
+          self.__scanForQrCode().then(data => {
+            console.log('QR Code Data:', data);
+            let [type, code] = data.split('.');
+
             self.fire('polymon-code', {
+              type,
               code,
               continueTo: self.returnTo
             });

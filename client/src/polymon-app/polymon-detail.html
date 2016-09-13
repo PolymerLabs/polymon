@@ -12,6 +12,7 @@
         right: 2px;
         bottom: 2px;
         overflow: hidden;
+        border-radius: 6px;
 
         pointer-events: none;
         opacity: 0;
@@ -20,7 +21,6 @@
         transition: opacity 0s;
         transition-delay: 0.5s;
 
-        --polymon-portrait-size: 256px;
         --polymon-portrait-background: transparent;
 
         box-sizing: border-box;
@@ -30,28 +30,28 @@
         align-items: center;
       }
 
-      :host([active]) {
+      :host(.active) {
         pointer-events: all;
         opacity: 1;
         transition-delay: 0s;
       }
 
-      :host([active][open]) #background {
+      :host(.active.open) #background {
         transform: scale(22);
         background-color: #eee;
       }
 
-      :host([active]:not([open])) #portrait {
+      :host(.active:not(.open)) #portrait {
         transition: none;
       }
 
-      :host([active][open]) #portrait {
+      :host(.active.open) #portrait {
         transform: translate(0, 0) scale(1) !important;
         transition-delay: 0.2s;
       }
 
-      :host([active]) #info,
-      :host([active]) #controls {
+      :host(.active) #info,
+      :host(.active) #controls {
         transition-delay: 0.3s;
         transform: translateY(0);
         opacity: 1;
@@ -113,16 +113,20 @@
       }
 
       #stats > h1 {
+        font-family: 'Bungee Inline';
         font-size: 2.5em;
         margin: 0 0 0.5em;
         color: #444;
+        font-weight: normal;
       }
 
       #stats > h2 {
         margin: 0 0 0.25em 0;
+        font-weight: normal;
       }
 
       #flavor {
+        font-family: sans-serif;
         font-style: italic;
         margin: 0 24px 1em;
         color: #444;
@@ -149,7 +153,7 @@
         text-shadow: 0 1px 0 #a31733;
       }
 
-      .defend {
+      .focus {
         color: #2BA8DE;
         text-shadow: 0 1px 0 #09537E;
       }
@@ -161,30 +165,32 @@
 
       @media (max-height: 600px) {
         :host {
-          --polymon-portrait-size: 200px;
+          /* TODO(cdata): Add this back in somehow for shorter screens
+           * e.g., iPhone 5 */
+          /*--polymon-portrait-size: 200px;*/
         }
       }
 
       @media (min-width: 500px) {
-        :host([active][open]) #background {
+        :host(.active.open) #background {
           transform: scale(30);
         }
       }
 
       @media (min-width: 750px) {
-        :host([active][open]) #background {
+        :host(.active.open) #background {
           transform: scale(35);
         }
       }
 
       @media (min-width: 1000px) {
-        :host([active][open]) #background {
+        :host(.active.open) #background {
           transform: scale(50);
         }
       }
 
       @media (min-width: 1500px) {
-        :host([active][open]) #background {
+        :host(.active.open) #background {
           transform: scale(70);
         }
       }
@@ -202,7 +208,8 @@
       <polymon-portrait
           id="portrait"
           polymon="[[polymon]]"
-          caught="[[caught]]">
+          caught="[[caught]]"
+          size="256">
       </polymon-portrait>
     </section>
 
@@ -210,7 +217,7 @@
       <section id="stats">
         <h1>[[__infoText(polymon.name, caught)]]</h1>
         <h2 class="attack">Attack: <span>[[__infoText(polymon.stats.attack, caught)]]</span></h2>
-        <h2 class="defend">Defend: <span>[[__infoText(polymon.stats.defend, caught)]]</span></h2>
+        <h2 class="focus">Focus: <span>[[__infoText(polymon.stats.focus, caught)]]</span></h2>
         <h2 class="counter">Counter: <span>[[__infoText(polymon.stats.counter, caught)]]</span></h2>
       </section>
       <section id="flavor">
@@ -250,9 +257,9 @@
 
         open: {
           type: Boolean,
-          reflectToAttribute: true,
           readOnly: true,
-          value: false
+          value: false,
+          observer: '__openChanged'
         }
       },
 
@@ -263,6 +270,14 @@
       get originElement() {
         let root = Polymer.dom(this).getOwnerRoot() || document;
         return Polymer.dom(root).querySelector(`#${this.polymonId}`);
+      },
+
+      __openChanged: function() {
+        if (this.open) {
+          this.classList.add('open');
+        } else {
+          this.classList.remove('open');
+        }
       },
 
       __openOrClose: function() {

@@ -1,0 +1,107 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-button.html">
+
+<dom-module id="polymon-battle-victory-screen">
+  <template>
+    <style include="active-fade-up">
+      :host {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        box-sizing: border-box;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition-delay: 1s;
+      }
+
+      :host(.active) {
+        transition-delay: 0s;
+      }
+
+      #results {
+        flex: 0 1 auto;
+        padding: 16px;
+        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 0.75);
+        text-align: center;
+        @apply --layout-vertical;
+      }
+
+      :host(.won) .victory,
+      :host(.lost) .defeat {
+        display: inline;
+      }
+
+      .victory, .defeat {
+        color: rgba(80, 200, 255, 0.9);
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+        display: none;
+        margin: 0 0 16px 0;
+      }
+
+      .victory :last-child,
+      .defeat :last-child {
+        display: block;
+        font-size: 60px;
+        line-height: 60px;
+      }
+    </style>
+    <section id="results">
+      <span class="victory">
+        <span>You</span>
+        <span>Won</span>
+      </span>
+      <span class="defeat">
+        <span>You</span>
+        <span>Lost</span>
+      </span>
+      <a href="/battle/new">
+        <polymon-button>Continue</polymon-button>
+      </a>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-battle-victory-screen',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        battleData: {
+          type: Object
+        },
+
+        result: {
+          type: String,
+          computed: '__computeResult(battleData.winningUserId, user.uid)',
+          observer: '__resultChanged'
+        }
+      },
+
+      __computeResult: function(winningUserId, uid) {
+        if (winningUserId != null && uid != null) {
+          return winningUserId === uid ?
+              'won' : 'lost';
+        }
+      },
+
+      __resultChanged: function(result) {
+        if (result === 'won') {
+          this.classList.add('won');
+        } else {
+          this.classList.remove('won');
+        }
+
+        if (result === 'lost') {
+          this.classList.add('lost');
+        } else {
+          this.classList.remove('lost');
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,7 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-portrait.html">
+<link rel="import" href="polymon-element.html">
 <dom-module id="polymon-caught-screen">
   <template>
     <style include="rotate-animation wiggle-animation">
@@ -17,7 +19,6 @@
         transition: transform 0.3s, opacity 0.15s;
 
         --polymon-portrait-background: transparent;
-        --polymon-portrait-size: 250px;
       }
 
       h1 {
@@ -128,10 +129,16 @@
 
 
     </style>
-    <h1>You caught a [[data.shortName]] Polymon!</h1>
+    <firebase-document
+        app-name="polymon"
+        path="[[__caughtPolymonPath(data.polymonId)]]"
+        data="{{polymon}}">
+    </firebase-document>
+    <h1>You caught a [[polymon.shortName]] Polymon!</h1>
     <section id="container">
       <polymon-portrait
-          polymon="[[data]]"
+          size="250"
+          polymon="[[polymon]]"
           caught>
       </polymon-portrait>
       <div id="one"></div>
@@ -150,6 +157,8 @@
     Polymer({
       is: 'polymon-caught-screen',
 
+      behaviors: [PolymonElement],
+
       properties: {
         active: {
           type: Boolean,
@@ -160,6 +169,16 @@
         data: {
           type: Object,
           notify: true
+        },
+
+        continueTo: {
+          type: String
+        }
+      },
+
+      __caughtPolymonPath: function(polymonId) {
+        if (polymonId) {
+          return `/polymons/${polymonId}`;
         }
       }
     });

@@ -9,15 +9,29 @@
 <link rel="import" href="polymon-caught-screen.html">
 <link rel="import" href="polymon-polydex.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-new-battle-screen.html">
+<link rel="import" href="polymon-battle-screen.html">
+<link rel="import" href="polymon-panel.html">
+<link rel="import" href="polymon-qr-code-scanner.html">
+
 <dom-module id="polymon-app">
   <template>
     <style>
       :host {
-        --polymon-font-family: 'kenvector', sans-serif;
+        --polymon-blue: #3EBBF0;
+        --polymon-blue-2: #2BA8DE;
+        --polymon-blue-3: #238AB6;
+        --polymon-red: #F73463;
+        --polymon-red-2: #E22D54;
+        --polymon-font-family: 'Bungee', sans-serif;
+        --polymon-headline-font-family: 'Bungee Inline', sans-serif;
+        --polymon-body-font-family: sans-serif;
         @apply --layout-fit;
         @apply --layout-vertical;
         background-color: #eee;
         overflow: hidden;
+
+        -webkit-font-smoothing: antialiased;
       }
     </style>
 
@@ -30,9 +44,10 @@
     </firebase-auth>
 
     <firebase-document
-        id="catchQueue"
+        id="userData"
         app-name="polymon"
-        path="[[__catchQueuePath(user)]]">
+        path="[[__computeUserDataPath(user)]]"
+        data="{{userData}}">
     </firebase-document>
 
     <app-location
@@ -51,7 +66,7 @@
         active="{{mapRouteActive}}">
     </app-route>
     <app-route
-        pattern="/caught/:shortName"
+        pattern="/caught/:polymonId"
         route="{{route}}"
         active="{{caughtRouteActive}}"
         data="{{caughtData}}"
@@ -65,6 +80,28 @@
         active="{{polydexRouteActive}}">
     </app-route>
 
+    <app-route
+        pattern="/battle/new"
+        route="{{route}}"
+        tail="{{newBattleRoute}}"
+        active="{{newBattleRouteActive}}">
+    </app-route>
+    <app-route
+        pattern="/battle/tutorial"
+        route="{{route}}"
+        active="{{battleTutorialRouteActive}}">
+    </app-route>
+    <app-route
+        pattern="/battle/engage/:id"
+        route="{{route}}"
+        data="{{engageBattleData}}"
+        active="{{engageBattleRouteActive}}">
+    </app-route>
+
+    <polymon-qr-code-scanner
+        id="scanner">
+    </polymon-qr-code-scanner>
+
     <polymon-map
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
@@ -73,21 +110,43 @@
 
     <polymon-start-screen
         active="[[rootRouteActive]]"
+        hidden="[[mapRouteActive]]"
         authenticated="[[authenticated]]"
         on-request-login="attemptLogin">
     </polymon-start-screen>
 
+    <!-- TODO(cdata): Consider moving this to the map screen? -->
     <polymon-caught-screen
         active="[[caughtRouteActive]]"
         data="[[caughtData]]"
         continue-to="[[caughtQueryParams.continueTo]]">
     </polymon-caught-screen>
 
-    <polymon-polydex
-        active="[[polydexRouteActive]]"
-        route="{{polydexRoute}}"
-        user="[[user]]">
-    </polymon-polydex>
+    <polymon-panel
+        active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]"
+        active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
+      <polymon-polydex
+          active="[[polydexRouteActive]]"
+          route="{{polydexRoute}}"
+          user="[[user]]">
+      </polymon-polydex>
+      <polymon-new-battle-screen
+          active="[[newBattleRouteActive]]"
+          route="{{newBattleRoute}}"
+          user="[[user]]"
+          user-data="{{userData}}">
+      </polymon-new-battle-screen>
+      <polymon-battle-tutorial>
+      </polymon-battle-tutorial>
+    </polymon-panel>
+
+    <polymon-battle-screen
+        active="[[engageBattleRouteActive]]"
+        user="[[user]]"
+        battle-id="[[engageBattleData.id]]"
+        user-data="{{userData}}">
+    </polymon-battle-screen>
+
   </template>
 
   <script>
@@ -112,17 +171,39 @@
         'polydex-entry-added': '__onPolydexEntryAdded'
       },
 
+      observers: [
+        '__activeBattleIdChanged(userData.player.activeBattleId, route.path)'
+      ],
+
       attemptLogin: function() {
         this.$.auth.signInWithPopup();
       },
 
-      __onPolymonCode: function(event) {
-        let code = event.detail.code;
-        let continueTo = event.detail.continueTo;
+      __activeBattleIdChanged: function(activeBattleId) {
+        if (activeBattleId != null) {
+          this.set('route.path', `/battle/engage/${activeBattleId}`);
+        }
+      },
 
-        if (this.$.catchQueue.ref) {
-          this.set('queryParams.continueTo', continueTo);
-          this.push('unconfirmedCatches', this.$.catchQueue.ref.push(code).key);
+      __onPolymonCode: function(event) {
+        let { type, code, continueTo } = event.detail;
+
+        if (this.$.userData.ref) {
+          switch (type) {
+            case 'reference':
+              this.set('queryParams.continueTo', continueTo);
+              this.push('unconfirmedCatches',
+                this.$.userData.ref.child('catchQueue').push(code).key);
+              break;
+            case 'battle':
+              this.$.userData.ref.child('battleQueue').push({
+                action: 'join',
+                battleId: code,
+                createdAt: Date.now()
+              });
+              break;
+          }
+
         }
       },
 
@@ -134,13 +215,25 @@
 
           if (catchId === polydexEntry.catchId) {
             this.unconfirmedCatches.splice(i, 1);
-            this.set('route.path', `/caught/${polymon.shortName}`);
+            this.set('route.path', `/caught/${polydexEntry.polymonId}`);
           }
         }
       },
 
-      __catchQueuePath: function(user) {
-        return user == null ? null : `/users/${user.uid}/catchQueue`;
+      __computeUserDataPath: function(user) {
+        return user
+            ? `/users/${user.uid}`
+            : null;
+      },
+
+      __computePanelIndex: function(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive) {
+        if (battleTutorialRouteActive) {
+          return 2;
+        } else if (newBattleRouteActive) {
+          return 1;
+        } else if (polydexRouteActive) {
+          return 0;
+        }
       }
     });
   </script>

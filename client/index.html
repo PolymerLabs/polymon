@@ -7,12 +7,18 @@
     <link rel="manifest" href="/manifest.json">
 
     <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="/bower_components/web-animations-js/web-animations.min.js"></script>
+    <!-- TODO(cdata): Do we really need this? -->
+    <!-- <script src="/bower_components/web-animations-js/web-animations.min.js"></script> -->
     <script src="/bower_components/webrtc-polyfill/index.js"></script>
 
-    <link rel="import" href="/fonts/kenvector.html">
+    <link href="https://fonts.googleapis.com/css?family=Bungee|Bungee+Inline" rel="stylesheet">
     <link rel="import" href="/bower_components/polymerfire/firebase-app.html">
     <link rel="import" href="/src/polymon-app/polymon-app.html">
+    <style>
+      body {
+        background-color: #000;
+      }
+    </style>
   </head>
   <body>
     <firebase-app
@@ -24,8 +30,10 @@
     </firebase-app>
     <polymon-app id="app"></polymon-app>
     <script>
-      function scanCode(code) {
+      function scanCode(data) {
+        let [type, code] = data.split('.');
         window.app.fire('polymon-code', {
+          type,
           code,
           continueTo: '/'
         });

@@ -13,8 +13,8 @@
 
         active: {
           type: Boolean,
-          reflectToAttribute: true,
-          value: false
+          value: false,
+          observer: 'invalidateClassname'
         }
       },
 
@@ -31,6 +31,24 @@
           this.__rafs[name] = null;
           fn();
         });
+      },
+
+      invalidateClassname: function() {
+        if (this.active) {
+          this.classList.add('active');
+        } else {
+          this.classList.remove('active');
+        }
+      },
+
+      or: function() {
+        for (let i = 0; i < arguments.length; ++i) {
+          if (arguments[i]) {
+            return true;
+          }
+        }
+
+        return false;
       }
     };
   })();

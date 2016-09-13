@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+  <head>
+    <title>polymon playtest sheet</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="/bower_components/polymer/polymer.html">
+    <link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+    <link rel="import" href="/bower_components/app-location/app-location.html">
+    <link rel="import" href="/bower_components/app-route/app-route.html">
+    <link rel="import" href="/src/polymon-app/polymon-portrait.html">
+    <style>
+
+    </style>
+  </head>
+  <body>
+    <playtest-sheet></playtest-sheet>
+    <dom-module id="playtest-sheet">
+      <template>
+        <style>
+          :host {
+            font-family: sans-serif;
+            color: #888;
+          }
+
+          .team {
+            display: block;
+            position: relative;
+            margin: 1em 0em 1em;
+            padding-bottom: 1em;
+            border-bottom: 4px dotted #ccc;
+            @apply --layout-horizontal;
+            @apply --layout-wrap;
+
+            align-items: center;
+            justify-content: space-around;
+          }
+
+          .team > div {
+            box-sizing: border-box;
+            height: 180px;
+            width: 120px;
+            border: 4px solid #eee;
+          }
+
+          .polydex {
+            @apply --layout-horizontal;
+            @apply --layout-wrap;
+
+            align-items: center;
+            justify-content: space-around;
+
+            margin: 0 0em 1em;
+            /*margin-bottom: 1em;*/
+          }
+
+          .details {
+            overflow: hidden;
+            clear: both;
+          }
+
+          .portrait {
+            float: left;
+            box-sizing: border-box;
+            width: 120px;
+            height: 180px;
+            @apply --layout-vertical;
+            @apply --layout-center-center;
+            text-align: center;
+            border: 8px solid #ccc;
+            margin-right: 1px;
+            margin-bottom: 1px;
+          }
+
+          .portrait polymon-portrait {
+            margin-bottom: 10px;
+          }
+
+          .portrait ul, .portrait li {
+            margin: 0;
+            padding: 0;
+          }
+
+          .portrait li {
+            display: block;
+          }
+
+          .portrait li > span {
+            font-weight: bold;
+            font-size: 18px;
+          }
+
+          .portrait.mini {
+            height: 89.5px;
+          }
+
+          .portrait > polymon-portrait {
+            background-color: transparent;
+          }
+
+          .tokens {
+            @apply --layout-horizontal;
+          }
+
+          .token {
+            box-sizing: border-box;
+            width: 120px;
+            border: 8px solid #888;
+            margin-right: 1px;
+            margin-bottom: 1px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px 0;
+            color: #888;
+            @apply --layout-vertical;
+            text-transform: uppercase;
+          }
+
+          .token > .info {
+            font-size: 0.5em;
+            font-style: italic;
+          }
+        </style>
+        <iron-ajax
+            url="/qr-code-data.json"
+            handle-as="json"
+            last-response="{{data}}"
+            auto>
+        </iron-ajax>
+        <section class="team">
+          <template is="dom-repeat" items="[0, 1, 2, 3, 4]">
+            <div></div>
+          </template>
+        </section>
+        <section class="polydex">
+          <template is="dom-repeat" items="[[polydex]]" as="polymon">
+            <polymon-portrait polymon="[[polymon]]" caught="[[polymon.caught]]"></polymon-portrait>
+          </template>
+        </section>
+        <section class="details">
+          <template is="dom-repeat" items="[[caughtPolymons]]" as="polymon">
+            <div class="portrait">
+              <polymon-portrait polymon="[[polymon]]" caught></polymon-portrait>
+              <ul>
+                <li>Attack: <span>[[polymon.stats.attack]]</span></li>
+                <li>Focus: <span>[[polymon.stats.focus]]</span></li>
+                <li>Counter: <span>[[polymon.stats.counter]]</span></li>
+              </ul>
+            </div>
+          </template>
+          <template is="dom-repeat" items="[[caughtPolymons]]" as="polymon">
+            <div class="mini portrait">
+              <polymon-portrait polymon="[[polymon]]" caught></polymon-portrait>
+            </div>
+          </template>
+        </section>
+
+        <section class="tokens">
+          <div class="token attack">Attack<span class="info">+3 vs Focus</span></div>
+          <div class="token focus">Focus<span class="info">+3 vs Counter</span></div>
+          <div class="token counter">Counter<span class="info">+3 vs Attack</span></div>
+        </section>
+      </template>
+      <script>
+        Polymer({
+          is: 'playtest-sheet',
+
+          properties: {
+            caughtCount: {
+              type: Number,
+              value: 10
+            },
+
+            randomIndices: {
+              type: Array,
+              computed: 'computeRandomIndices(caughtCount, data)'
+            },
+
+            polydex: {
+              type: Array,
+              computed: 'computePolydex(randomIndices, data)'
+            },
+
+            caughtPolymons: {
+              type: Array,
+              computed: 'computeCaughtPolymons(polydex)'
+            }
+          },
+
+          randomStat() {
+            return 5 - Math.floor(Math.random() * 4);
+          },
+
+          computeRandomIndices(caughtCount, data) {
+            let unchosenIndices = data.map((datum, index) => index);
+            let chosenIndices = [];
+
+            for (let i = 0; i < caughtCount; ++i) {
+              let index = Math.floor(Math.random() * unchosenIndices.length);
+              chosenIndices.push(unchosenIndices.splice(index, 1).pop());
+            }
+
+            return chosenIndices;
+          },
+
+          computePolydex(randomIndices, data) {
+            let polydex = data.map(data => data.polymon);
+
+            randomIndices.forEach(index => {
+              polydex[index].caught = true
+            });
+
+            return polydex;
+          },
+
+          computeCaughtPolymons(polydex) {
+            return polydex.filter(polymon => polymon.caught);
+          }
+        });
+      </script>
+    </dom-module>
+  </body>
+</html>

@@ -1,0 +1,294 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="polymon-initiate-battle-screen.html">
+<link rel="import" href="polymon-battle-field.html">
+<link rel="import" href="polymon-battle-round-visualizer.html">
+<link rel="import" href="polymon-battle-victory-screen.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-qr-code.html">
+<link rel="import" href="polymon-team-query.html">
+<link rel="import" href="polymon-portrait.html">
+
+<dom-module id="polymon-battle-screen">
+  <template>
+    <style include="active-fade-up">
+      :host {
+        @apply --layout-fit;
+        background-color: #000;
+
+        @apply --layout-vertical;
+        font-weight: normal;
+        font-family: var(--polymon-font-family);
+        --polymon-portrait-size: 128px;
+        --polymon-portrait-background: transparent;
+      }
+
+      :host(:not(.active)) > * {
+        pointer-events: none;
+      }
+    </style>
+
+    <firebase-document
+        app-name="polymon"
+        path="[[battlePath]]"
+        data="{{battleData}}">
+    </firebase-document>
+
+    <firebase-query
+        app-name="polymon"
+        path="[[battleRoundsPath]]"
+        order-by-child="index"
+        data="{{battleRounds}}">
+    </firebase-query>
+
+    <polymon-team-query
+        user-id="[[user.uid]]"
+        battle-id="[[battleId]]"
+        battle-rounds="[[battleRounds]]"
+        battle-status="{{userTeamStatus}}">
+    </polymon-team-query>
+
+    <polymon-team-query
+        user-id="[[opposingUserId]]"
+        battle-id="[[battleId]]"
+        battle-rounds="[[battleRounds]]"
+        battle-status="{{opposingTeamStatus}}">
+    </polymon-team-query>
+
+    <polymon-initiate-battle-screen
+        user="[[user]]"
+        user-data="[[userData]]"
+        active="[[initiatingBattle]]"
+        battle-id="[[userData.player.activeBattleId]]">
+    </polymon-initiate-battle-screen>
+
+    <polymon-battle-field
+        user-team-status="[[userTeamStatus]]"
+        opposing-team-status="[[opposingTeamStatus]]"
+        user-state="[[userState]]"
+        opponent-state="[[opponentState]]"
+        active="[[active]]"
+        waiting="[[waiting]]"
+        battle-finished="[[battleFinished]]"
+        on-polymon-move="__onPolymonMove">
+    </polymon-battle-field>
+
+    <polymon-battle-victory-screen
+        active="[[battleFinished]]"
+        user="[[user]]"
+        battle-data="[[battleData]]">
+    </polymon-battle-victory-screen>
+
+    <polymon-battle-round-visualizer
+        id="roundVisualizer"
+        user-id="[[user.uid]]"
+        opposing-user-id="[[opposingUserId]]"
+        user-team-status="[[userTeamStatus]]"
+        opposing-team-status="[[opposingTeamStatus]]">
+    </polymon-battle-round-visualizer>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-battle-screen',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        battleId: {
+          type: String
+        },
+
+        userData: {
+          type: Object
+        },
+
+        userState: {
+          type: Object,
+          readOnly: true
+        },
+
+        opponentState: {
+          type: Object,
+          readOnly: true
+        },
+
+        battlePath: {
+          type: String,
+          computed: '__computeBattlePath(battleId)'
+        },
+
+        battleRoundsPath: {
+          type: String,
+          computed: '__computeBattleRoundsPath(battlePath)'
+        },
+
+        battleData: {
+          type: Object,
+          value: null
+        },
+
+        opposingUserId: {
+          type: String,
+          computed: '__computeOpposingUserId(battleData.players.*)'
+        },
+
+        initiatingBattle: {
+          type: Boolean,
+          value: false,
+          readOnly: true
+        },
+
+        waiting: {
+          type: Boolean,
+          value: false,
+          readOnly: true
+        },
+
+        battleFinished: {
+          type: Boolean,
+          computed: '__computeBattleFinished(battleData.*)'
+        }
+      },
+
+      observers: [
+        '__activeBattleIdChanged(userData.player.activeBattleId)',
+        '__battleDataChanged(active, battleData)',
+        '__battleStateChanged(battleData.engaged, userState.waiting)',
+        '__battleRoundsChanged(battleRounds.length)',
+        '__updatePlayerState(battleData.players.*, opposingUserId)'
+      ],
+
+      __updatePlayerState: function() {
+        this.deraf('update-player-status', () => {
+          if (this.battleData && this.battleData.players) {
+            this._setUserState(this.battleData.players[this.user.uid]);
+
+            if (this.opposingUserId) {
+              this._setOpponentState(
+                  this.battleData.players[this.opposingUserId]);
+            }
+          }
+        });
+      },
+
+      __computeBattleFinished: function() {
+        if (this.battleData && this.battleData.winningUserId) {
+          return true;
+        }
+
+        return false;
+      },
+
+      __computeBattlePath: function(battleId) {
+        if (battleId != null) {
+          return `/battles/${battleId}/status`;
+        }
+
+        return this.battlePath;
+      },
+
+      __computeBattleRoundsPath: function(battlePath) {
+        if (battlePath != null) {
+          return `${battlePath}/rounds`;
+        }
+
+        return this.battleRoundsPath;
+      },
+
+      __computeOpposingUserId: function() {
+        if (this.battleData && this.battleData.players) {
+          for (let id in this.battleData.players) {
+            if (this.user.uid !== id) {
+              return id;
+            }
+          }
+        }
+      },
+
+      __activeBattleIdChanged: function(activeBattleId) {
+        if (this.__heartbeatInterval != null) {
+          clearInterval(this.__heartbeatInterval);
+          this.__heartbeatInterval = null;
+        }
+
+        if (activeBattleId != null) {
+          this.__heartbeatInterval = setInterval(() => {
+            // TODO(cdata): Add this back in when we build functionality to
+            // detect game abandonment and / or distracted players..
+            // this.__sendHeartbeat();
+          }, 15000);
+        } else {
+          this.__battleDataChanged(this.battleData);
+        }
+      },
+
+      __battleStateChanged: function(engaged, waiting) {
+        if (engaged && waiting) {
+          this._setWaiting(true);
+        } else {
+          this._setWaiting(false);
+        }
+      },
+
+      __battleDataChanged: function() {
+        this.deraf('battle-data-changed', () => {
+          let {active, battleData} = this;
+
+          if (battleData && battleData.engaged != null) {
+            // NOTE(cdata): This controls the visibility of the QR code screen
+            // that is used to share a battle with another player so that they
+            // can join it:
+            this._setInitiatingBattle(active && battleData.engaged === false);
+          }
+        });
+      },
+
+      __sendHeartbeat: function() {
+        firebase.app('polymon').database()
+            .ref(`/users/${this.user.uid}/battleQueue`).push({
+              action: 'ping',
+              battleId: this.userData.player.activeBattleId,
+              createdAt: Date.now()
+            });
+      },
+
+      __onPolymonMove: function(event) {
+        if (this.waiting) {
+          // NOTE(cdata): This should also be guarded against in Firebase,
+          // but we can opportunistically pre-empt it here as well..
+          return;
+        }
+        let {polydexId, attributeName} = event.detail;
+        firebase.app('polymon').database()
+            .ref(`/users/${this.user.uid}/battleQueue`).push({
+              action: 'move',
+              battleId: this.userData.player.activeBattleId,
+              polydexId,
+              attributeName
+            });
+      },
+
+      __battleRoundsChanged: function() {
+        if (this.battleRounds && this.battleRounds.length === 0) {
+          this._setWaiting(false);
+        } else {
+          this._setWaiting(true);
+
+          this.deraf('battle-rounds-changed', () => {
+            this.$.roundVisualizer.play(
+                this.battleRounds[this.battleRounds.length - 1])
+                    .then(function() {
+                      console.log('DONE');
+                      this._setWaiting(false);
+                    }.bind(this));
+          });
+        }
+      }
+    });
+  </script>
+</dom-module>
