@@ -4,15 +4,8 @@
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
-<link rel="import" href="polymon-map.html">
-<link rel="import" href="polymon-start-screen.html">
-<link rel="import" href="polymon-caught-screen.html">
-<link rel="import" href="polymon-polydex.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-new-battle-screen.html">
-<link rel="import" href="polymon-battle-screen.html">
-<link rel="import" href="polymon-panel.html">
-<link rel="import" href="polymon-qr-code-scanner.html">
+<link rel="import" href="polymon-lazy-loader.html">
 
 <dom-module id="polymon-app">
   <template>
@@ -32,6 +25,10 @@
         overflow: hidden;
 
         -webkit-font-smoothing: antialiased;
+      }
+
+      [unresolved] {
+        opacity: 0;
       }
     </style>
 
@@ -54,61 +51,100 @@
         route="{{route}}"
         query-params="{{queryParams}}">
     </app-location>
-    <app-route
-        pattern="/"
-        route="{{route}}"
-        active="{{rootRouteActive}}">
-    </app-route>
-    <app-route
-        pattern="/map"
-        route="{{route}}"
-        tail="{{mapRoute}}"
-        active="{{mapRouteActive}}">
-    </app-route>
-    <app-route
-        pattern="/caught/:polymonId"
-        route="{{route}}"
-        active="{{caughtRouteActive}}"
-        data="{{caughtData}}"
-        query-params="{{caughtQueryParams}}">
-    </app-route>
 
-    <app-route
-        pattern="/polydex"
-        route="{{route}}"
-        tail="{{polydexRoute}}"
-        active="{{polydexRouteActive}}">
-    </app-route>
+    <polymon-lazy-loader
+        route="{{route}}">
 
-    <app-route
-        pattern="/battle/new"
-        route="{{route}}"
-        tail="{{newBattleRoute}}"
-        active="{{newBattleRouteActive}}">
-    </app-route>
-    <app-route
-        pattern="/battle/tutorial"
-        route="{{route}}"
-        active="{{battleTutorialRouteActive}}">
-    </app-route>
-    <app-route
-        pattern="/battle/engage/:id"
-        route="{{route}}"
-        data="{{engageBattleData}}"
-        active="{{engageBattleRouteActive}}">
-    </app-route>
+      <app-route
+          pattern="/"
+          route="{{route}}"
+          active="{{rootRouteActive}}"
+          data-fragments='[
+            "polymon-start-screen.html",
+            "polymon-map.html"
+          ]'>
+      </app-route>
+
+      <app-route
+          pattern="/map"
+          route="{{route}}"
+          tail="{{mapRoute}}"
+          active="{{mapRouteActive}}"
+          data-fragments='[
+            "polymon-map.html",
+            "polymon-qr-code-scanner.html"
+          ]'>
+      </app-route>
+
+      <app-route
+          pattern="/caught/:polymonId"
+          route="{{route}}"
+          active="{{caughtRouteActive}}"
+          data="{{caughtData}}"
+          query-params="{{caughtQueryParams}}"
+          data-fragments='[
+            "polymon-caught-screen.html"
+          ]'>
+      </app-route>
+
+      <app-route
+          pattern="/polydex"
+          route="{{route}}"
+          tail="{{polydexRoute}}"
+          active="{{polydexRouteActive}}"
+          data-fragments='[
+            "polymon-map.html",
+            "polymon-panel.html",
+            "polymon-polydex.html"
+          ]'>
+      </app-route>
+
+      <app-route
+          pattern="/battle/new"
+          route="{{route}}"
+          tail="{{newBattleRoute}}"
+          active="{{newBattleRouteActive}}"
+          data-fragments='[
+            "polymon-map.html",
+            "polymon-panel.html",
+            "polymon-qr-code-scanner.html",
+            "polymon-new-battle-screen.html"
+          ]'>
+      </app-route>
+
+      <app-route
+          pattern="/battle/tutorial"
+          route="{{route}}"
+          active="{{battleTutorialRouteActive}}"
+          data-fragents='[]'>
+      </app-route>
+
+      <app-route
+          pattern="/battle/engage/:id"
+          route="{{route}}"
+          data="{{engageBattleData}}"
+          active="{{engageBattleRouteActive}}"
+          data-fragments='[
+            "polymon-battle-screen.html"
+          ]'>
+      </app-route>
+
+    </polymon-lazy-loader>
 
     <polymon-qr-code-scanner
+        unresolved
         id="scanner">
     </polymon-qr-code-scanner>
 
     <polymon-map
+        unresolved
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
         user="[[user]]">
     </polymon-map>
 
     <polymon-start-screen
+        unresolved
         active="[[rootRouteActive]]"
         hidden="[[mapRouteActive]]"
         authenticated="[[authenticated]]"
@@ -117,12 +153,14 @@
 
     <!-- TODO(cdata): Consider moving this to the map screen? -->
     <polymon-caught-screen
+        unresolved
         active="[[caughtRouteActive]]"
         data="[[caughtData]]"
         continue-to="[[caughtQueryParams.continueTo]]">
     </polymon-caught-screen>
 
     <polymon-panel
+        unresolved
         active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive, rootRouteActive)]]"
         active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
       <polymon-polydex
@@ -141,6 +179,7 @@
     </polymon-panel>
 
     <polymon-battle-screen
+        unresolved
         active="[[engageBattleRouteActive]]"
         user="[[user]]"
         battle-id="[[engageBattleData.id]]"

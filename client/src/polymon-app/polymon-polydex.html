@@ -368,6 +368,10 @@
       },
 
       __fetchCaughtPolymon: function() {
+        if (!this.availablePolymons || !this.caughtPolymons) {
+          return Promise.resolve([]);
+        }
+
         return Promise.all(this.caughtPolymons.map(polydexEntry =>
             this.__polymonById(polydexEntry.polymonId)))
             .then(caughtPolymons => caughtPolymons.map((caughtPolymon, index) =>

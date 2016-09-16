@@ -4,6 +4,11 @@
   "fragments": [
     "src/polymon-app/polymon-qr-code-scanner.html",
     "src/polymon-app/polymon-polydex.html",
+    "src/polymon-app/polymon-new-battle-screen.html",
+    "src/polymon-app/polymon-battle-screen.html",
+    "src/polymon-app/polymon-caught-screen.html",
+    "src/polymon-app/polymon-start-screen.html",
+    "src/polymon-app/polymon-panel.html",
     "src/polymon-app/polymon-map.html"
   ]
 }

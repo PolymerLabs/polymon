@@ -13,10 +13,11 @@
 
         active: {
           type: Boolean,
-          value: false,
-          observer: 'invalidateClassname'
+          value: false
         }
       },
+
+      observers: ['invalidateClassname(isAttached, active)'],
 
       created: function() {
         this.__rafs = {};
@@ -34,8 +35,15 @@
       },
 
       invalidateClassname: function() {
-        if (this.active) {
-          this.classList.add('active');
+        if (!this.__resolved) {
+          this.removeAttribute('unresolved');
+          this.__resolved = true;
+        }
+
+        if (this.active && this.isAttached && this._readied) {
+          this.deraf('invalidate-classname', () => {
+            this.classList.add('active', this.is);
+          });
         } else {
           this.classList.remove('active');
         }

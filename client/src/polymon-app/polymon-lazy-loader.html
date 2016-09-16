@@ -1,0 +1,106 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="polymon-lazy-loader">
+  <template>
+    <content id="routes" select="app-route"></content>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-lazy-loader',
+
+      properties: {
+        route: {
+          type: Object,
+          notify: true
+        },
+
+        routeElements: {
+          type: Array,
+          readOnly: true,
+          value: function() {
+            return [];
+          }
+        }
+      },
+
+      observers: [
+        '__routeChanged(route.*)'
+      ],
+
+      hostAttributes: {
+        hidden: true
+      },
+
+      attached: function() {
+        let root = Polymer.dom(this).getOwnerRoot();
+
+        this.__baseHost = root == null ? this : root.host;
+        this.__lazyRoute = {};
+        this.__observer = Polymer.dom(this.$.routes).observeNodes(info => {
+          info.addedNodes.forEach(route => this.addRoute(route));
+          info.removedNodes.forEach(route => this.removeRoute(route));
+
+          if (this.route != null) {
+            this.__routeChanged();
+          }
+        });
+      },
+
+      detached: function() {
+        Polymer.dom(this.$.routes).unobserveNodes(this.__observer);
+      },
+
+      addRoute: function(route) {
+        this.push('routeElements', route);
+      },
+
+      removeRoute: function(route) {
+        this.splice('routeElements', this.routeElements.indexOf(route), 1);
+      },
+
+      __lazyImport: function(fragments) {
+        return Promise.all(fragments.map(fragment => new Promise(
+            (resolve, reject) => {
+              console.log(`Lazy importing ${fragment}..`);
+              this.importHref(
+                  this.__baseHost.resolveUrl(fragment),
+                  event => resolve(event), error => reject(error));
+            })));
+      },
+
+      __routeChanged: function() {
+        this.debounce('route-changed', function() {
+
+          for (let i = 0; i < this.routeElements.length; ++i) {
+            let routeElement = this.routeElements[i];
+            let result = Promise.resolve();
+
+            if (routeElement.active &&
+                routeElement.dataset.fragmentsReadyState == null &&
+                routeElement.dataset.fragments != null) {
+
+              let fragments;
+
+              try {
+                fragments = JSON.parse(routeElement.dataset.fragments);
+              } catch (e) {
+                fragments = [];
+              }
+
+              routeElement.dataset.fragmentsReadyState = 'loading';
+
+              this.__lazyImport(fragments)
+                  .then(() => {
+                    routeElement.dataset.fragmentsReadyState = 'loaded';
+                    console.log('Fragments loaded..');
+                  })
+                  .catch(error => {
+                    routeElement.dataset.fragmentsReadyState = 'error';
+                    console.error(error);
+                  });
+            }
+          }
+        });
+      }
+    })
+  </script>
+</dom-module>
