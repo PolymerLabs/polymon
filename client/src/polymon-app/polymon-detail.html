@@ -15,12 +15,11 @@
         border-radius: 6px;
 
         pointer-events: none;
-        opacity: 0;
         z-index: 2;
 
-        transition: opacity 0s;
-        transition-delay: 0.5s;
+        transition: opacity 0s 0.5s;
 
+        opacity: 0;
         --polymon-portrait-background: transparent;
 
         box-sizing: border-box;
@@ -33,7 +32,7 @@
       :host(.active) {
         pointer-events: all;
         opacity: 1;
-        transition-delay: 0s;
+        transition: opacity 0s 0s;
       }
 
       :host(.active.open) #background {
@@ -43,6 +42,7 @@
 
       :host(.active:not(.open)) #portrait {
         transition: none;
+        transition-delay: 0s;
       }
 
       :host(.active.open) #portrait {
@@ -64,6 +64,10 @@
       #background {
         position: absolute;
         background-color: #ccc;
+        backface-visibility: hidden;
+        /*background-image: url(/images/polymon_sprite_sheet.svg);*/
+        /*background-size: 640px 640px;*/
+        /*background-position: 0 -448px;*/
         width: 64px;
         height: 64px;
         border-radius: 32px;
@@ -164,10 +168,9 @@
       }
 
       @media (max-height: 600px) {
-        :host {
-          /* TODO(cdata): Add this back in somehow for shorter screens
-           * e.g., iPhone 5 */
-          /*--polymon-portrait-size: 200px;*/
+        :host(.active.open) #portrait {
+          transform: translate(10%, 10%) scale(0.8) !important;
+          transition-delay: 0.2s;
         }
       }
 
@@ -229,7 +232,7 @@
       <a href="/polydex">
         <polymon-button class="alt">Back</polymon-button>
       </a>
-      <!-- TODO(cdata): Trading button goes here! -->
+      <!-- TODO(cdata): Trading button goes here? -->
     </section>
 
   </template>
@@ -313,6 +316,8 @@
             this.$.portrait.style.transform =
                 `translate(${left}px,${top}px) scale(${scale})`;
 
+            // this.classList.add('visible');
+
             // NOTE(cdata): This raf is kind of annoying. Without it, the
             // portrait will attempt to transition from its old initial position
             // to its new initial position:
@@ -320,7 +325,18 @@
               this._setOpen(true);
             });
           } else {
+            let self = this;
+
+            // this.addEventListener('transitionend', function onTransitionEnd(event) {
+            //   if (event.target === self.$.background && event.propertyName === 'transform') {
+            //     this.removeEventListener('transitionend', onTransitionEnd);
+            //
+            //   }
+            // });
             this._setOpen(false);
+            // this.debounce('close', () => {
+            //   this.classList.remove('visible');
+            // }, 500);
           }
         });
       },

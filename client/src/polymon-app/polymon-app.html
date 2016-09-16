@@ -123,7 +123,7 @@
     </polymon-caught-screen>
 
     <polymon-panel
-        active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]"
+        active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive, rootRouteActive)]]"
         active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
       <polymon-polydex
           active="[[polydexRouteActive]]"
@@ -203,7 +203,6 @@
               });
               break;
           }
-
         }
       },
 
@@ -226,8 +225,10 @@
             : null;
       },
 
-      __computePanelIndex: function(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive) {
-        if (battleTutorialRouteActive) {
+      __computePanelIndex: function(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive, rootRouteActive) {
+        if (rootRouteActive) {
+          return 0;
+        } else if (battleTutorialRouteActive) {
           return 2;
         } else if (newBattleRouteActive) {
           return 1;

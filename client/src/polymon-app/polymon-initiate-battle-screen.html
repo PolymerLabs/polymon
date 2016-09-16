@@ -82,7 +82,8 @@
 
       properties: {
         battleId: {
-          type: String
+          type: String,
+          observer: '__battleIdChanged'
         },
 
         battleCode: {
@@ -118,6 +119,15 @@
               createdAt: Date.now()
             });
       },
+
+      __battleIdChanged: function() {
+        this.deraf('battle-id-changed', () => {
+          if (this.active && this.battleId == null) {
+            window.history.back();
+            this.fire('location-changed', {}, {node: window});
+          }
+        });
+      }
     });
   </script>
 </dom-module>

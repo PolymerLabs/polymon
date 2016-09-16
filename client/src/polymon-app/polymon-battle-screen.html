@@ -177,7 +177,7 @@
       },
 
       __computeBattleFinished: function() {
-        if (this.battleData && this.battleData.winningUserId) {
+        if (this.battleData && this.battleData.winningUserId != null) {
           return true;
         }
 

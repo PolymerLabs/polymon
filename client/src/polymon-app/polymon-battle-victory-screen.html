@@ -32,11 +32,12 @@
       }
 
       :host(.won) .victory,
-      :host(.lost) .defeat {
+      :host(.lost) .defeat,
+      :host(.draw) .draw {
         display: inline;
       }
 
-      .victory, .defeat {
+      .victory, .defeat, .draw {
         color: rgba(80, 200, 255, 0.9);
         text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
         display: none;
@@ -44,7 +45,8 @@
       }
 
       .victory :last-child,
-      .defeat :last-child {
+      .defeat :last-child,
+      .draw :last-child {
         display: block;
         font-size: 60px;
         line-height: 60px;
@@ -58,6 +60,10 @@
       <span class="defeat">
         <span>You</span>
         <span>Lost</span>
+      </span>
+      <span class="draw">
+        <span>Battle ends in a</span>
+        <span>Draw</span>
       </span>
       <a href="/battle/new">
         <polymon-button>Continue</polymon-button>
@@ -84,8 +90,11 @@
 
       __computeResult: function(winningUserId, uid) {
         if (winningUserId != null && uid != null) {
-          return winningUserId === uid ?
-              'won' : 'lost';
+          return winningUserId === 0
+              ? 'draw'
+              : winningUserId === uid
+              ? 'won'
+              : 'lost';
         }
       },
 
@@ -100,6 +109,12 @@
           this.classList.add('lost');
         } else {
           this.classList.remove('lost');
+        }
+
+        if (result === 'draw') {
+          this.classList.add('draw');
+        } else {
+          this.classList.remove('draw');
         }
       }
     });
