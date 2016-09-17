@@ -1,15 +1,15 @@
 {
-  "entrypoint": "/index.html",
-  "root": "./client",
-  "shell": "/src/polymon-app/polymon-app.html",
+  "entrypoint": "index.html",
+  "shell": "src/polymon-app/polymon-app.html",
   "fragments": [
-    "/src/polymon-app/polymon-qr-code-scanner.html",
-    "/src/polymon-app/polymon-polydex.html",
-    "/src/polymon-app/polymon-new-battle-screen.html",
-    "/src/polymon-app/polymon-battle-screen.html",
-    "/src/polymon-app/polymon-caught-screen.html",
-    "/src/polymon-app/polymon-start-screen.html",
-    "/src/polymon-app/polymon-panel.html",
-    "/src/polymon-app/polymon-map.html"
+    "src/polymon-app/polymon-qr-code-scanner.html",
+    "src/polymon-app/polymon-polydex.html",
+    "src/polymon-app/polymon-new-battle-screen.html",
+    "src/polymon-app/polymon-battle-screen.html",
+    "src/polymon-app/polymon-caught-screen.html",
+    "src/polymon-app/polymon-start-screen.html",
+    "src/polymon-app/polymon-panel.html",
+    "src/polymon-app/polymon-map.html",
+    "bower_components/polymerfire/firebase-app.html"
   ]
 }

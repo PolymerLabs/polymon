@@ -4,16 +4,23 @@
     <title>Polymon</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/manifest.json">
 
-    <link rel="stylesheet" href="/fonts/faces.css">
-    <link rel="import" href="/bower_components/polymerfire/firebase-app.html" async>
-    <link rel="import" href="/src/polymon-app/polymon-app.html" async>
+    <link rel="manifest" href="/manifest.json">
     <style>
       body {
         background-color: #000;
       }
     </style>
+    <link rel="stylesheet" href="/fonts/faces.css">
+    <script>
+      window.Polymer = {
+        lazyRegister: true,
+        dom: 'shadow'
+      };
+    </script>
+    <link rel="import" href="/bower_components/polymerfire/firebase-app.html" defer>
+    <link rel="import" href="/src/polymon-app/polymon-app.html" defer>
+
   </head>
   <body>
 
@@ -24,8 +31,10 @@
         database-url="https://polymon-b105e.firebaseio.com"
         storage-bucket="polymon-b105e.appspot.com">
     </firebase-app>
+
     <polymon-app id="app"></polymon-app>
 
+    <!-- TODO(cdata): Remove this for production -->
     <script>
       function scanCode(data) {
         let [type, code] = data.split('.');
@@ -38,12 +47,9 @@
     </script>
 
     <script>
-      window.Polymer = {
-        lazyRegister: true,
-        dom: 'shadow'
-      };
-
       (function() {
+
+
         const SUPPORTS_WEB_COMPONENTS =
             'registerElement' in document &&
             'import' in document.createElement('link') &&
@@ -51,8 +57,11 @@
 
         const SUPPORTS_USER_MEDIA_AND_STREAMS =
             navigator.mediaDevices &&
-            'userMedia' in navigator.mediaDevices &&
+            'getUserMedia' in navigator.mediaDevices &&
             'enumerateDevices' in navigator.mediaDevices;
+
+        const SUPPORTS_SERVICE_WORKER =
+            'serviceWorker' in navigator;
 
         if (!SUPPORTS_WEB_COMPONENTS) {
           let script = document.createElement('script');
@@ -64,6 +73,10 @@
           let script = document.createElement('script');
           script.src = '/bower_components/webrtc-polyfill/index.js';
           document.body.appendChild(script);
+        }
+
+        if (SUPPORTS_SERVICE_WORKER) {
+          navigator.serviceWorker.register('/service-worker.js');
         }
       })();
     </script>

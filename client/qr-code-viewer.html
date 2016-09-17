@@ -8,7 +8,7 @@
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="/bower_components/polymer/polymer.html">
     <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
-    <link rel="import" href="/bower_components/app-location/app-location.html">
+    <link rel="import" href="/bower_components/app-route/app-location.html">
     <link rel="import" href="/bower_components/app-route/app-route.html">
     <link rel="import" href="/src/polymon-app/polymon-qr-code.html">
     <style>
@@ -34,6 +34,8 @@
             flex-direction: column;
             align-items: center;
           }
+
+          a[hidden] { display: none }
         </style>
         <iron-ajax
             url="/qr-code-data.json"
