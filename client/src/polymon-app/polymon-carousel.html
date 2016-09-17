@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-portrait.html">
 <dom-module id="polymon-carousel">
   <template>
     <style>
@@ -179,6 +180,8 @@
         perspective: 150px;
         perspective-origin: center 0px;
         transform: scale(1.3) translateY(40px);
+
+        --polymon-portrait-background: transparent;
       }
 
       @media (max-height: 640px) {
@@ -205,7 +208,6 @@
       }
 
 
-
       #container {
         position: relative;
         width: 100%;
@@ -219,9 +221,9 @@
         animation-duration: 10s;
       }
 
-      img {
+      polymon-portrait {
         position: absolute;
-        width: 15%;
+        margin: 0;
         left: -5%;
         transform-style: preserve-3d;
         animation-iteration-count: infinite;
@@ -231,9 +233,24 @@
 
     </style>
     <div id="container">
-      <img id="one" src="../../images/polymon/goat.svg">
-      <img id="two" src="../../images/polymon/monkey.svg">
-      <img id="three" src="../../images/polymon/tiger.svg">
+      <polymon-portrait
+          id="one"
+          polymon='{ "spriteIndex": 5 }'
+          size="48"
+          caught>
+      </polymon-portrait>
+      <polymon-portrait
+          id="two"
+          polymon='{ "spriteIndex": 6 }'
+          size="48"
+          caught>
+      </polymon-portrait>
+      <polymon-portrait
+          id="three"
+          polymon='{ "spriteIndex": 9 }'
+          size="48"
+          caught>
+      </polymon-portrait>
     </div>
   </template>
   <script>
