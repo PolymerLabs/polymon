@@ -6,12 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="/manifest.json">
 
-    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="/bower_components/webrtc-polyfill/index.js"></script>
-
     <link rel="stylesheet" href="/fonts/faces.css">
-    <link rel="import" href="/bower_components/polymerfire/firebase-app.html">
-    <link rel="import" href="/src/polymon-app/polymon-app.html">
+    <link rel="import" href="/bower_components/polymerfire/firebase-app.html" async>
+    <link rel="import" href="/src/polymon-app/polymon-app.html" async>
     <style>
       body {
         background-color: #000;
@@ -19,6 +16,7 @@
     </style>
   </head>
   <body>
+
     <firebase-app
         name="polymon"
         api-key="AIzaSyD5zoX-HpvOEiV-bEwHaHBCl9Rmnbgw_xk"
@@ -27,6 +25,7 @@
         storage-bucket="polymon-b105e.appspot.com">
     </firebase-app>
     <polymon-app id="app"></polymon-app>
+
     <script>
       function scanCode(data) {
         let [type, code] = data.split('.');
@@ -36,6 +35,37 @@
           continueTo: '/'
         });
       }
+    </script>
+
+    <script>
+      window.Polymer = {
+        lazyRegister: true,
+        dom: 'shadow'
+      };
+
+      (function() {
+        const SUPPORTS_WEB_COMPONENTS =
+            'registerElement' in document &&
+            'import' in document.createElement('link') &&
+            'content' in document.createElement('template');
+
+        const SUPPORTS_USER_MEDIA_AND_STREAMS =
+            navigator.mediaDevices &&
+            'userMedia' in navigator.mediaDevices &&
+            'enumerateDevices' in navigator.mediaDevices;
+
+        if (!SUPPORTS_WEB_COMPONENTS) {
+          let script = document.createElement('script');
+          script.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+          document.body.appendChild(script);
+        }
+
+        if (!SUPPORTS_USER_MEDIA_AND_STREAMS) {
+          let script = document.createElement('script');
+          script.src = '/bower_components/webrtc-polyfill/index.js';
+          document.body.appendChild(script);
+        }
+      })();
     </script>
   </body>
 </html>
