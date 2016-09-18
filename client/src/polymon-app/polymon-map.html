@@ -110,8 +110,7 @@
 
         playerLatLng: {
           type: Object,
-          value: null,
-          observer: '__playerLatLngChanged'
+          value: null
         },
 
         polymons: {
@@ -130,7 +129,8 @@
 
       observers: [
         '__activeChanged(active)',
-        '__polymonsChanged(polymons.*, overlay)'
+        '__polymonsChanged(polymons.*, overlay)',
+        '__playerLatLngChanged(overlay, playerLatLng)'
       ],
 
       attached: function() {

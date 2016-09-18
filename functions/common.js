@@ -51,3 +51,20 @@ exports.getUserPolymon = function(db, userId, polydexId) {
           .once('value'))
       .then(snapshot => snapshot.val());
 };
+
+exports.recordPolymonSighting = function(db, polymonId, latLng) {
+  return db.ref(`/polymons/${polymonId}`).once('value')
+      .then(snapshot => snapshot.val())
+      .then(polymon => {
+        if (!polymon) {
+          throw new error(`Polymon ${polymonId} does not exist.`);
+        }
+
+        return db.ref(`/polymons/${polymonId}/lastSeen`).set({
+          lat: latLng.lat,
+          lng: latLng.lng,
+          timestamp: Date.now()
+        });
+      });
+
+}

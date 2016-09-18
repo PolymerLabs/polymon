@@ -1,9 +1,23 @@
+const { recordPolymonSighting } = require('./common');
+
 exports.validateCaughtPolymon = functions => functions
     .database()
     .path('/users/{userId}/catchQueue/{catchId}')
     .on('write', event => {
       const userId = event.params.userId;
-      const referenceId = event.data.val();
+      const catchValue = event.data.val();
+
+      if (catchValue == null) {
+        return null;
+      }
+
+      const referenceId = catchValue.code;
+
+      if (referenceId == null) {
+        console.log('No Reference ID, ignoring..')
+        return event.data.val();
+      }
+
       const catchId = event.data.key;
       const db = functions.app.database();
       const auth = functions.app.auth();
@@ -11,10 +25,7 @@ exports.validateCaughtPolymon = functions => functions
 
       // If we don't have a referenceId, it means this is probably the write
       // performed by the function removing the queued catch event
-      if (referenceId == null) {
-        console.log('No Reference ID, ignoring..')
-        return event.data.val();
-      }
+
 
       console.log(`Reference ID: ${referenceId}`);
       console.log(`Catch ID: ${catchId}`);
@@ -27,8 +38,8 @@ exports.validateCaughtPolymon = functions => functions
           console.log('Polymon ID:', polymonId);
 
           return db.ref(`/users/${userId}/polydex`)
-              .orderByChild('polymonId')
-              .once('value').then(snapshot => {
+              .orderByChild('polymonId').once('value')
+              .then(snapshot => {
                 let polydexEntries = snapshot.val();
 
                 for (var id in polydexEntries) {
@@ -40,12 +51,15 @@ exports.validateCaughtPolymon = functions => functions
                 }
 
                 console.log('Recording catch in Polydex.');
+
                 return db.ref(`/users/${userId}/polydex`).push({
                   caughtAt: Date.now(),
                   catchId,
                   polymonId
                 });
-              });
+              })
+              .then(() =>
+                  recordPolymonSighting(db, polymonId, catchValue.latLng));
         }
       }).catch(error => {
         console.error(`Validation: ${error}`);

@@ -145,6 +145,7 @@
 
     <polymon-map
         unresolved
+        id="map"
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
         user="[[user]]"
@@ -245,7 +246,10 @@
             case 'reference':
               this.set('queryParams.continueTo', continueTo);
               this.push('unconfirmedCatches',
-                this.$.userData.ref.child('catchQueue').push(code).key);
+                this.$.userData.ref.child('catchQueue').push({
+                  code: code,
+                  latLng: this.$.map.playerLatLng
+                }).key);
               break;
             case 'battle':
               this.$.userData.ref.child('battleQueue').push({

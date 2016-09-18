@@ -15,6 +15,7 @@
         player>
     </polymon-map-marker>
     <template is="dom-repeat"
+        on-dom-change="__queryForMarkers"
         id="polymons"
         items="[[polymons]]"
         as="polymon">
@@ -63,22 +64,25 @@
 
         markers: {
           type: Array,
-          computed: '__computeMarkers(isAttached, polymons.length)',
+          value: function() {
+            return [];
+          },
           observer: 'update'
         }
       },
 
       observers: [
-        '__mapChanged(map, mapListeners)'
+        '__mapChanged(map, mapListeners)',
+        '__queryForMarkers(isAttached, polymons.length)'
       ],
 
-      __computeMarkers: function() {
-        if (this.root && this.isAttached) {
-          return Array.from(
-              Polymer.dom(this.root).querySelectorAll('polymon-map-marker'));
-        }
-
-        return [];
+      __queryForMarkers: function() {
+        this.deraf('query-for-markers', () => {
+          if (this.root && this.isAttached) {
+            this.markers = Array.from(
+                Polymer.dom(this.root).querySelectorAll('polymon-map-marker'));
+          }
+        });
       },
 
       __computePlayer: function(playerLatLng) {
@@ -125,8 +129,6 @@
             console.log('Cannot update markers..');
             return;
           }
-
-          // console.log('Updating markers..');
 
           const bounds = this.map.getBounds();
           const projection = this.overlay.getProjection();
