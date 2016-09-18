@@ -9,11 +9,7 @@
         position: absolute;
       }
     </style>
-    <polymon-map-marker
-        id="playerMarker"
-        polymon="[[player]]"
-        player>
-    </polymon-map-marker>
+
     <template is="dom-repeat"
         on-dom-change="__queryForMarkers"
         id="polymons"
@@ -23,6 +19,12 @@
           polymon="[[polymon]]">
       </polymon-map-marker>
     </template>
+
+    <polymon-map-marker
+        id="playerMarker"
+        polymon="[[player]]"
+        player>
+    </polymon-map-marker>
   </template>
   <script>
     Polymer({

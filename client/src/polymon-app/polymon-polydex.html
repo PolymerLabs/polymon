@@ -173,13 +173,6 @@
     </app-route>
 
     <firebase-query
-        id="polydexQuery"
-        app-name="polymon"
-        path="[[__firebasePolydexPath(user)]]"
-        data="{{caughtPolymons}}">
-    </firebase-query>
-
-    <firebase-query
         id="teamQuery"
         app-name="polymon"
         path="[[__firebaseTeamPath(user)]]"
@@ -270,15 +263,11 @@
 
         availablePolymons: {
           type: Array
-        },
-
-        db: {
-          type: Object
         }
       },
 
       observers: [
-        '__caughtPolymonsChanged(caughtPolymons.*)',
+        // '__caughtPolymonsChanged(caughtPolymons.*)',
         '__updateEntries(availablePolymons.length, caughtPolymons.length)',
         '__updateTeamPolymon(caughtPolymons.length, team.*)'
       ],
@@ -330,32 +319,8 @@
         return selectedTeamSpot != null;
       },
 
-      __caughtPolymonsChanged: function(change) {
-        let splices = change.value.indexSplices;
-
-        if (!splices) {
-          return;
-        }
-
-        let queue = Promise.resolve();
-        let db = this.$.polydexQuery.db;
-
-        splices.forEach(splice => {
-          for (let i = 0; i < splice.addedCount; ++i) {
-            let polydexEntry = splice.object[splice.index + i];
-
-            queue = queue
-                .then(() => this.__polymonById(polydexEntry.polymonId))
-                .then(polymon => this.fire('polydex-entry-added', {
-                  polymon,
-                  polydexEntry
-                }));
-          }
-        });
-      },
-
       __polymonById: function(polymonId) {
-        return this.$.polydexQuery.db
+        return firebase.app('polymon').database()
             .ref(`/polymons/${polymonId}`)
             .once('value')
             .then(snapshot => snapshot.val());
@@ -427,10 +392,6 @@
         }
 
         return false;
-      },
-
-      __firebasePolydexPath: function(user) {
-        return user == null ? null : `/users/${user.uid}/polydex`;
       },
 
       __firebaseTeamPath: function(user) {

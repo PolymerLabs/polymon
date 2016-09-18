@@ -4,11 +4,15 @@
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-button.html">
+
 <dom-module id="polymon-caught-screen">
   <template>
     <style include="rotate-animation wiggle-animation">
       :host {
         @apply --layout-fit;
+        @apply --layout-vertical;
+
         font-family: var(--polymon-font-family);
         text-align: center;
         background-image: linear-gradient(25deg, #71D3F4, #DEF6FF);
@@ -17,6 +21,11 @@
         pointer-events: none;
         transform: translateY(10px);
         transition: transform 0.3s, opacity 0.15s;
+
+        box-sizing: border-box;
+        padding: 1em;
+
+        justify-content: space-between;
 
         --polymon-portrait-background: transparent;
       }
@@ -34,7 +43,6 @@
 
       #container {
         position: relative;
-        margin-top: 6em;
       }
 
       #container polymon-portrait {
@@ -117,16 +125,17 @@
       }
 
       #overlay {
-        @apply --layout-fit;
         @apply --layout-vertical;
         @apply --layout-end-justified;
-        margin: 1em;
       }
 
       #continue {
         width: 100%;
       }
 
+      firebase-document {
+        display: none;
+      }
 
     </style>
     <firebase-document
@@ -172,7 +181,8 @@
         },
 
         continueTo: {
-          type: String
+          type: String,
+          value: '/'
         }
       },
 
