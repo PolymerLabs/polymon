@@ -8,9 +8,6 @@
         position: absolute;
         display: none;
         transition: transform 0.3s linear;
-      }
-
-      :host(.player) {
         --polymon-portrait-background: transparent;
       }
 
@@ -20,6 +17,15 @@
 
       polymon-portrait {
         transform: translate(-50%, -50%) scale(0.5);
+      }
+
+      :host(.waypoint) polymon-portrait {
+        background-color: #eee;
+        padding: 10px;
+        border-radius: 64px !important;
+        transform: translate(-50%, -50%) scale(0.3);
+        border: 10px solid white;
+        box-shadow: 0px 6px 0 #ddd;
       }
     </style>
     <polymon-portrait
@@ -49,12 +55,41 @@
       },
 
       reposition: function(bounds, projection) {
-        if (!this.polymon) {
+        if (!this.polymon || !this.visible) {
           return;
         }
 
         let latLng = this.toLatLng(this.polymon.lastSeen);
         let position = projection.fromLatLngToDivPixel(latLng);
+
+        if (bounds.contains(latLng)) {
+          this.classList.remove('waypoint');
+        } else {
+          let northEast = bounds.getNorthEast();
+          let southWest = bounds.getSouthWest();
+          let topRight = projection.fromLatLngToDivPixel(northEast);
+          let bottomLeft = projection.fromLatLngToDivPixel(southWest);
+
+          this.classList.add('waypoint');
+
+          topRight.x = topRight.x - 32;
+          topRight.y = topRight.y + 32;
+
+          bottomLeft.x = bottomLeft.x + 32;
+          bottomLeft.y = bottomLeft.y - 32;
+
+          if (position.y < topRight.y) {
+            position.y = topRight.y;
+          } else if (position.y > bottomLeft.y) {
+            position.y = bottomLeft.y;
+          }
+
+          if (position.x > topRight.x) {
+            position.x = topRight.x;
+          } else if (position.x < bottomLeft.x) {
+            position.x = bottomLeft.x;
+          }
+        }
 
         if (this.__oldX === position.x && this.__oldY === position.y) {
           // TODO(cdata): Is it better to do this check than to just update our
