@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-cd ./client
+set -e
+set -x
+
+cd `pwd`/client
 rm -r ./build
 polymer build -v --sources "src/**/*" \
                  --sources "fonts/**/*" \
@@ -13,3 +16,6 @@ sed -i.bak s/defer=\"\"/defer/g build/bundled/index.html
 sed -i.bak s/defer=\"\"/defer/g build/unbundled/index.html
 rm build/bundled/index.html.bak
 rm build/unbundled/index.html.bak
+
+set +e
+set +x
