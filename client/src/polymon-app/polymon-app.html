@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-lazy-loader.html">
 
@@ -39,6 +40,18 @@
         user="{{user}}"
         id="auth">
     </firebase-auth>
+
+    <firebase-query
+        app-name="polymon"
+        path="/polymons"
+        data="{{polymons}}">
+    </firebase-query>
+
+    <firebase-query
+        app-name="polymon"
+        path="[[__computePolydexPath(user)]]"
+        data="{{polydex}}">
+    </firebase-query>
 
     <firebase-document
         id="userData"
@@ -138,9 +151,11 @@
 
     <polymon-map
         unresolved
+        id="map"
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
-        user="[[user]]">
+        user="[[user]]"
+        polymons="[[polymons]]">
     </polymon-map>
 
     <polymon-start-screen
@@ -165,6 +180,8 @@
         active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
       <polymon-polydex
           active="[[polydexRouteActive]]"
+          available-polymons="[[polymons]]"
+          caught-polymons="[[polydex]]"
           route="{{polydexRoute}}"
           user="[[user]]">
       </polymon-polydex>
@@ -197,6 +214,14 @@
       ],
 
       properties: {
+        polymons: {
+          type: Array
+        },
+
+        polydex: {
+          type: Array
+        },
+
         unconfirmedCatches: {
           type: Array,
           value: function() {
@@ -211,7 +236,8 @@
       },
 
       observers: [
-        '__activeBattleIdChanged(userData.player.activeBattleId, route.path)'
+        '__activeBattleIdChanged(userData.player.activeBattleId, route.path)',
+        '__polydexChanged(polydex.*)'
       ],
 
       attemptLogin: function() {
@@ -232,7 +258,10 @@
             case 'reference':
               this.set('queryParams.continueTo', continueTo);
               this.push('unconfirmedCatches',
-                this.$.userData.ref.child('catchQueue').push(code).key);
+                this.$.userData.ref.child('catchQueue').push({
+                  code: code,
+                  latLng: this.$.map.playerLatLng
+                }).key);
               break;
             case 'battle':
               this.$.userData.ref.child('battleQueue').push({
@@ -246,7 +275,7 @@
       },
 
       __onPolydexEntryAdded: function(event) {
-        let { polydexEntry, polymon } = event.detail;
+        let polydexEntry = event.detail;
 
         for (let i = 0; i < this.unconfirmedCatches.length; ++i) {
           let catchId = this.unconfirmedCatches[i];
@@ -256,6 +285,12 @@
             this.set('route.path', `/caught/${polydexEntry.polymonId}`);
           }
         }
+      },
+
+      __computePolydexPath: function(user) {
+        return user
+            ? `/users/${user.uid}/polydex`
+            : null;
       },
 
       __computeUserDataPath: function(user) {
@@ -274,6 +309,23 @@
         } else if (polydexRouteActive) {
           return 0;
         }
+      },
+
+      __polydexChanged: function(change) {
+        let splices = change.value.indexSplices;
+
+        if (!splices) {
+          return;
+        }
+
+        let queue = Promise.resolve();
+
+        splices.forEach(splice => {
+          for (let i = 0; i < splice.addedCount; ++i) {
+            let polydexEntry = splice.object[splice.index + i];
+            this.fire('polydex-entry-added', polydexEntry);
+          }
+        });
       }
     });
   </script>

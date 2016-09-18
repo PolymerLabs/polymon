@@ -26,6 +26,18 @@ const app = firebase.initializeApp({
   serviceAccount: 'service-account.json'
 });
 
+const initialBounds = {
+  northEast: {
+    lat: 37.881054,
+    lng: -122.298045
+  },
+
+  southWest: {
+    lat: 37.808696,
+    lng: -122.219086
+  }
+};
+
 const db = app.database();
 const polymonsRef = db.ref('/polymons');
 const referencesRef = db.ref('/references');
@@ -44,10 +56,23 @@ function clean() {
   ]);
 }
 
+function randomSighting() {
+  const {northEast, southWest} = initialBounds;
+  return {
+    lat: Math.random() * (northEast.lat - southWest.lat) + southWest.lat,
+    lng: Math.random() * (southWest.lng - northEast.lng) + northEast.lng,
+    timestamp: Date.now()
+  };
+}
+
 clean().then(() => {
   return readJson(polymonJsonPath).then(polymons => {
     let writes = [];
     let qrCodeData = polymons.map(polymon => {
+      polymon = Object.assign({
+        lastSeen: randomSighting()
+      }, polymon);
+
       let reference = makeReference(polymon);
       let polymonRef = polymonsRef.push(polymon);
       let referenceSet = referencesRef.child(reference).set(polymonRef.key);

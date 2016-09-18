@@ -3,7 +3,14 @@
     ".read": "false",
     ".write": "false",
     "polymons": {
-      ".read": "true"
+      ".read": "true",
+      "$polymon": {
+        "lastSeen": {
+          "lat": {},
+          "lng": {},
+          "timestamp": {}
+        }
+      }
     },
     "references": {
       "$reference": {
