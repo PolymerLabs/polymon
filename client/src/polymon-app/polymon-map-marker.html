@@ -16,22 +16,97 @@
       }
 
       polymon-portrait {
-        transform: translate(-50%, -50%) scale(0.5);
+        position: absolute;
+        z-index: 1;
+        padding: 10px;
+        margin: 8px;
+      }
+
+      #arrow {
+        width: 100px;
+        height: 100px;
+        transform: translate(-50%, -50%) scale(0.6);
       }
 
       :host(.waypoint) polymon-portrait {
         background-color: #eee;
-        padding: 10px;
+
         border-radius: 64px !important;
-        transform: translate(-50%, -50%) scale(0.25);
-        border: 10px solid white;
-        box-shadow: 0px 6px 0 #ddd;
       }
+
+      :host(.waypoint) #arrow {
+        display: inline-block;
+        position: relative;
+        transform: translate(-50%, -50%) scale(0.33);
+      }
+
+      :host(.waypoint) #arrow > div {
+        width: 100px;
+        height: 100px;
+        background-color: #fff;
+        border-radius: 64px;
+        overflow: visible;
+      }
+
+      :host(.waypoint) #arrow > div:after {
+        content: '';
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        transform-origin: center center;
+      }
+
+      :host(.waypoint.south) #arrow div:after {
+        display: block;
+        transform: translateY(35%) rotate(45deg) scale(0.5);
+      }
+
+      :host(.waypoint.west) #arrow div:after {
+        display: block;
+        transform: translateX(-35%) rotate(45deg) scale(0.5);;
+      }
+
+      :host(.waypoint.north) #arrow div:after {
+        display: block;
+        transform: translateY(-35%) rotate(45deg) scale(0.5);
+      }
+
+      :host(.waypoint.east) #arrow div:after {
+        display: block;
+        transform: translateX(35%) rotate(45deg) scale(0.5);
+      }
+
+      :host(.waypoint) #arrow .surface {
+        top: 0;
+        position: absolute;
+      }
+
+      :host(.waypoint) #arrow .shadow {
+        position: relative;
+        top: 8px;
+        background-color: #ddd;
+      }
+
+      :host(.waypoint) #arrow .shadow:after {
+        background-color: #ddd;
+      }
+
     </style>
-    <polymon-portrait
-        polymon="[[polymon]]"
-        caught>
-    </polymon-portrait>
+
+    <div id="arrow">
+      <div class="shadow"></div>
+      <div class="surface">
+        <polymon-portrait
+            polymon="[[polymon]]"
+            caught>
+        </polymon-portrait>
+      </div>
+    </div>
+
   </template>
   <script>
     Polymer({
@@ -72,6 +147,7 @@
           let bottomLeft = projection.fromLatLngToDivPixel(southWest);
 
           this.classList.add('waypoint');
+          this.classList.remove('north', 'south', 'east', 'west');
 
           topRight.x = topRight.x - 32;
           topRight.y = topRight.y + 32;
@@ -81,14 +157,18 @@
 
           if (position.y < topRight.y) {
             position.y = topRight.y;
+            this.classList.add('north');
           } else if (position.y > bottomLeft.y) {
             position.y = bottomLeft.y;
+            this.classList.add('south');
           }
 
           if (position.x > topRight.x) {
             position.x = topRight.x;
+            this.classList.add('east');
           } else if (position.x < bottomLeft.x) {
             position.x = bottomLeft.x;
+            this.classList.add('west');
           }
         }
 
