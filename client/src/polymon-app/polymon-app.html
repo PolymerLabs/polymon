@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-lazy-loader.html">
 
@@ -39,6 +40,12 @@
         user="{{user}}"
         id="auth">
     </firebase-auth>
+
+    <firebase-query
+        app-name="polymon"
+        path="/polymons"
+        data="{{polymons}}">
+    </firebase-query>
 
     <firebase-document
         id="userData"
@@ -140,7 +147,8 @@
         unresolved
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
-        user="[[user]]">
+        user="[[user]]"
+        polymons="[[polymons]]">
     </polymon-map>
 
     <polymon-start-screen
@@ -165,6 +173,7 @@
         active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
       <polymon-polydex
           active="[[polydexRouteActive]]"
+          available-polymons="[[polymons]]"
           route="{{polydexRoute}}"
           user="[[user]]">
       </polymon-polydex>
@@ -197,6 +206,10 @@
       ],
 
       properties: {
+        polymons: {
+          type: Array
+        },
+
         unconfirmedCatches: {
           type: Array,
           value: function() {

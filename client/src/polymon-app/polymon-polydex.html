@@ -173,12 +173,6 @@
     </app-route>
 
     <firebase-query
-        app-name="polymon"
-        path="/polymons"
-        data="{{availablePolymons}}">
-    </firebase-query>
-
-    <firebase-query
         id="polydexQuery"
         app-name="polymon"
         path="[[__firebasePolydexPath(user)]]"
@@ -372,8 +366,8 @@
           return Promise.resolve([]);
         }
 
-        return Promise.all(this.caughtPolymons.map(polydexEntry =>
-            this.__polymonById(polydexEntry.polymonId)))
+        return Promise.all(this.caughtPolymons.map(
+            polydexEntry => this.__polymonById(polydexEntry.polymonId)))
             .then(caughtPolymons => caughtPolymons.map((caughtPolymon, index) =>
                 Object.assign(caughtPolymon,
                     { polydexId: this.caughtPolymons[index].$key })));
@@ -381,23 +375,23 @@
 
       __updateEntries: function() {
         this.__fetchCaughtPolymon().then(caughtPolymons => {
-            let entries = this.availablePolymons.map(polymon => {
-              let caught = false;
-              let caughtPolymon = {};
+          let entries = this.availablePolymons.map(polymon => {
+            let caught = false;
+            let caughtPolymon = {};
 
-              for (let i = 0; i < caughtPolymons.length; ++i) {
-                if (caughtPolymons[i].shortName === polymon.shortName) {
-                  caught = true;
-                  caughtPolymon = caughtPolymons.splice(i, 1)[0];
-                  break;
-                }
+            for (let i = 0; i < caughtPolymons.length; ++i) {
+              if (caughtPolymons[i].shortName === polymon.shortName) {
+                caught = true;
+                caughtPolymon = caughtPolymons.splice(i, 1)[0];
+                break;
               }
+            }
 
-              return Object.assign({}, { caught }, caughtPolymon, polymon);
-            });
-
-            this._setEntries(entries);
+            return Object.assign({}, { caught }, caughtPolymon, polymon);
           });
+
+          this._setEntries(entries);
+        });
       },
 
       __updateTeamPolymon: function() {

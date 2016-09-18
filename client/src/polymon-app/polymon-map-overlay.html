@@ -1,0 +1,183 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="polymon-map-marker.html">
+<link rel="import" href="polymon-element.html">
+<dom-module id="polymon-map-overlay">
+  <template>
+    <style>
+      :host {
+        position: absolute;
+      }
+    </style>
+    <polymon-map-marker
+        id="playerMarker"
+        polymon="[[player]]"
+        player>
+    </polymon-map-marker>
+    <template is="dom-repeat"
+        id="polymons"
+        items="[[polymons]]"
+        as="polymon">
+      <polymon-map-marker
+          polymon="[[polymon]]">
+      </polymon-map-marker>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-map-overlay',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        player: {
+          type: Object,
+          computed: '__computePlayer(playerLatLng)'
+        },
+
+        polymons: {
+          type: Array,
+          observer: 'update'
+        },
+
+        overlay: {
+          type: Object
+        },
+
+        map: {
+          type: Object,
+          computed: '__computeMap(overlay)'
+        },
+
+        playerLatLng: {
+          type: Object,
+          observer: 'update'
+        },
+
+        mapListeners: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        markers: {
+          type: Array,
+          computed: '__computeMarkers(isAttached, polymons.length)',
+          observer: 'update'
+        }
+      },
+
+      observers: [
+        '__mapChanged(map, mapListeners)'
+      ],
+
+      __computeMarkers: function() {
+        if (this.root && this.isAttached) {
+          return Array.from(
+              Polymer.dom(this.root).querySelectorAll('polymon-map-marker'));
+        }
+
+        return [];
+      },
+
+      __computePlayer: function(playerLatLng) {
+        return {
+          spriteIndex: 75,
+          lastSeen: Object.assign({
+            timestamp: 0
+          }, playerLatLng)
+        };
+      },
+
+      __computeMap: function(overlay) {
+        return overlay ? overlay.getMap() : null;
+      },
+
+      __mapChanged: function(map, mapListeners) {
+        if (mapListeners.length) {
+          mapListeners.forEach(
+              listener => google.maps.event.removeListener(listener));
+          this.mapListeners = [];
+        }
+
+        if (map != null) {
+          let boundUpdate = this.update.bind(this);
+          mapListeners.push(
+              map.addListener('bounds_changed', boundUpdate));
+          mapListeners.push(
+              map.addListener('zoom_changed', boundUpdate));
+          mapListeners.push(
+              map.addListener('drag', boundUpdate));
+          mapListeners.push(
+              map.addListener('resize', boundUpdate));
+        }
+      },
+
+      update: function() {
+        this.deraf('update', () => {
+          if (!this.overlay ||
+              !this.map ||
+              !this.polymons ||
+              !this.markers ||
+              // NOTE(cdata): The map is not yet initialized if mapType is null:
+              this.map.mapTypeId == null) {
+            console.log('Cannot update markers..');
+            return;
+          }
+
+          // console.log('Updating markers..');
+
+          const bounds = this.map.getBounds();
+          const projection = this.overlay.getProjection();
+
+          for (let i = 0; i < this.markers.length; ++i) {
+            this.markers[i].reposition(bounds, projection);
+          }
+          // TODO(cdata): Update all Polymon positions here..
+        });
+      }
+    });
+
+    function makePolymonMapOverlay(map, polymons) {
+      class PolymonMapOverlay extends google.maps.OverlayView {
+        constructor(map, polymons) {
+          super();
+          this.polymons = polymons;
+          this.overlayElement = document.createElement('polymon-map-overlay');
+          this.setMap(map);
+        }
+
+        onAdd() {
+          let panes = this.getPanes();
+          Polymer.dom(panes.overlayLayer).appendChild(this.overlayElement);
+
+          this.overlayElement.polymons = this.polymons;
+          this.overlayElement.overlay = this;
+        }
+
+        onRemove() {
+          this.overlayElement.remove();
+          this.overlayElement.polymons = [];
+          this.overlayElement = null;
+        }
+
+        draw() {
+          this.overlayElement
+              .notifyPath('polymons', this.overlayElement.polymons);
+          this.overlayElement.update();
+        }
+
+        set playerLatLng(value) {
+          this.overlayElement.playerLatLng = value;
+        }
+
+        get playerLatLng() {
+          return this.overlayElement.playerLatLng;
+        }
+      }
+
+      return new PolymonMapOverlay(map, polymons);
+    }
+  </script>
+</dom-module>

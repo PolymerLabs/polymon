@@ -5,6 +5,7 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-qr-code-scanner-proxy.html">
 <link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-map-overlay.html">
 <dom-module id="polymon-map">
   <template>
     <style>
@@ -73,15 +74,10 @@
     <google-map
         disable-default-ui
         zoom="16"
-        latitude="{{mapCoords.latitude}}"
-        longitude="{{mapCoords.longitude}}"
+        map="{{map}}"
+        latitude="{{mapLatLng.lat}}"
+        longitude="{{mapLatLng.lng}}"
         api-key="AIzaSyD5zoX-HpvOEiV-bEwHaHBCl9Rmnbgw_xk">
-      <!-- TODO(cdata): Add this back in when we get a good player icon -->
-      <!-- <google-map-marker
-          icon='{"url":"../../images/player.svg", "scaledSize":{"width":64,"height":64}}'
-          latitude="[[playerCoords.latitude]]"
-          longitude="[[playerCoords.longitude]]">
-      </google-map-marker> -->
     </google-map>
     <section id="controls">
       <a href="/">
@@ -101,52 +97,71 @@
       ],
 
       properties: {
-        mapCoords: {
+        mapLatLng: {
           type: Object,
           notify: true,
           value: function() {
             return {
-              latitude: 37.7905490,
-              longitude: -122.393477
+              lat: 37.7905490,
+              lng: -122.393477
             };
           }
         },
 
-        playerCoords: {
+        playerLatLng: {
           type: Object,
-          notify: true,
           value: null,
-          observer: '__playerCoordsChanged'
+          observer: '__playerLatLngChanged'
+        },
+
+        polymons: {
+          type: Object
+        },
+
+        map: {
+          type: Object
+        },
+
+        overlay: {
+          type: Object,
+          computed: '__computeOverlay(map, polymons)'
         }
       },
 
       observers: [
-        '__activeChanged(active)'
+        '__activeChanged(active)',
+        '__polymonsChanged(polymons.*, overlay)'
       ],
 
       attached: function() {
         try {
           navigator.geolocation.getCurrentPosition(position => {
-            let coords = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
+            this.playerLatLng = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
             };
 
-            this.playerCoords = coords;
+            // TODO(cdata): Add some UI so that the player can easily re-center
+            // the map..
+            this.mapLatLng = this.playerLatLng;
           });
         } catch (e) {}
+      },
+
+      __computeOverlay: function(map, polymons) {
+        if (map && polymons) {
+          return makePolymonMapOverlay(map, polymons);
+        }
       },
 
       __activeChanged: function(active) {
         if (active) {
           try {
             this.__watchId = navigator.geolocation.watchPosition(position => {
-              let coords = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude
+              this.playerLatLng = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
               };
-
-              this.playerCoords = coords;
             });
           } catch (e) {}
         } else {
@@ -156,8 +171,23 @@
         }
       },
 
-      __playerCoordsChanged: function() {
-        this.mapCoords = this.playerCoords;
+      __playerLatLngChanged: function() {
+        if (this.overlay) {
+          this.overlay.playerLatLng = this.playerLatLng;
+        }
+      },
+
+      __polymonsChanged: function() {
+        if (this.overlay && this.polymons) {
+
+          this.deraf('polymons-changed', () => {
+            // NOTE(cdata): This is super ugly coupling, but it's probably the
+            // most efficient way to get updates done without data-binding in
+            // play:
+            this.overlay.overlayElement.$.polymons.render();
+            this.overlay.draw();
+          });
+        }
       }
     });
   </script>

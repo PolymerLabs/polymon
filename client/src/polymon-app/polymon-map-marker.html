@@ -1,0 +1,102 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="polymon-portrait.html">
+<dom-module id="polymon-map-marker">
+  <template>
+    <style>
+      :host {
+        position: absolute;
+        display: none;
+        transition: transform 0.3s linear;
+      }
+
+      :host(.player) {
+        --polymon-portrait-background: transparent;
+      }
+
+      :host(.visible) {
+        display: inline-block;
+      }
+
+      polymon-portrait {
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+    </style>
+    <polymon-portrait
+        polymon="[[polymon]]"
+        caught>
+    </polymon-portrait>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-map-marker',
+
+      properties: {
+        visible: {
+          type: Boolean,
+          computed: '__computeVisible(player, polymon.*)',
+          observer: '__visibleChanged'
+        },
+
+        player: {
+          type: Boolean,
+          observer: '__playerChanged'
+        },
+
+        polymon: {
+          type: Object
+        }
+      },
+
+      reposition: function(bounds, projection) {
+        if (!this.polymon) {
+          return;
+        }
+
+        let latLng = this.toLatLng(this.polymon.lastSeen);
+        let position = projection.fromLatLngToDivPixel(latLng);
+
+        if (this.__oldX === position.x && this.__oldY === position.y) {
+          // TODO(cdata): Is it better to do this check than to just update our
+          // position?
+          return;
+        }
+
+        console.count('Marker repositioning');
+
+        this.__oldX = position.x;
+        this.__oldY = position.y;
+
+        this.style.transform = `translate(${position.x}px, ${position.y}px)`;
+      },
+
+      toLatLng: function(latLng) {
+        return new google.maps.LatLng(latLng);
+      },
+
+      __computeVisible: function() {
+        if (this.player) {
+          return true;
+        }
+
+        return this.polymon && this.polymon.lastSeen;
+      },
+
+      __visibleChanged: function() {
+        if (this.visible) {
+          this.classList.add('visible');
+        } else {
+          this.classList.remove('visible');
+        }
+      },
+
+      __playerChanged: function(player) {
+        if (player) {
+          this.classList.add('player');
+        } else {
+          this.classList.remove('player');
+        }
+      }
+    });
+  </script>
+</dom-module>
