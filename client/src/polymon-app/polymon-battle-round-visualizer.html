@@ -1247,7 +1247,7 @@
       },
 
       listeners: {
-        'iron-resize': '__updateMetrics',
+        'iron-resize': 'updateMetrics',
       },
 
       ready: function() {
@@ -1360,7 +1360,7 @@
         return classes.join(' ');
       },
 
-      __updateMetrics() {
+      updateMetrics() {
         this.deraf('update-metrics', () => {
           var rect = this.$.scene.getBoundingClientRect();
           var x1 = rect.width;

@@ -280,6 +280,10 @@
           this._setWaiting(true);
 
           this.deraf('battle-rounds-changed', () => {
+            // TODO(cdata): This is necessary to make sure that metrics get
+            // invalidated at the right time in some lazy-load cases. Figure
+            // out if there is a better (e.g., lazier) way..
+            this.$.roundVisualizer.updateMetrics();
             this.$.roundVisualizer.play(
                 this.battleRounds[this.battleRounds.length - 1])
                     .then(function() {
