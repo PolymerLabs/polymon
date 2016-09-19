@@ -26,6 +26,10 @@
         transform: translateY(0px);
       }
 
+      :host(.active) #warning {
+        opacity: 1;
+      }
+
       #controls {
         z-index: 1;
         position: absolute;
@@ -52,6 +56,20 @@
         margin-right: 1em;
       }
 
+      #warning {
+        margin: 2em;
+        position: absolute;
+        display: inline-block;
+        text-align: center;
+        max-width: 640px;
+        font-family: var(--polymon-font-family);
+        font-size: 24px;
+        color: #aaa;
+        text-shadow: 0 1px 0 #fff;
+        opacity: 0;
+        transition: opacity 0.15s 1s;
+      }
+
       polymon-button {
         width: 100%;
       }
@@ -60,6 +78,9 @@
         z-index: 10;
       }
     </style>
+    <span id="warning">
+      If the map does not load, please refresh!
+    </span>
     <app-route
         pattern="/scan"
         route="{{route}}"

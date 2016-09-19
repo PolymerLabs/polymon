@@ -37,6 +37,7 @@
         app-name="polymon"
         provider="google"
         signed-in="{{authenticated}}"
+        status-known="{{statusKnown}}"
         user="{{user}}"
         id="auth">
     </firebase-auth>
@@ -237,11 +238,18 @@
 
       observers: [
         '__activeBattleIdChanged(userData.player.activeBattleId, route.path)',
-        '__polydexChanged(polydex.*)'
+        '__polydexChanged(polydex.*)',
+        '__statusKnownChanged(statusKnown)'
       ],
 
       attemptLogin: function() {
         this.$.auth.signInWithPopup();
+      },
+
+      __statusKnownChanged: function() {
+        if (this.statusKnown && !this.$.auth.signedIn) {
+          this.set('route.path', '/');
+        }
       },
 
       __activeBattleIdChanged: function(activeBattleId) {

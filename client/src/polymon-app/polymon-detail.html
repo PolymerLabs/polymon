@@ -50,8 +50,8 @@
         transition-delay: 0.2s;
       }
 
-      :host(.active) #info,
-      :host(.active) #controls {
+      :host(.active.open) #info,
+      :host(.active.open) #controls {
         transition-delay: 0.3s;
         transform: translateY(0);
         opacity: 1;
@@ -65,9 +65,6 @@
         position: absolute;
         background-color: #ccc;
         backface-visibility: hidden;
-        /*background-image: url(/images/polymon_sprite_sheet.svg);*/
-        /*background-size: 640px 640px;*/
-        /*background-position: 0 -448px;*/
         width: 64px;
         height: 64px;
         border-radius: 32px;
@@ -146,6 +143,7 @@
 
       #controls a {
         width: 100%;
+        -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
       }
 
       #controls polymon-button {

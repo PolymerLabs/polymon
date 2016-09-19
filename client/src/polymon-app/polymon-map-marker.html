@@ -7,7 +7,10 @@
       :host {
         position: absolute;
         display: none;
-        transition: transform 0.15s ease-in-out;
+        /* TODO(cdata): This transition makes the markers look marginally better
+         * on mobile at the cost of looking marginally worse on desktop. Worth
+         * it? */
+        /*transition: transform 0.15s ease-in-out;*/
         --polymon-portrait-background: transparent;
       }
 
