@@ -1,7 +1,15 @@
 {
-  "name": "polymon",
-  "short_name": "polymon",
+  "name": "Polymon",
+  "short_name": "Polymon",
   "description": "Seek out Polymer Team members and capture their Polymon!",
   "start_url": "/",
-  "display": "standalone"
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#1CA6FC",
+  "background_color": "#1CA6FC",
+  "icons": [{
+    "src": "images/polymon_icon.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
 }
