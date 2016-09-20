@@ -131,5 +131,5 @@ firebase deploy --only database
 firebase deploy --only functions
 ```
 
-1: https://firebase.google.com/docs/server/setup#add_firebase_to_your_app
-2: http://localhost:5000
+[1]: https://firebase.google.com/docs/server/setup#add_firebase_to_your_app
+[2]: http://localhost:5000
