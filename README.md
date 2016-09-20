@@ -67,6 +67,7 @@ looks like this:
 ```sh
 export FIREBASE_APP_NAME=polymon
 export FIREBASE_API_KEY=YoUr_ApI_kEy_GoEs_HeRe
+export FIREBASE_AUTH_DOMAIN=polymon-dev.firebaseapp.com
 export FIREBASE_DATABASE_URL=https://polymon-foo.firebaseio.com
 export FIREBASE_STORAGE_BUCKET=polymon-foo.appspot.com
 export FIREBASE_SERVICE_ACCOUNT=.service-account.foo.json

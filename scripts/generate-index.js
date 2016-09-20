@@ -9,6 +9,7 @@ const indexHtmlPath = path.resolve(__dirname, '../client/index.html');
 const firebase = {
   appName: process.env.FIREBASE_APP_NAME,
   apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
   databaseUrl: process.env.FIREBASE_DATABASE_URL,
   serviceAccount: process.env.FIREBASE_SERVICE_ACCOUNT,
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET
