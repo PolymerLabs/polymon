@@ -3,7 +3,9 @@ bower_components
 node_modules
 firebase-debug.log
 *.swp
-service-account.json
 qr-code-data.json
 polymon-imageset.html
 build
+.service-account.*.json
+.firebase.*.env
+client/index.html

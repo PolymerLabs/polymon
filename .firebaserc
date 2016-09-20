@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "polymon-b105e"
+    "production": "polymon-b105e",
+    "dev": "polymon-dev"
   }
 }
