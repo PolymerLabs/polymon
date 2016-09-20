@@ -20,10 +20,10 @@ const polymonJsonPath = path.resolve(__dirname, '../polymon.json');
 const qrCodeDataPath =
     path.resolve(__dirname, '../client/qr-code-data.json');
 const app = firebase.initializeApp({
-  name: 'polymon',
-  apiKey: 'AIzaSyD5zoX-HpvOEiV-bEwHaHBCl9Rmnbgw_xk',
-  databaseURL: 'https://polymon-b105e.firebaseio.com',
-  serviceAccount: 'service-account.json'
+  name: process.env.FIREBASE_APP_NAME,
+  apiKey: process.env.FIREBASE_API_KEY,
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  serviceAccount: process.env.FIREBASE_SERVICE_ACCOUNT
 });
 
 const initialBounds = {
