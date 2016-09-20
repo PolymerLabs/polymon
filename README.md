@@ -86,7 +86,7 @@ run before you can start working:
 
 # Set the local environment, and generate an appropriate index.html for that
 # environment. Replace `foo` with your Firebase project alias:
-./scripts/set-env.sh foo
+source ./scripts/set-env.sh foo
 ```
 
 Finally, you need to make sure that both the Firebase Functions and Firebase

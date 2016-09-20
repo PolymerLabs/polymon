@@ -22,6 +22,7 @@ fi
 set -x
 
 source $FIREBASE_ENV_FILE
+
 node ./scripts/generate-index.js
 firebase use $ENV_NAME
 
