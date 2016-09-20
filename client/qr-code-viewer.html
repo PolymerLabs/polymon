@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>polymon</title>
+    <title>Polymon QR Code Viewer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,6 +11,7 @@
     <link rel="import" href="/bower_components/app-route/app-location.html">
     <link rel="import" href="/bower_components/app-route/app-route.html">
     <link rel="import" href="/src/polymon-app/polymon-qr-code.html">
+    <link rel="import" href="/src/polymon-app/polymon-portrait.html">
     <style>
       body {
         background-color: #fff;
@@ -29,6 +30,11 @@
             justify-content: space-around;
           }
 
+          polymon-portrait {
+            background-color: transparent;
+            margin-left: 36px;
+          }
+
           a {
             display: flex;
             flex-direction: column;
@@ -36,6 +42,13 @@
           }
 
           a[hidden] { display: none }
+
+          #detail > span:first-of-type {
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
         </style>
         <iron-ajax
             url="/qr-code-data.json"
@@ -54,12 +67,20 @@
             hidden>
         </app-route>
 
-        <a hidden$="[[!polymonRouteActive]]">
+        <a hidden$="[[!polymonRouteActive]]" id="detail">
+          <span>
+          <polymon-portrait
+              polymon="[[selectedDatum.polymon]]"
+              size="200"
+              caught>
+          </polymon-portrait>
           <polymon-qr-code
               size="7"
               margin="5"
               data="reference.[[selectedDatum.reference]]">
           </polymon-qr-code>
+          </span>
+
           <span>[[selectedDatum.polymon.shortName]]</span>
           <span>reference.[[selectedDatum.reference]]</span>
         </a>
