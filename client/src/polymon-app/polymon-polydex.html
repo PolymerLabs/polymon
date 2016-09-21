@@ -343,47 +343,53 @@
       },
 
       __updateEntries: function() {
-        this.__fetchCaughtPolymon().then(caughtPolymons => {
-          let entries = this.availablePolymons.map(polymon => {
-            let caught = false;
-            let caughtPolymon = {};
+        this.deraf('update-entries', () => {
+          this.__fetchCaughtPolymon().then(caughtPolymons => {
+            let entries = this.availablePolymons.map(polymon => {
+              let caught = false;
+              let caughtPolymon = {};
 
-            for (let i = 0; i < caughtPolymons.length; ++i) {
-              if (caughtPolymons[i].shortName === polymon.shortName) {
-                caught = true;
-                caughtPolymon = caughtPolymons.splice(i, 1)[0];
-                break;
+              for (let i = 0; i < caughtPolymons.length; ++i) {
+                if (caughtPolymons[i].shortName === polymon.shortName) {
+                  caught = true;
+                  caughtPolymon = caughtPolymons.splice(i, 1)[0];
+                  break;
+                }
               }
-            }
 
-            return Object.assign({}, { caught }, caughtPolymon, polymon);
-          });
+              return Object.assign({}, { caught }, caughtPolymon, polymon);
+            });
 
-          this._setEntries(entries);
+            this._setEntries(entries);
+          }).catch(e => console.error(e));
         });
+
       },
 
       __updateTeamPolymon: function() {
-        this.__fetchCaughtPolymon().then(caughtPolymons => {
-          let team = Array.from(this.team);
-          let teamPolymons = [{}, {}, {}, {}, {}];
+        this.deraf('update-team-polymon', () => {
+          this.__fetchCaughtPolymon().then(caughtPolymons => {
+            let team = Array.from(this.team);
+            let teamPolymons = [{}, {}, {}, {}, {}];
 
-          for (let i = 0; team.length && i < caughtPolymons.length; ++i) {
-            let caughtPolymon = caughtPolymons[i];
+            for (let i = 0; team.length && i < caughtPolymons.length; ++i) {
+              let caughtPolymon = caughtPolymons[i];
 
-            for (let j = 0; j < team.length; j++) {
-              let teamPosition = team[j];
+              for (let j = 0; j < team.length; j++) {
+                let teamPosition = team[j];
 
-              if (teamPosition.polydexId === caughtPolymon.polydexId) {
-                teamPolymons[teamPosition.index] = caughtPolymon;
-                team.splice(j, 1);
-                break;
+                if (teamPosition.polydexId === caughtPolymon.polydexId) {
+                  teamPolymons[teamPosition.index] = caughtPolymon;
+                  team.splice(j, 1);
+                  break;
+                }
               }
             }
-          }
 
-          this._setTeamPolymons(teamPolymons);
-        });
+            this._setTeamPolymons(teamPolymons);
+          });
+        })
+
       },
 
       __isCaught: function(polymonId) {
