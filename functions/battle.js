@@ -237,7 +237,7 @@ function assignBattleMaxRounds(db, battleId) {
       ]))
       .then(snapshots => snapshots.map(snapshot => snapshot.val()))
       .then(teams =>
-          Math.max(Object.keys(teams[0]).length, Object.keys(teams[1]).length))
+          Math.min(Object.keys(teams[0]).length, Object.keys(teams[1]).length))
       .then(maxRounds => {
         console.log(`Setting Battle ${battleId} Max Rounds to ${maxRounds}..`);
         return Promise.all([
