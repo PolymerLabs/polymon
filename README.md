@@ -42,8 +42,7 @@ project's ID. For example, if your project ID is `polymon-foo`, your
 Once you have access to the Firebase project(s), you will need to create two
 files for each project you want to work with:
 
- 1. A shell file that exports environment variables that correspond to the
-    Firebase project's configuration.
+ 1. A JSON file that contains your Firebase project's configuration.
  2. A JSON file that contains Service Account credentials that have owner
     access to the Firebase project.
 
@@ -51,26 +50,26 @@ These files should be named based on the alias that corresponds to each
 Firebase project in `.firebaserc`. So, for a project with alias `foo` (as in
 the example `.firebaserc` above), the files should be named:
 
- 1. `.firebase.foo.env`
- 2. `.service-account.foo.json`
+ 1. `.foo.env.json`
+ 2. `.foo.service-account.json`
 
-NOTE: The name for the Service Account credentials file is actually
-arbitrary, but conventionally it will help to name it after the Firebase
-project alias as you will probably have to handle more than one such files.
-Also, the `.gitignore` is already configured to ignore
-`.service-account.*.json`, and you definitely don't want to check in your
-Service Account credentials, so...
+The `.foo.env.json` file should describe a Firebase configuration, and
+optionally a Google Analytics configuration:
 
-The `.firebase.foo.env` file should export a Firebase configuration that
-looks like this:
+```json
+{
+  "firebase": {
+    "appName": "polymon",
+    "apiKey": "AIzaSyDBzqU7s3b6hVu309lbYQABJr2xmioiIV0",
+    "authDomain": "polymon-foo.firebaseapp.com",
+    "databaseUrl": "https://polymon-foo.firebaseio.com",
+    "storageBucket": "polymon-foo.appspot.com"
+  },
 
-```sh
-export FIREBASE_APP_NAME=polymon
-export FIREBASE_API_KEY=YoUr_ApI_kEy_GoEs_HeRe
-export FIREBASE_AUTH_DOMAIN=polymon-dev.firebaseapp.com
-export FIREBASE_DATABASE_URL=https://polymon-foo.firebaseio.com
-export FIREBASE_STORAGE_BUCKET=polymon-foo.appspot.com
-export FIREBASE_SERVICE_ACCOUNT=.service-account.foo.json
+  "googleAnalytics": {
+    "trackingId": "OPTIONAL_TRACKING_ID_HERE"
+  }
+}
 ```
 
 If you don't know how to generate a Service Account credential file, please
@@ -87,7 +86,7 @@ run before you can start working:
 
 # Set the local environment, and generate an appropriate index.html for that
 # environment. Replace `foo` with your Firebase project alias:
-source ./scripts/set-env.sh foo
+./scripts/set-env.sh foo
 ```
 
 Finally, you need to make sure that both the Firebase Functions and Firebase

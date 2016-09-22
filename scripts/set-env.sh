@@ -12,16 +12,23 @@ if [ -z "$ENV_NAME" ]; then
   exit 1
 fi
 
-FIREBASE_ENV_FILE=.firebase.$ENV_NAME.env
+ENV_FILE=.$ENV_NAME.env.json
+SERVICE_ACCOUNT_FILE=.$ENV_NAME.service-account.json
 
-if [ ! -f $FIREBASE_ENV_FILE ]; then
-  echo "Please export environment variables in $FIREBASE_ENV_FILE to use env $ENV_NAME!"
+if [ ! -f $ENV_FILE ]; then
+  echo "Please define an environment config in $ENV_FILE to use env $ENV_NAME!"
+  exit 1
+fi
+
+if [ ! -f $SERVICE_ACCOUNT_FILE ]; then
+  echo "Please place your Service Account credentials in $SERVICE_ACCOUNT_FILE to use env $ENV_NAME!"
   exit 1
 fi
 
 set -x
 
-source $FIREBASE_ENV_FILE
+ln -fs $ENV_FILE ./.active.env.json
+ln -fs $SERVICE_ACCOUNT_FILE ./.active.service-account.json
 
 node ./scripts/generate-index.js
 firebase use $ENV_NAME
