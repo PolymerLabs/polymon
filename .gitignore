@@ -6,6 +6,6 @@ firebase-debug.log
 qr-code-data.json
 polymon-imageset.html
 build
-.service-account.*.json
-.firebase.*.env
+.*.service-account.json
+.*.env.json
 client/index.html

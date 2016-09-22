@@ -237,6 +237,7 @@
       },
 
       observers: [
+        '__routePathChanged(route.path)',
         '__activeBattleIdChanged(userData.player.activeBattleId, route.path)',
         '__polydexChanged(polydex.*)',
         '__statusKnownChanged(statusKnown)'
@@ -332,6 +333,14 @@
           for (let i = 0; i < splice.addedCount; ++i) {
             let polydexEntry = splice.object[splice.index + i];
             this.fire('polydex-entry-added', polydexEntry);
+          }
+        });
+      },
+
+      __routePathChanged: function() {
+        this.debounce('route-path-changed', () => {
+          if (window.ga) {
+            window.ga('send', 'pageview', this.route.path);
           }
         });
       }
