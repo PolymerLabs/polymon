@@ -94,11 +94,11 @@
 
     <google-map
         disable-default-ui
-        zoom="16"
+        zoom="18"
         map="{{map}}"
         latitude="{{mapLatLng.lat}}"
         longitude="{{mapLatLng.lng}}"
-        api-key="AIzaSyD5zoX-HpvOEiV-bEwHaHBCl9Rmnbgw_xk">
+        api-key="[[apiKey]]">
     </google-map>
     <section id="controls">
       <a href="/">
@@ -145,6 +145,13 @@
         overlay: {
           type: Object,
           computed: '__computeOverlay(map, polymons)'
+        },
+
+        apiKey: {
+          type: String,
+          value: function() {
+            return firebase.app('polymon').options.apiKey;
+          }
         }
       },
 

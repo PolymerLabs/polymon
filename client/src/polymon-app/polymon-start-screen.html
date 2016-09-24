@@ -18,6 +18,22 @@
         transition: opacity 0.3s, transform 0.5s cubic-bezier(.7,-0.29,.28,1.27);
       }
 
+      @media (max-height: 525px) and (orientation: landscape) {
+        :host {
+          @apply --layout-horizontal;
+          flex-wrap: wrap;
+        }
+
+        polymon-logo {
+          flex-basis: 100%;
+        }
+
+        #options {
+          box-sizing: border-box;
+          margin-right: calc(5% * 0.66);
+        }
+      }
+
       :host(:not(.hidden)) {
         opacity: 1;
         transform: translateY(0);
@@ -43,6 +59,11 @@
         transition-delay: 0.5s;
       }
 
+      #marquee {
+        @apply --layout-vertical;
+        flex: 1 1 50%;
+      }
+
       #for-anon {
         opacity: 1;
         transform: translateY(80px);
@@ -62,7 +83,7 @@
       #options {
         display: flex;
         position: relative;
-        flex: 1;
+        flex: 1 1 33.33333%;
       }
 
       #options > section {
@@ -96,11 +117,13 @@
       }
     </style>
 
-    <polymon-logo></polymon-logo>
+    <section id="marquee">
+      <polymon-logo></polymon-logo>
 
-    <polymon-carousel
-        active="[[active]]">
-    </polymon-carousel>
+      <polymon-carousel
+          active="[[active]]">
+      </polymon-carousel>
+    </section>
 
     <section id="options">
       <section id="for-user">
