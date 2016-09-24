@@ -48,7 +48,7 @@ readJson(envJsonPath).then(config => {
   const usersRef = db.ref('/users');
 
   function makeReference(polymon) {
-    return SHA256(`${polymon.shortName}${secret}`).toString()
+    return SHA256(`${polymon.shortName}${secret}`).toString();
   }
 
   function clean() {

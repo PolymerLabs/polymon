@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="/bower_components/paper-input/paper-input.html">
     <link rel="import" href="/bower_components/polymer/polymer.html">
     <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
     <link rel="import" href="/bower_components/app-route/app-location.html">
@@ -28,6 +29,7 @@
             flex-wrap: wrap;
             font-family: sans-serif;
             justify-content: space-around;
+            -webkit-print-color-adjust: exact;
           }
 
           polymon-portrait {
@@ -35,7 +37,7 @@
             margin-left: 36px;
           }
 
-          a {
+          :host > a {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -43,11 +45,27 @@
 
           a[hidden] { display: none }
 
+          #detail {
+            text-align: center;
+          }
+
           #detail > span:first-of-type {
             border: 1px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 1em;
+          }
+
+          #top {
+            flex-basis: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          paper-input {
+            width: 400px;
           }
         </style>
         <iron-ajax
@@ -56,6 +74,13 @@
             last-response="{{data}}"
             auto>
         </iron-ajax>
+
+        <section id="top">
+          <paper-input
+              label="QR Code Origin"
+              value="{{qrCodeOrigin}}">
+          </paper-input>
+        </section>
 
         <app-location route="{{route}}" use-hash-as-path hidden>
         </app-location>
@@ -67,27 +92,27 @@
             hidden>
         </app-route>
 
-        <a hidden$="[[!polymonRouteActive]]" id="detail">
+        <div hidden$="[[!polymonRouteActive]]" id="detail">
           <span>
-          <polymon-portrait
-              polymon="[[selectedDatum.polymon]]"
-              size="200"
-              caught>
-          </polymon-portrait>
-          <polymon-qr-code
-              size="7"
-              margin="5"
-              data="reference.[[selectedDatum.reference]]">
-          </polymon-qr-code>
+            <polymon-portrait
+                polymon="[[selectedDatum.polymon]]"
+                size="200"
+                caught>
+            </polymon-portrait>
+            <polymon-qr-code
+                size="7"
+                margin="5"
+                data="[[__urlFor(selectedDatum.reference, qrCodeOrigin)]]">
+            </polymon-qr-code>
           </span>
 
           <span>[[selectedDatum.polymon.shortName]]</span>
-          <span>reference.[[selectedDatum.reference]]</span>
-        </a>
+          <a target="_blank" href="[[__urlFor(selectedDatum.reference, qrCodeOrigin)]]">Catch Link</a>
+        </div>
 
         <template is="dom-repeat" items="[[data]]" as="datum">
           <a href="#/polymon/[[datum.polymon.shortName]]" hidden$="[[polymonRouteActive]]">
-            <polymon-qr-code data="reference.[[datum.reference]]"></polymon-qr-code>
+            <polymon-qr-code data="[[__urlFor(datum.reference, qrCodeOrigin)]]"></polymon-qr-code>
             <span>[[datum.polymon.shortName]]</span>
           </a>
         </template>
@@ -104,6 +129,11 @@
             selectedDatum: {
               type: Object,
               computed: '__computeSelectedDatum(data, polymonSelection.shortName)'
+            },
+
+            qrCodeOrigin: {
+              type: String,
+              value: window.location.origin
             }
           },
 
@@ -113,6 +143,10 @@
                 return data[i];
               }
             }
+          },
+
+          __urlFor: function(reference, origin) {
+            return `${origin}/code/reference.${reference}`;
           }
         });
       </script>

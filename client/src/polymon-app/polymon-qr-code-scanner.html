@@ -120,6 +120,21 @@
           value: function() {
             return new MeatScopeImagePreview();
           }
+        },
+
+        urlRe: {
+          type: Object,
+          value: /^http[s]?:\/\//
+        },
+
+        polymonCodeRe: {
+          type: Object,
+          value: /^[a-z]+\..+/
+        },
+
+        originRe: {
+          type: Object,
+          value: new RegExp(`^${window.location.origin}/code/(.*)`)
         }
       },
 
@@ -201,8 +216,24 @@
           }
 
           self.__scanForQrCode().then(data => {
-            console.log('QR Code Data:', data);
-            let [type, code] = data.split('.');
+            let validData;
+
+            if (self.urlRe.test(data)) {
+              let [url, fragment] = data.match(self.originRe) || [];
+              validData = fragment;
+            } else if (self.polymonCodeRe.test(data)){
+              validData = data;
+            }
+
+            if (validData == null) {
+              console.log(self.originRe);
+              console.log('Cannot use QR Code data:', data);
+              return;
+            }
+
+            console.log('Usable QR Code data:', validData);
+
+            let [type, code] = validData.split('.');
 
             self.fire('polymon-code', {
               type,
@@ -210,7 +241,7 @@
               continueTo: self.returnTo
             });
           }).catch(error => {
-            console.log('QR Code Scanner:', error);
+            console.log('QR Code scan failed:', error);
           }).then(() => {
             setTimeout(doScan, 1000);
           });

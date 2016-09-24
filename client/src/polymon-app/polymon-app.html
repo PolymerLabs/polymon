@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-coded-url-handler.html">
 <link rel="import" href="polymon-lazy-loader.html">
 
 <dom-module id="polymon-app">
@@ -65,6 +66,18 @@
         route="{{route}}"
         query-params="{{queryParams}}">
     </app-location>
+
+    <!-- TODO(cdata): This should probably be turned into a formal
+         interstitial view that represents the coded URL in a visual way.
+         It can be used to show an intro screen when users have not signed
+         in yet. -->
+    <polymon-coded-url-handler
+        route="{{route}}"
+        user="{{user}}"
+        authenticated="[[authenticated]]"
+        auth-status-known="[[statusKnown]]"
+        player-lat-lng="[[playerLatLng]]">
+    </polymon-coded-url-handler>
 
     <polymon-lazy-loader
         route="{{route}}">
@@ -156,7 +169,8 @@
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
         user="[[user]]"
-        polymons="[[polymons]]">
+        polymons="[[polymons]]"
+        player-lat-lng="{{playerLatLng}}">
     </polymon-map>
 
     <polymon-start-screen
@@ -232,7 +246,7 @@
       },
 
       listeners: {
-        'polymon-code': '__onPolymonCode',
+        'polymon-catch': '__onPolymonCatch',
         'polydex-entry-added': '__onPolydexEntryAdded'
       },
 
@@ -247,42 +261,23 @@
         this.$.auth.signInWithPopup();
       },
 
+      // Always redirect to the base path when not authenticated..
       __statusKnownChanged: function() {
-        if (this.statusKnown && !this.$.auth.signedIn) {
+        if (this.statusKnown && !this.authenticated) {
           this.set('route.path', '/');
         }
       },
 
+      // Always redirect to the battle when there is an active battle ID..
       __activeBattleIdChanged: function(activeBattleId) {
         if (activeBattleId != null) {
           this.set('route.path', `/battle/engage/${activeBattleId}`);
         }
       },
 
-      __onPolymonCode: function(event) {
-        let { type, code, continueTo } = event.detail;
-
-        if (this.$.userData.ref) {
-          switch (type) {
-            case 'reference':
-              this.set('queryParams.continueTo', continueTo);
-              this.push('unconfirmedCatches',
-                this.$.userData.ref.child('catchQueue').push({
-                  code: code,
-                  latLng: this.$.map.playerLatLng
-                }).key);
-              break;
-            case 'battle':
-              this.$.userData.ref.child('battleQueue').push({
-                action: 'join',
-                battleId: code,
-                createdAt: Date.now()
-              });
-              break;
-          }
-        }
-      },
-
+      // When the polydex adds an entry, check it against the unconfirmed
+      // catches. If there is a match, splice it out and notify the user of the
+      // catch..
       __onPolydexEntryAdded: function(event) {
         let polydexEntry = event.detail;
 
@@ -290,9 +285,17 @@
           let catchId = this.unconfirmedCatches[i];
 
           if (catchId === polydexEntry.catchId) {
-            this.unconfirmedCatches.splice(i, 1);
+            this.splice('unconfirmedCatches', i, 1);
             this.set('route.path', `/caught/${polydexEntry.polymonId}`);
           }
+        }
+      },
+
+      // Push unconfirmed catches on to an array. The `polymon-catch` is fired
+      // by the <polymon-coded-url-handler> right now..
+      __onPolymonCatch: function(event) {
+        if (event.detail && event.detail.catchId) {
+          this.push('unconfirmedCatches', event.detail.catchId);
         }
       },
 
@@ -337,6 +340,7 @@
         });
       },
 
+      // This method handles pageview tracking for analytics.
       __routePathChanged: function() {
         this.debounce('route-path-changed', () => {
           if (window.ga) {
