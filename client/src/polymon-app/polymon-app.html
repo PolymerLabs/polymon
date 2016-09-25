@@ -6,7 +6,6 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-coded-url-handler.html">
 <link rel="import" href="polymon-lazy-loader.html">
 
 <dom-module id="polymon-app">
@@ -67,20 +66,20 @@
         query-params="{{queryParams}}">
     </app-location>
 
-    <!-- TODO(cdata): This should probably be turned into a formal
-         interstitial view that represents the coded URL in a visual way.
-         It can be used to show an intro screen when users have not signed
-         in yet. -->
-    <polymon-coded-url-handler
-        route="{{route}}"
-        user="{{user}}"
-        authenticated="[[authenticated]]"
-        auth-status-known="[[statusKnown]]"
-        player-lat-lng="[[playerLatLng]]">
-    </polymon-coded-url-handler>
+
 
     <polymon-lazy-loader
         route="{{route}}">
+
+      <app-route
+          pattern="/code/:data"
+          route="{{route}}"
+          data="{{codeRouteData}}"
+          active="{{codeRouteActive}}"
+          data-fragments='[
+            "polymon-coded-url-screen.html"
+          ]'>
+      </app-route>
 
       <app-route
           pattern="/"
@@ -218,6 +217,14 @@
         user-data="{{userData}}">
     </polymon-battle-screen>
 
+    <polymon-coded-url-screen
+        route="{{route}}"
+        user="{{user}}"
+        data="[[codeRouteData.data]]"
+        active="[[codeRouteActive]]"
+        authenticated="[[authenticated]]"
+        auth-status-known="[[statusKnown]]">
+    </polymon-coded-url-screen>
   </template>
 
   <script>
@@ -237,6 +244,10 @@
           type: Array
         },
 
+        playerLatLng: {
+          type: Object
+        },
+
         unconfirmedCatches: {
           type: Array,
           value: function() {
@@ -246,7 +257,7 @@
       },
 
       listeners: {
-        'polymon-catch': '__onPolymonCatch',
+        'polymon-code': '__onPolymonCode',
         'polydex-entry-added': '__onPolydexEntryAdded'
       },
 
@@ -261,10 +272,15 @@
         this.$.auth.signInWithPopup();
       },
 
-      // Always redirect to the base path when not authenticated..
+      // Always redirect to the base path when not authenticated, except when
+      // the code route is the active route.
       __statusKnownChanged: function() {
-        if (this.statusKnown && !this.authenticated) {
-          this.set('route.path', '/');
+        if (this.statusKnown) {
+          if ((!this.authenticated && !this.codeRouteActive) ||
+              (this.authenticated && this.codeRouteActive)) {
+
+            this.set('route.path', '/');
+          }
         }
       },
 
@@ -291,11 +307,40 @@
         }
       },
 
-      // Push unconfirmed catches on to an array. The `polymon-catch` is fired
-      // by the <polymon-coded-url-handler> right now..
-      __onPolymonCatch: function(event) {
-        if (event.detail && event.detail.catchId) {
-          this.push('unconfirmedCatches', event.detail.catchId);
+      // A universal handler for codes passed in by a QR code or a specially
+      // formatted URL. Currently handles "catching" Polymon, and joining
+      // battles with other players.
+      __onPolymonCode: function(event) {
+        let { type, code } = event.detail;
+
+        switch (type) {
+          // A reference is a secret code that points to a Polymon in the
+          // the database. When a reference is scanned, we attempt to catch
+          // the Polymon by pushing the details on to the user's catch queue.
+          case 'reference':
+            let catchData = { code };
+
+            if (this.playerLatLng) {
+              catchData.latLng = this.playerLatLng;
+            }
+
+            let catchId = firebase.app('polymon').database()
+                .ref(`/users/${this.user.uid}/catchQueue`)
+                .push(catchData).key;
+
+            this.push('unconfirmedCatches', catchId);
+          break;
+          // A battle code is typically shared from one user to another when one
+          // user starts a battle and the other user scans the code on her
+          // screen.
+          case 'battle':
+            firebase.app('polymon').database()
+                .ref(`/users/${this.user.uid}/battleQueue`).push({
+                  action: 'join',
+                  battleId: code,
+                  createdAt: Date.now()
+                });
+          break;
         }
       },
 

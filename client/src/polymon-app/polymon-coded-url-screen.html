@@ -1,0 +1,281 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-spinner.html">
+<link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-styles.html">
+
+<dom-module id="polymon-coded-url-screen">
+  <template>
+    <style include="active-fade-up">
+      @keyframes slide {
+        0% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      :host {
+        @apply --layout-fit;
+        font-family: var(--polymon-font-family);
+        background-color: #eee;
+      }
+
+      :host(.active) #background > .triangle {
+        animation-name: slide;
+      }
+
+      :host(.introduction) #waiting {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      :host(.introduction) #introduction {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      :host(.reference) #introduction .reference-intro,
+      :host(.battle) #introduction .battle-intro {
+        display: inline;
+      }
+
+      #waiting,
+      #introduction {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+        transition: opacity 0.3s, transform 0.3s;
+      }
+
+      #introduction {
+        opacity: 0;
+        transform: translateY(10px);
+        justify-content: space-between;
+        padding: 1em;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.25);
+      }
+
+      #introduction .reference-intro,
+      #introduction .battle-intro {
+        display: none;
+      }
+
+      h1 {
+        font-family: var(--polymon-headline-font-family);
+        font-weight: normal;
+        font-size: 2.5em;
+        margin: 0 0 0.5em;
+      }
+
+      p {
+        font-size: 24px;
+        margin: 0 0 1em;
+      }
+
+      p.quote {
+        font-family: var(--polymon-body-font-family);
+        font-style: italic;
+        font-size: 20px;
+        text-align: center;
+      }
+
+      a, polymon-button {
+        width: 100%;
+      }
+
+      #introduction > :not(#background) {
+        z-index: 1;
+      }
+
+      #background {
+        @apply --layout-fit;
+        transform-origin: top center;
+        transform: scale(1.25);
+        background-color: var(--polymon-red);
+      }
+
+      #background > .triangle {
+        display: block;
+        float: left;
+        width: 25%;
+        margin: 0;
+        padding: 0;
+        line-height: 0;
+        color: #00A4FF;
+
+        animation-duration: 20s;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+      }
+
+      #background > .triangle:after {
+        content: '';
+        display: block;
+        width: 100%;
+        padding-bottom: 100%;
+        background-color: currentColor;
+        transform: skewX(45deg) scale(2);
+      }
+
+      #background > .triangle.flip:after {
+        transform: skewX(-45deg) scale(2);
+      }
+    </style>
+    <section id="waiting">
+      <polymon-spinner></polymon-spinner>
+    </section>
+    <section id="introduction">
+      <div id="background"></div>
+      <span>
+        <span class="reference-intro">
+          <h1>You found a Polymon...</h1>
+          <p>Become a Polymon handler and collect them all!</p>
+        </span>
+
+        <span class="battle-intro">
+          <h1>Join the battle...</h1>
+          <p>Become a Polymon handler and train the best team!</p>
+        </span>
+        <p class="quote">Polymon are digital monsters that are scattered across the Polymersphere. Use this app to collect them and play games with other Polymon handlers!</p>
+      </span>
+
+      <a href="/"><polymon-button>Let's go!</polymon-button></a>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-coded-url-screen',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        authenticated: {
+          type: Boolean
+        },
+
+        authStatusKnown: {
+          type: Boolean
+        },
+
+        codeQueue: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        data: {
+          type: String,
+          notify: true
+        },
+
+        lastCodeType: {
+          type: String,
+          computed: '__computeLastCodeType(codeQueue.length)',
+          observer: '__lastCodeTypeChanged'
+        }
+      },
+
+      observers: [
+        '__codeQueueChanged(codeQueue.length, authStatusKnown, authenticated)',
+        '__dataChanged(data)'
+      ],
+
+      attached: function() {
+        this.__populateBackground();
+      },
+
+      pushPolymonCode: function(data) {
+        this.push('codeQueue', data);
+        this.__flushCodeQueue();
+      },
+
+      __flushCodeQueue: function() {
+        this.deraf('flush-code-queue', () => {
+          if (!this.authenticated) {
+            return;
+          }
+
+          while (this.codeQueue.length) {
+            this.fire('polymon-code', this.shift('codeQueue'));
+          }
+        });
+      },
+
+      __codeQueueChanged: function() {
+        if (!this.authStatusKnown) {
+          // This handler will be called again when auth status is known.
+          return;
+        }
+
+        if (this.authenticated) {
+          this.__flushCodeQueue();
+
+          if (this.codeRouteActive) {
+            // Return to the parent path right away..
+            this.set('route.path', '/');
+          }
+        } else {
+          this.debounce('update-classname', () => {
+            this.classList.add('introduction');
+          }, 2500);
+          // TODO(cdata): Use this condition to show user an intro message
+          // about Polymon and calling them to sign in to claim their catch..
+        }
+      },
+
+      __dataChanged: function() {
+        console.log('DATA CHANGED', this.data);
+        if (this.data != null) {
+          let [ type, code ] = this.data.split('.');
+          this.pushPolymonCode({ type, code });
+        }
+      },
+
+      __lastCodeTypeChanged: function(lastCodeType, oldLastCodeType) {
+        if (oldLastCodeType != null) {
+          this.classList.remove(oldLastCodeType);
+        }
+
+        if (lastCodeType != null) {
+          this.classList.add(lastCodeType);
+        }
+      },
+
+      __computeLastCodeType: function() {
+        if (this.codeQueue.length) {
+          return this.codeQueue[this.codeQueue.length - 1].type;
+        }
+      },
+
+      __populateBackground: function() {
+        requestAnimationFrame(() => {
+          let container = Polymer.dom(this.$.background);
+          let fragment = document.createDocumentFragment();
+          let count = 20;
+
+          for (let i = 0; i < count; ++i) {
+            let triangle = document.createElement('div');
+            triangle.classList.add('triangle');
+            if (i % 2) {
+              triangle.classList.add('flip');
+            }
+
+            triangle.style.opacity = (count - i) / count * (Math.random() * 1);
+            triangle.style.animationDelay = Math.random() * -40 + 's';
+            fragment.appendChild(triangle);
+          }
+
+          container.appendChild(fragment);
+        });
+      }
+    });
+  </script>
+</dom-module>

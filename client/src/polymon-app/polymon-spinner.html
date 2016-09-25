@@ -1,0 +1,33 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="polymon-spinner">
+  <template>
+    <style>
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      :host {
+        display: inline-block;
+        width: 64px;
+        height: 64px;
+        background-image: url(/images/polymon_sprite_sheet.svg);
+        background-size: 1000%;
+        background-position: calc(-4/9 * 100%) calc(-3/9 * 100%);
+
+        animation: spin 1s infinite reverse;
+        animation-timing-function: cubic-bezier(.85,.01,.15,1);
+      }
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-spinner'
+    });
+  </script>
+</dom-module>
