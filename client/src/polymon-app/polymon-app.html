@@ -66,8 +66,20 @@
         query-params="{{queryParams}}">
     </app-location>
 
+
+
     <polymon-lazy-loader
         route="{{route}}">
+
+      <app-route
+          pattern="/code/:data"
+          route="{{route}}"
+          data="{{codeRouteData}}"
+          active="{{codeRouteActive}}"
+          data-fragments='[
+            "polymon-coded-url-screen.html"
+          ]'>
+      </app-route>
 
       <app-route
           pattern="/"
@@ -156,7 +168,8 @@
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
         user="[[user]]"
-        polymons="[[polymons]]">
+        polymons="[[polymons]]"
+        player-lat-lng="{{playerLatLng}}">
     </polymon-map>
 
     <polymon-start-screen
@@ -204,6 +217,14 @@
         user-data="{{userData}}">
     </polymon-battle-screen>
 
+    <polymon-coded-url-screen
+        route="{{route}}"
+        user="{{user}}"
+        data="[[codeRouteData.data]]"
+        active="[[codeRouteActive]]"
+        authenticated="[[authenticated]]"
+        auth-status-known="[[statusKnown]]">
+    </polymon-coded-url-screen>
   </template>
 
   <script>
@@ -221,6 +242,10 @@
 
         polydex: {
           type: Array
+        },
+
+        playerLatLng: {
+          type: Object
         },
 
         unconfirmedCatches: {
@@ -247,42 +272,28 @@
         this.$.auth.signInWithPopup();
       },
 
+      // Always redirect to the base path when not authenticated, except when
+      // the code route is the active route.
       __statusKnownChanged: function() {
-        if (this.statusKnown && !this.$.auth.signedIn) {
-          this.set('route.path', '/');
+        if (this.statusKnown) {
+          if ((!this.authenticated && !this.codeRouteActive) ||
+              (this.authenticated && this.codeRouteActive)) {
+
+            this.set('route.path', '/');
+          }
         }
       },
 
+      // Always redirect to the battle when there is an active battle ID..
       __activeBattleIdChanged: function(activeBattleId) {
         if (activeBattleId != null) {
           this.set('route.path', `/battle/engage/${activeBattleId}`);
         }
       },
 
-      __onPolymonCode: function(event) {
-        let { type, code, continueTo } = event.detail;
-
-        if (this.$.userData.ref) {
-          switch (type) {
-            case 'reference':
-              this.set('queryParams.continueTo', continueTo);
-              this.push('unconfirmedCatches',
-                this.$.userData.ref.child('catchQueue').push({
-                  code: code,
-                  latLng: this.$.map.playerLatLng
-                }).key);
-              break;
-            case 'battle':
-              this.$.userData.ref.child('battleQueue').push({
-                action: 'join',
-                battleId: code,
-                createdAt: Date.now()
-              });
-              break;
-          }
-        }
-      },
-
+      // When the polydex adds an entry, check it against the unconfirmed
+      // catches. If there is a match, splice it out and notify the user of the
+      // catch..
       __onPolydexEntryAdded: function(event) {
         let polydexEntry = event.detail;
 
@@ -290,9 +301,46 @@
           let catchId = this.unconfirmedCatches[i];
 
           if (catchId === polydexEntry.catchId) {
-            this.unconfirmedCatches.splice(i, 1);
+            this.splice('unconfirmedCatches', i, 1);
             this.set('route.path', `/caught/${polydexEntry.polymonId}`);
           }
+        }
+      },
+
+      // A universal handler for codes passed in by a QR code or a specially
+      // formatted URL. Currently handles "catching" Polymon, and joining
+      // battles with other players.
+      __onPolymonCode: function(event) {
+        let { type, code } = event.detail;
+
+        switch (type) {
+          // A reference is a secret code that points to a Polymon in the
+          // the database. When a reference is scanned, we attempt to catch
+          // the Polymon by pushing the details on to the user's catch queue.
+          case 'reference':
+            let catchData = { code };
+
+            if (this.playerLatLng) {
+              catchData.latLng = this.playerLatLng;
+            }
+
+            let catchId = firebase.app('polymon').database()
+                .ref(`/users/${this.user.uid}/catchQueue`)
+                .push(catchData).key;
+
+            this.push('unconfirmedCatches', catchId);
+          break;
+          // A battle code is typically shared from one user to another when one
+          // user starts a battle and the other user scans the code on her
+          // screen.
+          case 'battle':
+            firebase.app('polymon').database()
+                .ref(`/users/${this.user.uid}/battleQueue`).push({
+                  action: 'join',
+                  battleId: code,
+                  createdAt: Date.now()
+                });
+          break;
         }
       },
 
@@ -337,6 +385,7 @@
         });
       },
 
+      // This method handles pageview tracking for analytics.
       __routePathChanged: function() {
         this.debounce('route-path-changed', () => {
           if (window.ga) {

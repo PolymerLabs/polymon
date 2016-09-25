@@ -101,10 +101,8 @@
       },
 
       __computeBattleCode: function(activeBattleId) {
-        // TODO(cdata): format these as URLs so that we can use Physical Web
-        // beacons and copy-paste-able links?
         if (activeBattleId) {
-          return `battle.${activeBattleId}`;
+          return `${window.location.origin}/code/battle.${activeBattleId}`;
         }
 
         return this.battleCode;

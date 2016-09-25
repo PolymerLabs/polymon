@@ -53,6 +53,12 @@ exports.getUserPolymon = function(db, userId, polydexId) {
 };
 
 exports.recordPolymonSighting = function(db, polymonId, latLng) {
+  if (latLng == null) {
+    console.log(
+        `Cannot record sighting of Polymon ${polymonId}; no lat/lng provided.`);
+    return Promise.resolve();
+  }
+
   return db.ref(`/polymons/${polymonId}`).once('value')
       .then(snapshot => snapshot.val())
       .then(polymon => {
