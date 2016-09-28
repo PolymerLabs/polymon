@@ -18,16 +18,21 @@ exports.ensureCorrectTeamSize = function(db, userId) {
       .once('value')
       .then(snapshot => snapshot.val())
       .then(team => {
-        let count = Object.keys(team).length;
+        // There may not be a team if no team spots are filled:
+        let count = team
+            ? Object.keys(team).length
+            : 0;
 
         console.log(`User ${userId} has a team with ${count} Polymon..`);
 
         if (count < 3) {
-          throw new Error(`Team size not big enough (${count}).`);
+          throw new Error(
+              `Team has ${count} Polymon, but needs at least 3.`);
         }
 
         if (count > 5) {
-          throw new Error(`Team is too big (${count}).`);
+          throw new Error(
+              `Team has ${count} Polymon, but is allowed no more than 5.`);
         }
       });
 };
@@ -73,4 +78,33 @@ exports.recordPolymonSighting = function(db, polymonId, latLng) {
         });
       });
 
-}
+};
+
+exports.pushNotification = function(db, userId, message, type="message") {
+  if (message == null) {
+    console.log(`Warning: no message provided for notification. Ignoring..`);
+    return Promise.resolve();
+  }
+
+  console.log(`Pushing ${type} notification to User ${userId}: "${message}"`);
+
+  return db.ref(`/users/${userId}/notifications`).push({
+    type,
+    message,
+    createdAt: Date.now(),
+    acknowledged: false
+  });
+};
+
+exports.userErrorNotifier = function(db, userId) {
+  return function(error) {
+    if (error.stack) {
+      console.log(error.stack);
+    }
+    return exports.pushNotification(db, userId, error.message, 'error');
+  };
+};
+
+exports.wait = function(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};

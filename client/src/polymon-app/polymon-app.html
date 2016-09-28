@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-notification-overlay.html">
 <link rel="import" href="polymon-lazy-loader.html">
 
 <dom-module id="polymon-app">
@@ -54,6 +55,13 @@
         data="{{polydex}}">
     </firebase-query>
 
+    <firebase-query
+        app-name="polymon"
+        path="[[__computeUserNotificationsPath(user)]]"
+        order-by-child="createdAt"
+        data="{{notifications}}">
+    </firebase-query>
+
     <firebase-document
         id="userData"
         app-name="polymon"
@@ -65,8 +73,6 @@
         route="{{route}}"
         query-params="{{queryParams}}">
     </app-location>
-
-
 
     <polymon-lazy-loader
         route="{{route}}">
@@ -225,6 +231,11 @@
         authenticated="[[authenticated]]"
         auth-status-known="[[statusKnown]]">
     </polymon-coded-url-screen>
+
+    <polymon-notification-overlay
+        id="notificationOverlay"
+        notifications="{{notifications}}">
+    </polymon-notification-overlay>
   </template>
 
   <script>
@@ -242,6 +253,11 @@
 
         polydex: {
           type: Array
+        },
+
+        notifications: {
+          type: Array,
+          notify: true
         },
 
         playerLatLng: {
@@ -353,6 +369,12 @@
       __computeUserDataPath: function(user) {
         return user
             ? `/users/${user.uid}`
+            : null;
+      },
+
+      __computeUserNotificationsPath: function(user) {
+        return user
+            ? `/users/${user.uid}/notifications`
             : null;
       },
 

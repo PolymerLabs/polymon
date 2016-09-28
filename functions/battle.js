@@ -2,7 +2,8 @@ const {
   ensureNoActiveBattle,
   ensureCorrectTeamSize,
   ensureHasPolydexEntry,
-  getUserPolymon
+  getUserPolymon,
+  userErrorNotifier
 } = require('./common');
 
 
@@ -587,6 +588,6 @@ exports.processBattleQueue = functions => functions
       }
 
       return action
-          .catch(error => console.error(error))
+          .catch(userErrorNotifier(db, userId))
           .then(() => event.data.ref.remove());
     });
