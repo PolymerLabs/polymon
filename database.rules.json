@@ -32,6 +32,14 @@
         },
         "polydex": {},
         "achievements": {},
+        "notifications": {
+          "$notification": {
+            "acknowledged": {
+              ".validate": "newData.isBoolean()",
+              ".write": "$userId === auth.uid"
+            }
+          }
+        },
         "catchQueue": {
           ".write": "$userId === auth.uid"
         },

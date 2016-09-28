@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-notification.html">
+
+<dom-module id="polymon-notification-overlay">
+  <template>
+    <template is="dom-repeat" items="{{notifications}}" as="notification">
+      <polymon-notification
+          notification="{{notification}}"
+          active="[[__identical(notification, activeNotification)]]">
+      </polymon-notification>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-notification-overlay',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        notifications: {
+          type: Array,
+          notify: true
+        },
+
+        activeNotification: {
+          type: Object
+        }
+      },
+
+      observers: [
+        '__updateActiveNotification(notifications.*)'
+      ],
+
+      listeners: {
+        'acknowledged': '__onAcknowledged'
+      },
+
+      __identical: function(object, otherObject) {
+        return object === otherObject;
+      },
+
+      __updateActiveNotification: function() {
+        let activeNotification;
+
+        for (let i = 0; i < this.notifications.length; i++) {
+          if (this.notifications[i].acknowledged === false) {
+            activeNotification = this.notifications[i];
+            break;
+          }
+        }
+
+        this.activeNotification = activeNotification || null;
+      }
+    });
+  </script>
+</dom-module>

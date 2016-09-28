@@ -1,6 +1,7 @@
 <script>
   (() => {
-    window.PolymonElement = {
+    /** @polymerBehavior */
+    var PolymonElement = {
       properties: {
         user: {
           type: Object
@@ -59,5 +60,7 @@
         return false;
       }
     };
+
+    window.PolymonElement = PolymonElement;
   })();
 </script>
