@@ -1,122 +1,534 @@
 [
   {
-    "name": "Cooptoo",
-    "shortName": "goat",
-    "codePoint": "1f410",
-    "spriteIndex": 5,
-    "stats": {
-      "attack": 5,
-      "focus": 2,
-      "counter": 1
-    },
-    "flavor": "One time it tried to chew through a closed shadow root. Now it mostly prefers script tags."
-  },
-  {
-    "name": "Ferdinoms",
-    "shortName": "dancer",
-    "codePoint": "1f483",
-    "spriteIndex": 4,
+    "codePoint": "U+1F985",
+    "github": "tjsavage",
     "stats": {
       "attack": 3,
-      "focus": 5,
-      "counter": 2
+      "counter": 1,
+      "focus": 3
     },
-    "flavor": "And those who were seen dancing were thought to be insane by those who could not hear the music."
+    "name": "Productasaur",
+    "ldap": "tjsavage",
+    "twitter": "taylorthesavage",
+    "flavor": "Product-type. Likes to schedule meetings. Good at having other Polymon battle.",
+    "atSummit": "Yes"
   },
   {
-    "name": "Octorvel",
-    "shortName": "octopus",
-    "codePoint": "1f419",
-    "spriteIndex": 7,
-    "stats": {
-      "attack": 4,
-      "focus": 1,
-      "counter": 3
-    },
-    "flavor": "It will jump at the opportunity to share its deep wisdom. It likes to share for long periods of time."
-  },
-  {
-    "name": "Tiscript",
-    "shortName": "tiger",
-    "codePoint": "1f405",
-    "spriteIndex": 9,
-    "stats": {
-      "attack": 5,
-      "focus": 1,
-      "counter": 3
-    },
-    "flavor": "When hunting, it will stalk prey with sound typings before anything else."
-  },
-  {
-    "shortName": "boar",
-    "codePoint": "1f417",
-    "spriteIndex": 1,
-    "stats": {
-      "attack": 5,
-      "focus": 2,
-      "counter": 2
-    }
-  },
-  {
-    "shortName": "monkey",
-    "codePoint": "1f412",
-    "spriteIndex": 6,
-    "stats": {
-      "attack": 4,
-      "focus": 2,
-      "counter": 4
-    }
-  },
-  {
-    "shortName": "cactus",
-    "codePoint": "1f335",
-    "spriteIndex": 2,
+    "codePoint": "U+1F434",
+    "github": "samccone",
     "stats": {
       "attack": 1,
-      "focus": 3,
-      "counter": 5
-    }
+      "counter": 1,
+      "focus": 7
+    },
+    "name": "Horse",
+    "ldap": "samccone",
+    "twitter": "samccone",
+    "flavor": "horse",
+    "atSummit": "Yes"
   },
   {
-    "shortName": "steaming-bowl",
-    "codePoint": "1f35c",
-    "spriteIndex": 8,
+    "codePoint": "U+1F98E",
+    "github": "wmginsberg",
+    "stats": {
+      "attack": 6,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Ginzard",
+    "ldap": "wmginsberg",
+    "twitter": "wmginsberg",
+    "flavor": "Quick and agile, though enjoys basking in the sun atop a warm rock.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F410",
+    "github": "cdata",
     "stats": {
       "attack": 4,
-      "focus": 1,
-      "counter": 4
-    }
+      "counter": 2,
+      "focus": 1
+    },
+    "name": "Seadata",
+    "ldap": "cdata",
+    "twitter": "x",
+    "flavor": "It likes to munch on DOM tree leaves while basking under a shadow root.",
+    "atSummit": "Yes"
   },
   {
-    "shortName": "koala",
-    "codePoint": "1f428",
-    "spriteIndex": 12,
+    "codePoint": "U+1F418",
+    "github": "e111077",
     "stats": {
       "attack": 2,
-      "focus": 3,
-      "counter": 4
-    }
+      "counter": 1,
+      "focus": 5
+    },
+    "name": "Elliophant",
+    "ldap": "emarquez",
+    "twitter": "Elliott_Marquez",
+    "flavor": "Though last to the office, it can quickly sneak up behind you for a \"quick\" question. After gaining speed, it can rampage through issues.",
+    "atSummit": "Yes"
   },
   {
-    "shortName": "cat-face-with-tears-of-joy",
-    "name": "Meownicat",
-    "flavor": "Meownicat is a byproduct of unchecked Unicode experiments. It is perceptive and smells faintly of blueberries.",
-    "codePoint": "1f639",
-    "spriteIndex": 3,
+    "codePoint": "U+1F428",
+    "github": "robdodson",
     "stats": {
-      "attack": 4,
-      "focus": 4,
-      "counter": 2
-    }
+      "attack": 5,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Bobdod",
+    "ldap": "robdodson",
+    "twitter": "rob_dodson",
+    "flavor": "Is a bear or a koala or something. Its secret weapon is the hug. Of death.",
+    "atSummit": "Yes"
   },
   {
-    "shortName": "baby-chick",
-    "codePoint": "1f424",
-    "spriteIndex": 0,
+    "codePoint": "U+1F63B",
+    "github": "notwaldorf",
+    "stats": {
+      "attack": 3,
+      "counter": 2,
+      "focus": 2
+    },
+    "name": "Meownicat",
+    "ldap": "noms",
+    "twitter": "notwaldorf",
+    "flavor": "Meownicat is a byproduct of unchecked Unicode experiments. It is perceptive and smells faintly of blueberries.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F409",
+    "github": "ebidel",
     "stats": {
       "attack": 1,
-      "focus": 1,
-      "counter": 5
-    }
+      "counter": 1,
+      "focus": 7
+    },
+    "name": "Bideldore",
+    "ldap": "ericbidelman",
+    "twitter": "ebidel",
+    "flavor": "Bideldore will unleash a deadly fire vomit at the mention of native apps or CoffeeScript.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F34C",
+    "github": "x",
+    "stats": {
+      "attack": 3,
+      "counter": 6,
+      "focus": 1
+    },
+    "name": "Brainana",
+    "ldap": "brendanb",
+    "twitter": "x",
+    "flavor": "Brainana is clever, but clumsy.  It's friendliness make it an a-peeling addition to any roster.  (Take not to slip on it, though!)",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F980",
+    "github": "arthurevans",
+    "stats": {
+      "attack": 6,
+      "counter": 2,
+      "focus": 2
+    },
+    "name": "Jigglystache",
+    "ldap": "arthure",
+    "twitter": "devdocdude",
+    "flavor": "A pedantic type Polymon, Jigglystache's main weapons are sarcasm, persiflage, and an almost fanatical devotion to the web.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F427",
+    "github": "azakus",
+    "stats": {
+      "attack": 2,
+      "counter": 1,
+      "focus": 5
+    },
+    "name": "Danguin",
+    "ldap": "dfreedm",
+    "twitter": "danfreedman",
+    "flavor": "It usually stays hidden under the snow, but can pop out at any time to solve problems.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F648",
+    "github": "x",
+    "stats": {
+      "attack": 2,
+      "counter": 2,
+      "focus": 3
+    },
+    "name": "Ilmasil",
+    "ldap": "samli",
+    "twitter": "x",
+    "flavor": "",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F419",
+    "github": "x",
+    "stats": {
+      "attack": 4,
+      "counter": 4,
+      "focus": 1
+    },
+    "name": "Octorvel",
+    "ldap": "sorvell",
+    "twitter": "x",
+    "flavor": "It will jump at the opportunity to share its deep wisdom. It likes to share for long periods of time.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F453",
+    "github": "x",
+    "stats": {
+      "attack": 4,
+      "counter": 2,
+      "focus": 2
+    },
+    "name": "Spector",
+    "ldap": "shanestephens",
+    "twitter": "x",
+    "flavor": "It likes to mess around with specifications, imagining it is making them better.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F991",
+    "github": "x",
+    "stats": {
+      "attack": 3,
+      "counter": 4,
+      "focus": 3
+    },
+    "name": "Shquid",
+    "ldap": "thorogood",
+    "twitter": "x",
+    "flavor": "This Polymon will shrug, say \"why not\", and work out a solution when asked deep and meaningful development questions.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F300",
+    "github": "paullewis",
+    "stats": {
+      "attack": 1,
+      "counter": 3,
+      "focus": 4
+    },
+    "name": "Aerotwist",
+    "ldap": "paullewis",
+    "twitter": "aerotwist",
+    "flavor": "Full of hot air and may trash your stuff.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+26BD",
+    "github": "valdrinkoshi",
+    "stats": {
+      "attack": 4,
+      "counter": 2,
+      "focus": 1
+    },
+    "name": "Valtorb",
+    "ldap": "valdrin",
+    "twitter": "x",
+    "flavor": "Very Focused, can be Blurred only by a soccer ball.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F4A3",
+    "github": "andybons",
+    "stats": {
+      "attack": 6,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "KABONS",
+    "ldap": "andybons",
+    "twitter": "andybons",
+    "flavor": "A fan of chain reactions, KABONS knows that sometimes you have to blow the whole thing up and start fresh.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F389",
+    "github": "fredkschott",
+    "stats": {
+      "attack": 5,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Fredosaurus",
+    "ldap": "fschott",
+    "twitter": "fredkschott",
+    "flavor": "Tadannosaurus always shows up to celebrate a job well done. But don't be fooled: He's really here to snack on your easy-to-reach plants.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F43B",
+    "github": "mbleigh",
+    "stats": {
+      "attack": 3,
+      "counter": 1,
+      "focus": 3
+    },
+    "name": "Pandabeard",
+    "ldap": "bleigh",
+    "twitter": "mbleigh",
+    "flavor": "Pandabeard is friendly and easygoing, unless you make trouble for the Web Platform. Then watch out!",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F42C",
+    "github": "dalmaer",
+    "stats": {
+      "attack": 8,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Dalphinaer",
+    "ldap": "dalmaer",
+    "twitter": "dalmaer",
+    "flavor": "Aggregator of things",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F332",
+    "github": "sjmiles",
+    "stats": {
+      "attack": 6,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Rootsfirmiles",
+    "ldap": "sjmiles",
+    "twitter": "scottjmiles",
+    "flavor": "Ancient Polymon, hard to uproot. It's bark is worse than it's bite.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F47E",
+    "github": "blasten",
+    "stats": {
+      "attack": 7,
+      "counter": 2,
+      "focus": 1
+    },
+    "name": "Alienuel",
+    "ldap": "egarciad",
+    "twitter": "blasten",
+    "flavor": "Alienuel came from a planet in the constellation of sagittarius! ",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F32A",
+    "github": "graynorton",
+    "stats": {
+      "attack": 3,
+      "counter": 1,
+      "focus": 3
+    },
+    "name": "Noreasturr",
+    "ldap": "graynorton",
+    "twitter": "graynorton",
+    "flavor": "Materializes out of the apparent calm, enveloping friends and enemies alike in a blanket of gray",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F98A",
+    "github": "rictic",
+    "stats": {
+      "attack": 3,
+      "counter": 3,
+      "focus": 1
+    },
+    "name": "Ricitic",
+    "ldap": "rictic",
+    "twitter": "rictic",
+    "flavor": "Curious and inquisitive, it loves to bounce from project, trying a little bit of everything. Anxious but excitable.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F40F",
+    "github": "justinfagnani",
+    "stats": {
+      "attack": 1,
+      "counter": 3,
+      "focus": 3
+    },
+    "name": "Caprani",
+    "ldap": "justinfagnani",
+    "twitter": "justinfagnani",
+    "flavor": "Obsessively curious, and will eat almost anything. Skilled at balancing in precarious places.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F40A",
+    "github": "x",
+    "stats": {
+      "attack": 7,
+      "counter": 2,
+      "focus": 1
+    },
+    "name": "Keanugator",
+    "ldap": "keanulee",
+    "twitter": "x",
+    "flavor": "It likes to sit in the sun and take a bite out of bugs. It wishes there's a real emoji for alligators.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F332",
+    "github": "x",
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 7
+    },
+    "name": "Domdriform",
+    "ldap": "dominicc",
+    "twitter": "x",
+    "flavor": "Domdriform is tree-shaped Polymon which can detach, rearrange and reattach its many branches.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F914",
+    "github": "x",
+    "stats": {
+      "attack": 3,
+      "counter": 5,
+      "focus": 1
+    },
+    "name": "Slightlyoff",
+    "ldap": "slightlyoff",
+    "twitter": "x",
+    "flavor": "",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F43C",
+    "github": "frankiefu",
+    "stats": {
+      "attack": 5,
+      "counter": 3,
+      "focus": 2
+    },
+    "name": "Frankiemon",
+    "ldap": "ffu",
+    "twitter": "x",
+    "flavor": "I like to build cool things.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F639",
+    "github": "x",
+    "stats": {
+      "attack": 6,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Salgoud",
+    "ldap": "dstockwell",
+    "twitter": "x",
+    "flavor": "",
+    "atSummit": "No (don't worry, you still get a Polymon!)"
+  },
+  {
+    "codePoint": "U+1F346",
+    "github": "x",
+    "stats": {
+      "attack": 5,
+      "counter": 1,
+      "focus": 3
+    },
+    "name": "Moussaka",
+    "ldap": "andymutton",
+    "twitter": "x",
+    "flavor": "Old and weary, it laughs at the world, those around it and (most of all) itself.",
+    "atSummit": "No (don't worry, you still get a Polymon!)"
+  },
+  {
+    "codePoint": "U+1F575",
+    "github": "x",
+    "stats": {
+      "attack": 5,
+      "counter": 2,
+      "focus": 1
+    },
+    "name": "KonfusedKevin",
+    "ldap": "kschaaf",
+    "twitter": "x",
+    "flavor": "Excels at factual exchanges. Has trouble understanding references to games, fiction, and other fun things.",
+    "atSummit": "No (don't worry, you still get a Polymon!)"
+  },
+  {
+    "codePoint": "U+1F981",
+    "github": "mattsmcnulty",
+    "stats": {
+      "attack": 6,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Mattata",
+    "ldap": "matthewmcnulty",
+    "twitter": "mattsmcnulty",
+    "flavor": "King of the jungle. Mostly looks cuddly and chill until another polymon rouses his ire.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F428",
+    "github": "mikelawther",
+    "stats": {
+      "attack": 2,
+      "counter": 3,
+      "focus": 2
+    },
+    "name": "Marsupimike",
+    "ldap": "mikelawther",
+    "twitter": "x",
+    "flavor": "Looks cuddly, from a distance. Protective of its team. Big claws are kept hidden, but will come out if provoked.",
+    "atSummit": "No (don't worry, you still get a Polymon!)"
+  },
+  {
+    "codePoint": "U+1F385",
+    "github": "x",
+    "stats": {
+      "attack": 8,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Gläzfather",
+    "ldap": "dglazkov",
+    "twitter": "x",
+    "flavor": "Lives on North Pole and only appears once in a blue moon, mostly to eat cookies, spread the cheer, and share hopelessly optimistic timelines.",
+    "atSummit": "No (don't worry, you still get a Polymon!)"
+  },
+  {
+    "codePoint": "U+1F344",
+    "github": "namchid",
+    "stats": {
+      "attack": 5,
+      "counter": 1,
+      "focus": 4
+    },
+    "name": "Mushron",
+    "ldap": "namchi",
+    "twitter": "x",
+    "flavor": "An unpredictable, shady character. May or may not be poisonous.",
+    "atSummit": "Yes"
+  },
+  {
+    "codePoint": "U+1F43C\t",
+    "github": "jkomoros",
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 6
+    },
+    "name": "Pandasnore",
+    "ldap": "komoroske",
+    "twitter": "komorama",
+    "flavor": "Big and slow and unintimidating.",
+    "atSummit": "Yes"
   }
 ]

@@ -17,6 +17,10 @@
       body {
         background-color: #fff;
       }
+
+      polymon-qr-code {
+        max-width: 256px;
+      }
     </style>
   </head>
   <body>
@@ -99,11 +103,14 @@
                 size="200"
                 caught>
             </polymon-portrait>
-            <polymon-qr-code
-                size="7"
-                margin="5"
-                data="[[__urlFor(selectedDatum.reference, qrCodeOrigin)]]">
-            </polymon-qr-code>
+            <a href="[[downloadUrl]]" download="[[selectedDatum.polymon.name]].png">
+              <polymon-qr-code
+                  size="15"
+                  margin="5"
+                  data="[[__urlFor(selectedDatum.reference, qrCodeOrigin)]]"
+                  url="{{downloadUrl}}">
+              </polymon-qr-code>
+            </a>
           </span>
 
           <span>[[selectedDatum.polymon.shortName]]</span>

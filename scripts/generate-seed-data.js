@@ -22,6 +22,8 @@ const serviceAccountJsonPath = path.resolve(__dirname, '../.active.service-accou
 const qrCodeDataPath =
     path.resolve(__dirname, '../client/qr-code-data.json');
 
+console.log(`Using secret: ${secret}`);
+
 readJson(envJsonPath).then(config => {
   const app = firebase.initializeApp({
     name: config.firebase.appName,
@@ -74,7 +76,8 @@ readJson(envJsonPath).then(config => {
       let writes = [];
       let qrCodeData = polymons.map(polymon => {
         polymon = Object.assign({
-          lastSeen: randomSighting()
+          lastSeen: randomSighting(),
+          shortName: polymon.name.toLowerCase()
         }, polymon);
 
         let reference = makeReference(polymon);
