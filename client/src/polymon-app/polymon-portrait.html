@@ -59,18 +59,21 @@
             index = -1;
           }
 
-          let top = Math.floor(index / 10) * -size;
-          let left = (index % 10) * -size;
-
-          if (!this.caught) {
-            top -= 2 * size;
-          }
-
           this.style.width = `${size}px`;
           this.style.height = `${size}px`;
           this.style.borderRadius = `${size / 2}px`;
-          this.$.image.style.backgroundSize = `${size * 10}px ${size * 10}px`;
-          this.$.image.style.backgroundPosition = `${left}px ${top}px`;
+
+          if (this.caught) {
+            this.$.image.style.backgroundSize = '100%';
+            this.$.image.style.backgroundPosition = 'top left';
+            this.$.image.style.backgroundImage = `url(/images/polymon_monster_${index}.png)`;
+          } else {
+            let top = Math.floor(index / 20) * -size;
+            let left = (index % 20) * -size;
+
+            this.$.image.style.backgroundSize = `${size * 20}px ${size * 20}px`;
+            this.$.image.style.backgroundPosition = `${left}px ${top}px`;
+          }
         });
       },
 

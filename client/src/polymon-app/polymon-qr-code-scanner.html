@@ -218,6 +218,8 @@
           self.__scanForQrCode().then(data => {
             let validData;
 
+            console.log('SCAN RESULT:', data);
+
             if (self.urlRe.test(data)) {
               let [url, fragment] = data.match(self.originRe) || [];
               validData = fragment;

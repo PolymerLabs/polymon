@@ -74,10 +74,11 @@ readJson(envJsonPath).then(config => {
   return clean().then(() => {
     return readJson(polymonJsonPath).then(polymons => {
       let writes = [];
-      let qrCodeData = polymons.map(polymon => {
+      let qrCodeData = polymons.map((polymon, index) => {
         polymon = Object.assign({
           lastSeen: randomSighting(),
-          shortName: polymon.name.toLowerCase()
+          shortName: polymon.name.toLowerCase(),
+          spriteIndex: index
         }, polymon);
 
         let reference = makeReference(polymon);
