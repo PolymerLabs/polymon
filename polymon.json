@@ -530,5 +530,59 @@
     "twitter": "komorama",
     "flavor": "Big and slow and unintimidating.",
     "atSummit": "Yes"
+  },
+  {
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Ramen",
+    "flavor": "A steaming bowl of soup. It is extra tasty on a rainy day."
+  },
+  {
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Taco",
+    "flavor": "The second most delightful way to package food. Loves to put its HTML, CSS and JS in one file."
+  },
+  {
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Dumpling",
+    "flavor": "A tasty dumpling. Yum!"
+  },
+  {
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Pie",
+    "flavor": "It is haunted by the sense that the better part of itself has gone missing."
+  },
+  {
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Bao",
+    "flavor": "Who doesn't love a good steamed bun? No one. Love the Bao, or else."
+  },
+  {
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Hargow",
+    "flavor": "A mysterious dumpling from outer space. Legends say it has psychic flavor powers."
   }
 ]
