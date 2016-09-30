@@ -7,6 +7,7 @@
 <link rel="import" href="third-party/jsqrcode.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-spinner.html">
 <dom-module id="polymon-qr-code-scanner">
   <template>
     <style>
@@ -14,6 +15,7 @@
         @apply --layout-fit;
         @apply --layout-vertical;
         @apply --layout-center-center;
+        font-family: var(--polymon-font-family);
         text-align: center;
         background-color: #000;
         opacity: 0;
@@ -29,7 +31,7 @@
         transform: translateY(0);
       }
 
-      :host(.active) #warning {
+      :host(.active) #fallback {
         opacity: 1;
         transform: translateY(-10px);
       }
@@ -40,20 +42,8 @@
 
       #camera {
         @apply --layout-fit;
-      }
-
-      #warning {
-        margin: 2em;
-        display: inline-block;
-        max-width: 640px;
-        font-family: var(--polymon-font-family);
-        font-size: 24px;
-        color: #F43865;
-        text-shadow: 0 1px 0 #a31733;
-        opacity: 0;
-        transform: translateY(0);
-        transition: transform 0.3s, opacity 0.15s;
-        transition-delay: 1s;
+        pointer-events: none;
+        z-index: 2;
       }
 
       #overlay {
@@ -61,6 +51,12 @@
         @apply --layout-vertical;
         @apply --layout-end-justified;
         margin: 1em;
+        z-index: 4;
+        pointer-events: none;
+      }
+
+      :host(.active) #overlay polymon-button {
+        pointer-events: all;
       }
 
       #cancel {
@@ -70,10 +66,78 @@
       a {
         -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
       }
+
+      #fallback {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+
+        opacity: 0;
+        transform: translateY(0);
+        transition: transform 0.3s, opacity 0.15s;
+        transition-delay: 1s;
+      }
+
+      #fallback .warning {
+        margin: 2em 2em 0;
+        display: inline-block;
+        max-width: 640px;
+        font-size: 24px;
+        color: #F43865;
+        text-shadow: 0 1px 0 #a31733;
+      }
+
+      #fallback > :not(:last-child):after {
+        content: 'OR';
+        display: block;
+        margin: 3em;
+        text-align: center;
+        color: #fafafa;
+        text-shadow: none;
+        font-size: 14px;
+      }
+
+      #upload-container {
+        display: inline-block;
+        position: relative;
+      }
+
+      #input {
+        @apply --layout-fit;
+        z-index: 2;
+        opacity: 0;
+      }
+
+      :host(.has-code) #code-scanned-indicator {
+        opacity: 1;
+        transform: translateY(0px);
+        pointer-events: all;
+      }
+
+      #code-scanned-indicator {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+
+        opacity: 0;
+        transform: translateY(10px);
+
+        transition: opacity 0.3s, transform 0.3s;
+        pointer-events: none;
+        z-index: 3;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
     </style>
-    <span id="warning">
-      Please enable your camera in order to scan for QR codes!
-    </span>
+    <section id="fallback">
+      <span class="warning">Please enable your camera to scan for QR codes!</span>
+      <div id="upload-container">
+        <polymon-button>Upload a QR Code Photo</polymon-button>
+        <input id="input" type="file" capture="camera" accept="image/*">
+      </div>
+    </section>
     <section id="camera">
       <meat-scope-devices
           id="devices"
@@ -89,6 +153,9 @@
           id="video"
           stream="[[stream]]">
       </meat-scope-video>
+    </section>
+    <section id="code-scanned-indicator">
+      <polymon-spinner></polymon-spinner>
     </section>
     <section id="overlay">
       <a href="[[returnTo]]">
@@ -135,6 +202,20 @@
         originRe: {
           type: Object,
           value: new RegExp(`^${window.location.origin}/code/(.*)`)
+        },
+
+        uploadedImageUrl: {
+          type: Object,
+          readOnly: true,
+          value: null,
+          observer: '__uploadedImageUrlChanged'
+        },
+
+        code: {
+          type: Object,
+          readOnly: true,
+          value: null,
+          observer: '__codeChanged'
         }
       },
 
@@ -142,6 +223,27 @@
         '__cameraChanged(camera, hasMultipleCameras)',
         '__activeChanged(active)'
       ],
+
+      listeners: {
+        'input.change': '__onInputChange'
+      },
+
+      __uploadedImageUrlChanged: function(uploadedImageUrl, oldUploadedImageUrl) {
+        if (oldUploadedImageUrl != null) {
+          try {
+            URL.revokeObjectURL(oldUploadedImageUrl);
+          } catch (e) {}
+        }
+      },
+
+      __onInputChange: function() {
+        let file = this.$.input.files[0];
+        let currentUpload = this.imageUpload || Promise.resolve();
+
+        if (file != null) {
+          this._setUploadedImageUrl(URL.createObjectURL(file));
+        }
+      },
 
       get ownerHost() {
         let root = Polymer.dom(this).getOwnerRoot();
@@ -165,8 +267,76 @@
         this.__ownerHost = null;
       },
 
+      scan: function() {
+        let self = this;
+        this.$.media.active = true;
+
+        (function doScan() {
+          if (!self.$.media.active) {
+            return;
+          }
+
+          self.__scanForQrCode().then(data => {
+            let validData;
+
+            if (self.urlRe.test(data)) {
+              let [url, fragment] = data.match(self.originRe) || [];
+              validData = fragment;
+            } else if (self.polymonCodeRe.test(data)){
+              validData = data;
+            }
+
+            if (validData == null) {
+              console.log('Cannot use QR Code data:', data);
+              return;
+            }
+
+            console.log('Usable QR Code data:', validData);
+
+            let [type, code] = validData.split('.');
+
+            self._setCode({
+              type,
+              code,
+              continueTo: self.returnTo
+            });
+          }).catch(error => {
+            console.log('QR Code scan failed:', error);
+          }).then(() => {
+            setTimeout(doScan, 1000);
+          });
+        })();
+      },
+
+      stopScanning: function() {
+        console.log('STOP SCANNING');
+        // Stop the media stream:
+        this.$.media.active = false;
+        // Clear the video src, blacking it out:
+        this.$.video.$.video.src = null;
+        // Reset the fallback file input:
+        this.$.input.value = null;
+        // Unset the uploaded image URL if one exists:
+        this._setUploadedImageUrl(null);
+        // Unset the scanned code if one exists:
+        this._setCode(null);
+      },
+
+      __codeChanged: function(code) {
+        if (code != null) {
+          this.$.media.active = false;
+          this.fire('polymon-code', code);
+          this.classList.add('has-code');
+        } else {
+          this.classList.remove('has-code');
+        }
+      },
+
       __onActivateRequest: function(event) {
         this.returnTo = event.detail.returnTo;
+        if (event.detail.handledCallback) {
+          event.detail.handledCallback();
+        }
         this.active = true;
       },
 
@@ -184,7 +354,7 @@
         }, 300);
       },
 
-      __scanForQrCode: function() {
+      __captureFromCamera: function() {
         return new Promise((resolve, reject) => {
           let captureRect = new MeatScopeCaptureRect(this.$.video);
 
@@ -194,66 +364,64 @@
               new MeatScopeTransform());
 
           try {
-            qrcode.width = captureRect.clampedWidth;
-            qrcode.height = captureRect.clampedHeight;
-            qrcode.imagedata = this.imagePreview.context
-                .getImageData(0, 0, qrcode.width, qrcode.height);
-
-            resolve(qrcode.process(this.imagePreview.context));
+            resolve(this.__process(this.imagePreview, captureRect));
           } catch (e) {
             reject(e);
           }
         });
       },
 
-      scan: function() {
-        let self = this;
-        this.$.media.active = true;
+      __captureFromUploadedImage: function() {
+        return new Promise((resolve, reject) => {
+          let image = document.createElement('img');
+          // NOTE(cdata): scale, x and y are here to trick the meat scope
+          // elements into thinking this is a <meat-scope-video>. Tiz a dirty
+          // hack to be sure, but allows us to re-use the canvas processing
+          // in the MeatScopeImagePreview instance for better performance.
+          image.scale = 1;
+          image.x = 0;
+          image.y = 0;
+          image.crossOrigin = "Anonymous";
+          image.onload = event => {
+            let captureRect = new MeatScopeCaptureRect(
+                image, 1000, 0, 0, image.width, image.height);
 
-        (function doScan() {
-          if (!self.$.media.active) {
-            return;
+            this.imagePreview
+                .draw(image, captureRect, new MeatScopeTransform());
+
+            try {
+              resolve(this.__process(this.imagePreview, captureRect));
+            } catch (e) {
+              reject(e);
+            }
+          };
+
+          image.src = this.uploadedImageUrl;
+        });
+      },
+
+      __scanForQrCode: function() {
+        return new Promise((resolve, reject) => {
+          if (this.camera != null) {
+            resolve(this.__captureFromCamera());
+          } else if (this.uploadedImageUrl != null) {
+            resolve(this.__captureFromUploadedImage());
+          } else {
+            reject(new Error('No valid image data source available.'));
           }
-
-          self.__scanForQrCode().then(data => {
-            let validData;
-
-            console.log('SCAN RESULT:', data);
-
-            if (self.urlRe.test(data)) {
-              let [url, fragment] = data.match(self.originRe) || [];
-              validData = fragment;
-            } else if (self.polymonCodeRe.test(data)){
-              validData = data;
-            }
-
-            if (validData == null) {
-              console.log(self.originRe);
-              console.log('Cannot use QR Code data:', data);
-              return;
-            }
-
-            console.log('Usable QR Code data:', validData);
-
-            let [type, code] = validData.split('.');
-
-            self.fire('polymon-code', {
-              type,
-              code,
-              continueTo: self.returnTo
-            });
-          }).catch(error => {
-            console.log('QR Code scan failed:', error);
-          }).then(() => {
-            setTimeout(doScan, 1000);
-          });
-        })();
+        });
       },
 
-      stopScanning: function() {
-        this.$.media.active = false;
-        this.$.video.$.video.src = null;
+      __process: function(imagePreview, captureRect) {
+        qrcode.width = captureRect.clampedWidth;
+        qrcode.height = captureRect.clampedHeight;
+        qrcode.imagedata = imagePreview.context
+            .getImageData(0, 0, qrcode.width, qrcode.height);
+
+        return qrcode.process(imagePreview.context);
       },
+
+
 
       __cameraChanged: function(camera) {
         if (!camera) {

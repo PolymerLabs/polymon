@@ -23,9 +23,18 @@
     __activeChanged: function() {
       this.deraf('active-changed', () => {
         if (this.active) {
+          let handled = false;
+
           this.fire('polymon-qr-code-scanner-activate', {
-            returnTo: this.returnTo
+            returnTo: this.returnTo,
+            handledCallback() {
+              handled = true;
+            }
           });
+
+          if (!handled) {
+            this.__activeChanged();
+          }
         } else {
           this.fire('polymon-qr-code-scanner-deactivate');
         }

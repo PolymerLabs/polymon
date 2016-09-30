@@ -327,7 +327,7 @@
       // formatted URL. Currently handles "catching" Polymon, and joining
       // battles with other players.
       __onPolymonCode: function(event) {
-        let { type, code } = event.detail;
+        let { type, code, continueTo } = event.detail;
 
         switch (type) {
           // A reference is a secret code that points to a Polymon in the
@@ -345,7 +345,7 @@
                 .push(catchData).key;
 
             this.push('unconfirmedCatches', catchId);
-          break;
+            break;
           // A battle code is typically shared from one user to another when one
           // user starts a battle and the other user scans the code on her
           // screen.
@@ -356,7 +356,14 @@
                   battleId: code,
                   createdAt: Date.now()
                 });
-          break;
+            break;
+          default:
+            if (continueTo) {
+              console.log(`Don't know how to handle ${type} QR code..`)
+              // TODO(cdata): Notify that code is unhandled..
+              this.set('route.path', continueTo);
+            }
+            break;
         }
       },
 
