@@ -216,7 +216,7 @@
           readOnly: true,
           value: null,
           observer: '__codeChanged'
-        }
+        },
       },
 
       observers: [
@@ -382,15 +382,27 @@
           image.x = 0;
           image.y = 0;
           image.crossOrigin = "Anonymous";
+
+          if (this.__transform == null) {
+            this.__transform = new MeatScopeTransform();
+          } else {
+            // Rotate the transform each time to accomodate for Safari's
+            // dizzyingly awful tendency to rotate photos taken with the camera
+            // to "fix" user orientation. Eventually we will get it right (but
+            // it might take a few tries):
+            this.__transform.rotateRight();
+          }
+
           image.onload = event => {
             let captureRect = new MeatScopeCaptureRect(
-                image, 1000, 0, 0, image.width, image.height);
+                image, 600, 0, 0, image.width, image.height);
 
             this.imagePreview
-                .draw(image, captureRect, new MeatScopeTransform());
+                .draw(image, captureRect, this.__transform);
 
             try {
               resolve(this.__process(this.imagePreview, captureRect));
+              this.__transform = null;
             } catch (e) {
               reject(e);
             }
