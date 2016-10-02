@@ -3,7 +3,7 @@ const { ensureNoActiveBattle } = require('./common');
 exports.validateTeam = functions => functions
     .database()
     .path('/users/{userId}/team/{teamId}')
-    .on('write', event => {
+    .onWrite(event => {
       const newTeamPositionId = event.data.key;
       const newTeamPosition = event.data.val();
       const teamRef = event.data.ref.parent;

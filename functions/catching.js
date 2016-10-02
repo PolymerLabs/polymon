@@ -3,7 +3,7 @@ const { recordPolymonSighting } = require('./common');
 exports.validateCaughtPolymon = functions => functions
     .database()
     .path('/users/{userId}/catchQueue/{catchId}')
-    .on('write', event => {
+    .onWrite(event => {
       const userId = event.params.userId;
       const catchValue = event.data.val();
 

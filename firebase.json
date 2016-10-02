@@ -4,7 +4,9 @@
   },
   "hosting": {
     "public": "client",
-    "ignore": ["qr-code-viewer.html"],
+    "ignore": [
+      "qr-code-viewer.html"
+    ],
     "rewrites": [
       {
         "source": "!(qr-code-viewer.html)",

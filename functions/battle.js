@@ -546,7 +546,7 @@ function withdrawFromBattle(db, userId, battleId) {
 exports.processBattleQueue = functions => functions
     .database()
     .path('/users/{userId}/battleQueue/{messageId}')
-    .on('write', event => {
+    .onWrite(event => {
       const message = event.data.val();
       const userId = event.params.userId;
       const db = functions.app.database();

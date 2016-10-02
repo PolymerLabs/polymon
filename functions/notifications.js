@@ -3,7 +3,7 @@ const { wait } = require('./common');
 exports.popNotifications = functions => functions
     .database()
     .path('/users/{userId}/notifications/{notificationId}/acknowledged')
-    .on('write', event => {
+    .onWrite(event => {
       const acknowledged = event.data.val();
 
       if (!acknowledged) {
