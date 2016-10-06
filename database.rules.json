@@ -25,7 +25,6 @@
         },
         "team": {
           ".read": "auth != null",
-          ".write": "$userId === auth.uid",
           "$teamPosition": {
             ".validate": "newData.child('index').val() < 5 && newData.child('index').val() > -1 && newData.hasChild('polydexId')"
           }
@@ -44,6 +43,9 @@
           ".write": "$userId === auth.uid"
         },
         "battleQueue": {
+          ".write": "$userId === auth.uid"
+        },
+        "teamQueue": {
           ".write": "$userId === auth.uid"
         }
       }

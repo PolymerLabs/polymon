@@ -299,10 +299,12 @@
 
       __setTeamPosition: function(position, polymon) {
         console.log(position, polymon);
-        this.$.teamQuery.ref.push({
-          index: position,
-          polydexId: polymon.polydexId
-        });
+        firebase.app('polymon').database()
+            .ref(`/users/${this.user.uid}/teamQueue`)
+            .push({
+              index: position,
+              polydexId: polymon.polydexId
+            });
       },
 
       __onCancelTeamSwapTap: function() {

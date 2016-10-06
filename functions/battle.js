@@ -552,7 +552,7 @@ exports.processBattleQueue = functions => functions
       const db = functions.app.database();
 
       if (message == null) {
-        console.log('No Battle Request, ignoring..');
+        console.log('No Battle message, ignoring...');
         return null;
       }
 
