@@ -4,7 +4,6 @@
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-devices.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-user-media.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-film-strip.html">
-<link rel="import" href="third-party/jsqrcode.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-spinner.html">
@@ -425,12 +424,27 @@
       },
 
       __process: function(imagePreview, captureRect) {
-        qrcode.width = captureRect.clampedWidth;
-        qrcode.height = captureRect.clampedHeight;
-        qrcode.imagedata = imagePreview.context
-            .getImageData(0, 0, qrcode.width, qrcode.height);
+        // Lazy load the QR Code reader library.
+        // NOTE(cdata): For some reason, if this loads at the same time as the
+        // map, the map will not render. This is kind of crazy, and it deserves
+        // to be looked into more deeply. For now, lazy loading addresses the
+        // problem except in the condition when the user refreshes while using
+        // the scanner (probably rare, but who knows).
+        if (this.__qrCodeLibraryLoads == null) {
+          this.__qrCodeLibraryLoads = new Promise((resolve, reject) => {
+            this.importHref(this.resolveUrl('third-party/jsqrcode.html'),
+                event => resolve(), error => reject(error));
+          });
+        }
 
-        return qrcode.process(imagePreview.context);
+        return this.__qrCodeLibraryLoads.then(() => {
+          qrcode.width = captureRect.clampedWidth;
+          qrcode.height = captureRect.clampedHeight;
+          qrcode.imagedata = imagePreview.context
+          .getImageData(0, 0, qrcode.width, qrcode.height);
+
+          return qrcode.process(imagePreview.context);
+        });
       },
 
 
