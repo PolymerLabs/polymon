@@ -12,6 +12,7 @@
          * it? */
         /*transition: transform 0.15s ease-in-out;*/
         --polymon-portrait-background: transparent;
+        will-change: transform;
       }
 
       :host(.visible) {
@@ -130,6 +131,35 @@
 
         polymon: {
           type: Object
+        },
+
+        waypoint: {
+          type: Boolean,
+          value: false,
+          observer: '__waypointChanged'
+        },
+
+        direction: {
+          type: String,
+          observer: '__directionChanged'
+        }
+      },
+
+      __waypointChanged(waypoint) {
+        if (waypoint) {
+          this.classList.add('waypoint');
+        } else {
+          this.classList.remove('waypoint');
+        }
+      },
+
+      __directionChanged(direction, oldDirection) {
+        if (oldDirection != null) {
+          this.classList.remove(oldDirection);
+        }
+
+        if (direction != null) {
+          this.classList.add(direction);
         }
       },
 
@@ -140,17 +170,18 @@
 
         let latLng = this.toLatLng(this.polymon.lastSeen);
         let position = projection.fromLatLngToDivPixel(latLng);
+        let direction = null;
+        let waypoint;
 
         if (bounds.contains(latLng)) {
-          this.classList.remove('waypoint');
+          waypoint = false;
         } else {
           let northEast = bounds.getNorthEast();
           let southWest = bounds.getSouthWest();
           let topRight = projection.fromLatLngToDivPixel(northEast);
           let bottomLeft = projection.fromLatLngToDivPixel(southWest);
 
-          this.classList.add('waypoint');
-          this.classList.remove('north', 'south', 'east', 'west');
+          waypoint = true;
 
           topRight.x = topRight.x - 32;
           topRight.y = topRight.y + 32;
@@ -160,18 +191,18 @@
 
           if (position.y < topRight.y) {
             position.y = topRight.y;
-            this.classList.add('north');
+            direction = 'north';
           } else if (position.y > bottomLeft.y) {
             position.y = bottomLeft.y;
-            this.classList.add('south');
+            direction = 'south';
           }
 
           if (position.x > topRight.x) {
             position.x = topRight.x;
-            this.classList.add('east');
+            direction = 'east';
           } else if (position.x < bottomLeft.x) {
             position.x = bottomLeft.x;
-            this.classList.add('west');
+            direction = 'west';
           }
         }
 
@@ -180,6 +211,9 @@
           // position?
           return;
         }
+
+        this.direction = direction;
+        this.waypoint = waypoint;
 
         this.__oldX = position.x;
         this.__oldY = position.y;

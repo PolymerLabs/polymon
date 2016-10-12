@@ -518,7 +518,7 @@
     "atSummit": "Yes"
   },
   {
-    "codePoint": "U+1F43C\t",
+    "codePoint": "U+1F43C",
     "github": "jkomoros",
     "stats": {
       "attack": 1,
@@ -530,6 +530,20 @@
     "twitter": "komorama",
     "flavor": "Big and slow and unintimidating.",
     "atSummit": "Yes"
+  },
+  {
+    "ldap": "katejeffreys",
+    "name": "Writerpuff",
+    "twitter": "x",
+    "github": "x",
+    "codePoint": "U+1F937",
+    "atSummit": "Yes",
+    "stats": {
+      "attack": 5,
+      "focus": 4,
+      "counter": 1
+    },
+    "flavor": "It's not lazy; it's efficient."
   },
   {
     "stats": {
