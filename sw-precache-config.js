@@ -9,5 +9,8 @@ module.exports = {
     '/fonts/**/*'
   ],
   navigateFallback: '/index.html',
-  navigateFallbackWhitelist: [/^(?!\/__)/]
+  navigateFallbackWhitelist: [
+    /^(?!\/__)/,
+    /getProjectConfig/
+  ]
 };
