@@ -1,0 +1,134 @@
+<link rel="stylesheet" href="/fonts/faces.css">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="polymon-logo.html">
+<link rel="import" href="polymon-carousel.html">
+<link rel="import" href="polymon-element.html">
+
+<dom-module id="polymon-egg">
+  <template>
+    <style>
+      :host {
+        @apply --layout-fit;
+        pointer-events: none;
+
+        opacity: 0;
+        transition: opacity 0.3s;
+        overflow: hidden;
+        z-index: 10000;
+
+        background-color: rgba(255, 255, 255, 0.65);
+        text-align: center;
+      }
+
+      #container {
+        @apply --layout-fit;
+        box-sizing: border-box;
+        padding-top: 10%;
+        transform: translateY(50px);
+        transition: transform 0.5s cubic-bezier(.7,-0.29,.28,1.27)
+      }
+
+      h1 {
+        font-family: 'Bungee Inline', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        color: #3ebbf0;
+        text-shadow: 0px 1px 0px #09537E;
+      }
+
+      :host(.active) {
+        opacity: 1;
+      }
+
+      :host(.active) #container {
+        transform: translateY(0);
+      }
+
+      div {
+        height: 128px;
+        overflow: visible;
+      }
+    </style>
+    <div id="container">
+      <polymon-logo></polymon-logo>
+      <div>
+        <polymon-carousel active="[[active]]"></polymon-carousel>
+      </div>
+      <h1>Capture the moment!</h1>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-egg',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        code: {
+          type: Array,
+          value: function() {
+            return [
+              'up',
+              'up',
+              'down',
+              'down',
+              'left',
+              'right',
+              'left',
+              'right',
+              'b',
+              'a'
+            ];
+          }
+        },
+
+        nextCodeIndex: {
+          type: Number,
+          value: 0
+        }
+      },
+
+      attached: function() {
+        document.body.addEventListener('keydown', this.__onBodyKeydown.bind(this));
+      },
+
+      get expectedKey() {
+        return this.code[this.nextCodeIndex];
+      },
+
+      get codeComplete() {
+        return this.nextCodeIndex === this.code.length;
+      },
+
+      __onBodyKeydown: function(event) {
+        if (this.active) {
+          return;
+        }
+
+        var matches = Polymer.IronA11yKeysBehavior.keyboardEventMatchesKeys;
+
+        if (matches(event, this.expectedKey)) {
+          this.nextCodeIndex++;
+        } else {
+          this.nextCodeIndex = 0;
+        }
+
+        if (this.codeComplete) {
+          this.active = true;
+          this.async(function() {
+            this.active = false;
+          }, 10000);
+        } else {
+          if (this.__resetAsync) {
+            this.cancelAsync(this.__resetAsync);
+          }
+
+          this.__resetAsync = this.async(function() {
+            this.nextCodeIndex = 0;
+          }, 1000);
+        }
+      }
+    });
+  </script>
+</dom-module>
