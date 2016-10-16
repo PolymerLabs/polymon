@@ -123,6 +123,24 @@
       #options polymon-button {
         width: 100%;
       }
+
+      #options .row {
+        @apply --layout-horizontal;
+        width: 100%;
+        max-width: 280px;
+      }
+
+      #options .row a:last-child  {
+        display: inline-block;
+        width: auto;
+        flex-grow: 0;
+        margin-left: 1em;
+      }
+
+      #options .row a:last-child > polymon-button {
+        font-size: 22px;
+        line-height: 19px;
+      }
     </style>
 
     <section id="marquee">
@@ -141,9 +159,16 @@
         <a href="/polydex">
           <polymon-button>Polydex</polymon-button>
         </a>
-        <a href="javascript:void(0)">
-          <polymon-button>Achievements</polymon-button>
-        </a>
+        <div class="row">
+          <a href="javascript:void(0)">
+            <polymon-button>Achievements</polymon-button>
+          </a>
+          <a href="javascript:void(0)">
+            <polymon-button
+                on-tap="requestToggleAudio"
+                class="plain">[[__computeAudioIcon(musicEnabled)]]</polymon-button>
+          </a>
+        </div>
       </section>
       <section id="for-anon">
         <polymon-button on-tap="requestLogin">Login with Google</polymon-button>
@@ -167,11 +192,20 @@
           type: Boolean,
           value: false,
           observer: '__authenticatedChanged'
+        },
+
+        musicEnabled: {
+          type: Boolean,
+          value: false
         }
       },
 
       requestLogin: function() {
         this.fire('request-login');
+      },
+
+      requestToggleAudio() {
+        this.fire('toggle-audio');
       },
 
       __authenticatedChanged: function() {
@@ -188,6 +222,12 @@
         } else {
           this.classList.remove('hidden');
         }
+      },
+
+      __computeAudioIcon(musicEnabled) {
+        return musicEnabled
+            ? '🔊'
+            : '🔇';
       }
     });
   </script>

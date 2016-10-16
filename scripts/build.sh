@@ -8,6 +8,7 @@ rm -r ./build
 polymer build -v --sources "src/**/*" \
                  --sources "fonts/**/*" \
                  --sources "images/**/*" \
+                 --sources "music/*.mp3" \
                  --sources "manifest.json" \
                  --sources "bower_components/webrtc-polyfill/index.js" \
                  --sources "bower_components/webcomponentsjs/webcomponents-lite.min.js" \

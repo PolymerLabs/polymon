@@ -12,5 +12,15 @@ module.exports = {
   navigateFallbackWhitelist: [
     /^(?!\/__)/,
     /getProjectConfig/
-  ]
+  ],
+  runtimeCaching: [{
+    urlPattern: /\/music\/.*/,
+    handler: 'cacheFirst',
+    options: {
+      cache: {
+        maxEntries: 200,
+        name: 'items-cache'
+      }
+    }
+  }]
 };

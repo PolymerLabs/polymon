@@ -176,14 +176,6 @@
         data="{{showPolymonData}}">
     </app-route>
 
-    <firebase-query
-        id="teamQuery"
-        app-name="polymon"
-        path="[[__firebaseTeamPath(user)]]"
-        order-by-child="index"
-        data="{{team}}">
-    </firebase-query>
-
     <h2>Your team &middot; Tap spot to swap</h2>
 
     <iron-selector id="team" selected="{{selectedTeamSpot}}">
@@ -256,7 +248,8 @@
 
         teamPolymons: {
           type: Array,
-          readOnly: true
+          readOnly: true,
+          notify: true
         },
 
         entries: {
@@ -297,7 +290,6 @@
       },
 
       __setTeamPosition: function(position, polymon) {
-        console.log(position, polymon);
         firebase.app('polymon').database()
             .ref(`/users/${this.user.uid}/teamQueue`)
             .push({
@@ -364,7 +356,6 @@
             this._setEntries(entries);
           }).catch(e => console.error(e));
         });
-
       },
 
       __updateTeamPolymon: function() {
@@ -390,7 +381,6 @@
             this._setTeamPolymons(teamPolymons);
           });
         })
-
       },
 
       __isCaught: function(polymonId) {
@@ -403,10 +393,6 @@
         }
 
         return false;
-      },
-
-      __firebaseTeamPath: function(user) {
-        return user == null ? null : `/users/${user.uid}/team`;
       }
     });
   </script>

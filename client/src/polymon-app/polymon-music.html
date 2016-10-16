@@ -1,0 +1,126 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="polymon-element.html">
+<dom-module id="polymon-music">
+  <template>
+    <audio
+        id="audio"
+        src="[[src]]"
+        preload="none"
+        loop>
+    </audio>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-music',
+
+      behaviors: [
+        PolymonElement
+      ],
+
+      properties: {
+        src: {
+          type: String,
+          computed: '__computeSrc(userData)'
+        },
+
+        playing: {
+          type: Boolean,
+          value: false,
+          readOnly: true,
+          notify: true
+        },
+
+        play: {
+          type: Boolean,
+          value: false,
+          readOnly: true,
+          notify: true
+        }
+      },
+
+      observers: ['__playChanged(play, active, src)'],
+
+      listeners: {
+        'audio.play': '__onAudioPlay',
+        'audio.pause': '__onAudioPause'
+      },
+
+      attached() {
+        this.__manuallyPausing = false;
+        this.__manuallyPlaying = false;
+
+        if (!this.__boundVisibilityChanged) {
+          this.__boundVisibilityChanged = this.__visibilityChanged.bind(this);
+        }
+        this.deraf('attached', () => {
+          if (!this.isAttached) {
+            return;
+          }
+
+          document.addEventListener(
+              'visibilitychange', this.__boundVisibilityChanged);
+          this.__visibilityChanged();
+        });
+      },
+
+      detached() {
+        document.addEventListener(
+              'visibilitychange', this.__boundVisibilityChanged);
+
+      },
+
+      toggle() {
+        if (!this.playing) {
+          this._setPlay(true);
+        } else {
+          this._setPlay(false);
+        }
+      },
+
+      __onAudioPlay() {
+        console.log('Got audio play event...');
+        this._setPlaying(true);
+        if (this.__manuallyPlaying) {
+          this.__manuallyPlaying = false;
+        } else {
+          this._setPlay(true);
+        }
+      },
+
+      __onAudioPause() {
+        console.log('Got audio pause event...');
+        this._setPlaying(false);
+        if (this.__manuallyPausing) {
+          this.__manuallyPausing = false;
+        } else {
+          this._setPlay(false);
+        }
+      },
+
+      __visibilityChanged() {
+        this.active = !document.hidden;
+      },
+
+      __playChanged(play, active) {
+        if (play && active) {
+          console.log('Playing music...');
+          this.__manuallyPlaying = true;
+          this.$.audio.play();
+        } else {
+          console.log('Pausing music...');
+          this.__manuallyPausing = true;
+          this.$.audio.pause();
+        }
+      },
+
+      __computeSrc(userData) {
+        console.log('computing audio src', userData);
+        return userData != null &&
+            userData.player != null &&
+            userData.player.activeBattleId != null
+                ? '/music/battle_80kbps.mp3'
+                : '/music/walking_80kbps.mp3';
+      }
+    });
+  </script>
+</dom-module>

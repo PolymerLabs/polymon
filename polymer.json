@@ -12,6 +12,7 @@
     "src/polymon-app/polymon-panel.html",
     "src/polymon-app/polymon-map.html",
     "src/polymon-app/polymon-coded-url-screen.html",
+    "src/polymon-app/polymon-music.html",
     "bower_components/polymerfire/firebase-app.html"
   ]
 }

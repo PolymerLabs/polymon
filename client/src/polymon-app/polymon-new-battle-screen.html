@@ -5,6 +5,7 @@
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-qr-code-scanner-proxy.html">
 
 <dom-module id="polymon-new-battle-screen">
@@ -26,6 +27,11 @@
 
       #team {
         flex: 1;
+        @apply --layout-vertical;
+      }
+
+      #team .hidden {
+        display: none;
       }
 
       #controls {
@@ -72,6 +78,11 @@
     </polymon-qr-code-scanner-proxy>
 
     <section id="team">
+      <template is="dom-repeat" items="[[teamPolymons]]" as="polymons">
+        <div class="entry [[__entryClass(polymon)]]">
+          <polymon-portrait polymon="[[polymon]]"></polymon-portrait>
+        </div>
+      </template>
     </section>
 
     <section id="controls">
@@ -99,7 +110,9 @@
       behaviors: [PolymonElement],
 
       properties: {
-
+        teamPolymons: {
+          type: Array
+        }
       },
 
       __onStartTap: function() {
@@ -110,6 +123,12 @@
                 createdAt: Date.now()
               });
         }
+      },
+
+      __entryClass(polymon) {
+        return (polymon != null && polymon.polydexId != null)
+            ? ''
+            : 'empty';
       }
     });
   </script>
