@@ -13,8 +13,9 @@
         @apply --layout-fit;
         @apply --layout-vertical;
         background-color: #fafafa;
+        color: rgba(0, 0, 0, 0.8);
         text-align: center;
-        align-items: stretch;
+        align-items: center;
       }
 
       h2:nth-of-type(1) {
@@ -26,10 +27,14 @@
         flex: 1;
         padding: 1.5em;
         overflow: auto;
+        max-width: 640px;
       }
 
       #controls {
         flex: 0;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 640px;
         padding: 16px;
       }
 
@@ -43,7 +48,8 @@
 
       .credit {
         width: 100%;
-        margin-bottom: 0.25em;
+        max-width: 480px;
+        margin: auto auto 0.25em auto;
         box-sizing: border-box;
         @apply --layout-horizontal;
         justify-content: space-between;
@@ -61,6 +67,7 @@
       .subtitle {
         font-style: italic;
         font-weight: bold;
+        margin-bottom: 0;
       }
     </style>
     <section id="credits">
@@ -86,7 +93,7 @@
       </div>
 
       <h3>Special thanks to</h3>
-      <p>Alex Russell, Dominick Ng, Chris Harrelson, Gray Norton, Arthur Evans, Steve Orvell, Dan Freedman, Dimitri Glazkov, Elliott Marquez, Emmanuel Garcia, Fred Schott, Frankie Fu, AJ Ortega, Kate Jeffreys, Keanu Lee, Kevin Schaff, Matt McNulty, Monica Dinculescu, Namchi Do, Peter Burns, Russell Bicknell, Shane Stephens, Scott Miles, Taylor Savage, Brendan Baldwin, Valdrin Koshi, Michael Bleigh and everyone else who helped bring Polymon to life!</p>
+      <p>Alex Russell, Dominick Ng, Chris Harrelson, Justin Fagnani, Gray Norton, Arthur Evans, Steve Orvell, Dan Freedman, Dimitri Glazkov, Elliott Marquez, Emmanuel Garcia, Fred Schott, Frankie Fu, AJ Ortega, Kate Jeffreys, Keanu Lee, Kevin Schaff, Matt McNulty, Monica Dinculescu, Namchi Do, Peter Burns, Russell Bicknell, Shane Stephens, Scott Miles, Taylor Savage, Brendan Baldwin, Valdrin Koshi, Michael Bleigh and everyone else who helped bring Polymon to life!</p>
 
       <p class="subtitle">Based on an original game design by Chris Joel &amp; Justin Fagnani</p>
     </section>
