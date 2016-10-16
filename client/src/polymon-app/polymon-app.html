@@ -170,6 +170,15 @@
           ]'>
       </app-route>
 
+      <app-route
+          pattern="/about"
+          route="{{route}}"
+          active="{{aboutRouteActive}}"
+          data-fragments='[
+            "polymon-about-screen.html"
+          ]'>
+      </app-route>
+
     </polymon-lazy-loader>
 
     <polymon-qr-code-scanner
@@ -244,6 +253,10 @@
         authenticated="[[authenticated]]"
         auth-status-known="[[statusKnown]]">
     </polymon-coded-url-screen>
+
+    <polymon-about-screen
+        active="[[aboutRouteActive]]">
+    </polymon-about-screen>
 
     <polymon-notification-overlay
         id="notificationOverlay"

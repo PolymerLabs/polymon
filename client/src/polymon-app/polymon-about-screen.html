@@ -1,0 +1,106 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-logo.html">
+<link rel="import" href="polymon-button.html">
+
+<dom-module id="polymon-about-screen">
+  <template>
+    <style include="typography active-fade-up">
+      :host {
+        @apply --layout-fit;
+        @apply --layout-vertical;
+        background-color: #fafafa;
+        text-align: center;
+        align-items: stretch;
+      }
+
+      h2:nth-of-type(1) {
+        font-style: italic;
+        margin: 1em 0 1.5em;
+      }
+
+      #credits {
+        flex: 1;
+        padding: 1.5em;
+        overflow: auto;
+      }
+
+      #controls {
+        flex: 0;
+        padding: 16px;
+      }
+
+      #controls > a {
+        width: 100%;
+      }
+
+      #controls > a > polymon-button {
+        width: 100%;
+      }
+
+      .credit {
+        width: 100%;
+        margin-bottom: 0.25em;
+        box-sizing: border-box;
+        @apply --layout-horizontal;
+        justify-content: space-between;
+      }
+
+      .credit > span:nth-of-type(2) {
+        font-weight: bold;
+        font-style: italic;
+      }
+
+      .credits {
+        margin-bottom: 1em;
+      }
+
+      .subtitle {
+        font-style: italic;
+        font-weight: bold;
+      }
+    </style>
+    <section id="credits">
+      <polymon-logo></polymon-logo>
+      <h2>Polymon is a multiplayer, location-based monster hunting game designed and maintained by the <a href="https://www.polymer-project.org/" target="_blank">Polymer</a> team.</h2>
+
+      <div class="credits">
+        <span class="credit">
+          <span>Wendy Ginsburg</span><span>Production</span>
+        </span>
+        <span class="credit">
+          <span>Evangeline Pineschi</span><span>Art</span>
+        </span>
+        <span class="credit">
+          <span>Donna Almendrala</span><span>Art</span>
+        </span>
+        <span class="credit">
+          <span>Cityfires</span><span>Music</span>
+        </span>
+        <span class="credit">
+          <span>Chris Joel</span><span>Code</span>
+        </span>
+      </div>
+
+      <h3>Special thanks to</h3>
+      <p>Alex Russell, Dominick Ng, Chris Harrelson, Gray Norton, Arthur Evans, Steve Orvell, Dan Freedman, Dimitri Glazkov, Elliott Marquez, Emmanuel Garcia, Fred Schott, Frankie Fu, AJ Ortega, Kate Jeffreys, Keanu Lee, Kevin Schaff, Matt McNulty, Monica Dinculescu, Namchi Do, Peter Burns, Russell Bicknell, Shane Stephens, Scott Miles, Taylor Savage, Brendan Baldwin, Valdrin Koshi, Michael Bleigh and everyone else who helped bring Polymon to life!</p>
+
+      <p class="subtitle">Based on an original game design by Chris Joel &amp; Justin Fagnani</p>
+    </section>
+    <section id="controls">
+      <a href="/">
+        <polymon-button class="alt">Back</polymon-button>
+      </a>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-about-screen',
+
+      behaviors: [PolymonElement]
+    });
+  </script>
+</dom-module>
