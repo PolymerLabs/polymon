@@ -7,6 +7,664 @@
 <dom-module id="polymon-battle-round-visualizer">
   <template>
     <style include="active-fade-up">
+      @-webkit-keyframes flash {
+        0% {
+          opacity: 0;
+        }
+
+        24.9% {
+          opacity: 0;
+        }
+
+        25% {
+          opacity: 0.75;
+        }
+
+        26.5% {
+          opacity: 0;
+        }
+
+        29.9% {
+          opacity: 0;
+        }
+
+        30% {
+          opacity: 1;
+        }
+
+        34% {
+          opacity: 0;
+        }
+
+        66.9% {
+          opacity: 0;
+        }
+
+        67% {
+          opacity: 1
+        }
+
+        72% {
+          opacity: 0;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @-webkit-keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(100%);
+        }
+
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      @-webkit-keyframes attackTop {
+        0% {
+          transform: translate(45%, 0);
+        }
+
+        25% {
+          transform: translate(47%, -4%);
+        }
+
+        25.5% {
+          transform: translate(-55%, 6%) scaleX(-1);
+        }
+
+        29.9% {
+          transform: translate(-57%, 8%)  scaleX(-1);
+        }
+
+        30% {
+          transform: translate(45%, -8%);
+        }
+
+        100% {
+          transform: translate(49%, -16%);
+        }
+      }
+
+
+      @-webkit-keyframes attackBottom {
+        0% {
+          transform: translate(-45%, 10%) scaleX(-1);
+        }
+
+        25% {
+          transform: translate(-47%, 14%) scaleX(-1);
+        }
+
+        25.5% {
+          transform: translate(55%, 4%) scaleX(1);
+        }
+
+        29.9% {
+          transform: translate(57%, 2%)  scaleX(1);
+        }
+
+        30% {
+          transform: translate(-45%, 18%) scaleX(-1);
+        }
+
+        100% {
+          transform: translate(-49%, 26%) scaleX(-1);
+        }
+      }
+
+      @-webkit-keyframes shudder {
+        0% {
+          transform: translateX(0);
+        }
+
+        25% {
+          transform: translateX(0);
+        }
+
+        25.25% {
+          transform: translateX(0.5%);
+        }
+
+        25.5% {
+          transform: translateX(-1%);
+        }
+
+        25.75% {
+          transform: translateX(1%);
+        }
+
+        26% {
+          transform: translateX(-2.5%);
+        }
+
+        26.25% {
+          transform: translateX(2.5%);
+        }
+
+        26.5% {
+          transform: translateX(-1%);
+        }
+
+        26.75% {
+          transform: translateX(1%);
+        }
+
+        27% {
+          transform: translateX(-0.5%);
+        }
+
+        27.25% {
+          transform: translateX(0.25%);
+        }
+
+        27.5% {
+          transform: translateX(0%);
+        }
+
+
+
+        30% {
+          transform: translateX(0);
+        }
+
+        30.25% {
+          transform: translateX(0.5%);
+        }
+
+        30.5% {
+          transform: translateX(-1%);
+        }
+
+        30.75% {
+          transform: translateX(1%);
+        }
+
+        31% {
+          transform: translateX(-2.5%);
+        }
+
+        31.25% {
+          transform: translateX(2.5%);
+        }
+
+        31.5% {
+          transform: translateX(-1%);
+        }
+
+        31.75% {
+          transform: translateX(1%);
+        }
+
+        32% {
+          transform: translateX(-0.5%);
+        }
+
+        32.25% {
+          transform: translateX(0.25%);
+        }
+
+        32.5% {
+          transform: translateX(0%);
+        }
+      }
+
+      @-webkit-keyframes moveTop {
+        0% {
+          transform: translateX(-10000px);
+        }
+
+        25% {
+          transform: translateX(-10000px);
+        }
+
+        25.5% {
+          transform: translateX(0px);
+        }
+
+        100% {
+          transform: translateX(10px);
+        }
+      }
+
+      @-webkit-keyframes moveBottom {
+        0% {
+          transform: translateX(-10000px);
+        }
+
+        30% {
+          transform: translateX(-10000px);
+        }
+
+        30.5% {
+          transform: translateX(0px);
+        }
+
+        100% {
+          transform: translateX(-10px);
+        }
+      }
+
+      @-webkit-keyframes total {
+        0% {
+          transform: translateX(-10000px);
+        }
+
+        30% {
+          transform: translateX(-10000px);
+        }
+
+        30.5% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      @-webkit-keyframes basicTotalTickOne {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        38% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        40% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @-webkit-keyframes basicTotalTickTwo {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        38% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        40% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        42% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @-webkit-keyframes basicTotalTickThree {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        40% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        44% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @-webkit-keyframes basicTotalTickFour {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        44% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @-webkit-keyframes modifiedTotalTickOne {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        50% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        52% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+      }
+
+      @-webkit-keyframes modifiedTotalTickFour {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        44% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        50% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        52% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+      }
+
+      @-webkit-keyframes modifiedTotalTickFive {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        50% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        52% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @-webkit-keyframes coverTop {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        10% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        11% {
+          transform: translateX(-100%);
+          opacity: 1;
+        }
+
+        11.1% {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+
+        89.9% {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+
+        90% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        90.1% {
+          transform: translateX(100%);
+          opacity: 1;
+        }
+
+        91.5% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @-webkit-keyframes coverBottom {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        10% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        11% {
+          transform: translateX(100%);
+          opacity: 1;
+        }
+
+        11.1% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        89.9% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        90% {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+
+        90.1% {
+          transform: translateX(-100%);
+          opacity: 1;
+        }
+
+        91.5% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @-webkit-keyframes fateBottom {
+        0% {
+          transform: translate(200%, 25%);
+        }
+
+        40% {
+          transform: translate(200%, 25%);
+        }
+
+        45% {
+          transform: translate(5%, 25%);
+        }
+
+        100% {
+          transform: translate(-5%, 25%);
+        }
+      }
+
+      @-webkit-keyframes fateTop {
+        0% {
+          transform: translate(-150%, -25%);
+        }
+
+        40% {
+          transform: translate(-150%, -25%);
+        }
+
+        45% {
+          transform: translate(-5%, -25%);
+        }
+
+        100% {
+          transform: translate(5%, -25%);
+        }
+      }
+
+      @-webkit-keyframes breakdownTop {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        63% {
+          transform: translateX(0%);
+          opacity: 1;
+        }
+
+        68% {
+          transform: translateX(5%);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateX(5%);
+          opacity: 0;
+        }
+      }
+
+      @-webkit-keyframes breakdownBottom {
+        0% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        63% {
+          transform: translateX(0%);
+          opacity: 1;
+        }
+
+        68% {
+          transform: translateX(-5%);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateX(-5%);
+          opacity: 0;
+        }
+      }
+
+      @-webkit-keyframes healthLostTop {
+        0% {
+          transform: translateX(5%);
+          opacity: 0;
+        }
+
+        66.9% {
+          transform: translateX(5%);
+          opacity: 0;
+        }
+
+        70% {
+          transform: translateX(4%);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateX(-5%);
+          opacity: 1;
+        }
+      }
+
+      @-webkit-keyframes healthLostBottom {
+        0% {
+          transform: translateX(-5%);
+          opacity: 0;
+        }
+
+        66.9% {
+          transform: translateX(-5%);
+          opacity: 0;
+        }
+
+        70% {
+          transform: translateX(-4%);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateX(5%);
+          opacity: 1;
+        }
+      }
+
+
+
+
       /**
        * NOTE(cdata): The (many) keyframe animations that follow assume a common
        * 10 second duration. Collectively they represent the animations of the
@@ -694,7 +1352,10 @@
       .health-lost,
       .breakdown {
         position: absolute;
+        -webkit-transform-origin: center center;
         transform-origin: center center;
+        -webkit-animation-duration: 10s;
+        -webkit-animation-timing-function: linear;
         animation-duration: 10s;
         animation-timing-function: linear;
         /*animation-iteration-count: infinite;*/
@@ -703,8 +1364,10 @@
       #scene {
         @apply --layout-fit;
         overflow: hidden;
+        -webkit-transform-origin: top center;
         transform-origin: top center;
         margin: auto;
+        -webkit-animation-name: shudder;
         animation-name: shudder;
       }
 
@@ -714,6 +1377,7 @@
         width: 100%;
         height: 100%;
         opacity: 0;
+        -webkit-animation-name: flash;
         animation-name: flash;
       }
 
@@ -744,11 +1408,13 @@
       }
 
       #top .image {
+        -webkit-animation-name: attackTop;
         animation-name: attackTop;
         /*background-image: url('https://cdn.rawgit.com/googlei18n/noto-emoji/master/svg/emoji_u1f405.svg');*/
       }
 
       #bottom .image {
+        -webkit-animation-name: attackBottom;
         animation-name: attackBottom;
         /*background-image: url('https://cdn.rawgit.com/googlei18n/noto-emoji/master/svg/emoji_u1f410.svg');*/
       }
@@ -781,6 +1447,7 @@
       }
 
       #bottom {
+        -webkit-transform: translateY(-33.33333333%);
         transform: translateY(-33.33333333%);
         height: 60%;
         background-image:
@@ -833,6 +1500,11 @@
         position: absolute;
         width: 100%;
         height: 100%;
+
+        -webkit-animation-name: float;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-direction: alternate;
 
         animation-name: float;
         animation-timing-function: linear;
@@ -923,14 +1595,18 @@
         height: 100%;
         z-index: 2;
         color: rgba(255, 255, 255, 0.9);
+        will-change: transform;
       }
 
       #top .results {
+        -webkit-transform: rotate(18deg) translate(5%, 65%);
         transform: rotate(18deg) translate(5%, 65%);
       }
 
       #bottom .results {
+        -webkit-transform-origin: right;
         transform-origin: right;
+        -webkit-transform: rotate(18deg) translate(-5%, 31.7777776%);
         transform: rotate(18deg) translate(-5%, 31.7777776%);
       }
 
@@ -942,6 +1618,7 @@
       }
 
       #top .results .move {
+        -webkit-animation-name: moveTop;
         animation-name: moveTop;
         bottom: 0px;
       }
@@ -958,6 +1635,7 @@
 
       #bottom .results .move {
         right: 0px;
+        -webkit-animation-name: moveBottom;
         animation-name: moveBottom;
       }
 
@@ -978,6 +1656,7 @@
         color: rgba(0, 0, 0, 0.75);
         text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.33);
 
+        -webkit-animation-name: total;
         animation-name: total;
       }
 
@@ -990,30 +1669,37 @@
       }
 
       .results.bonus .total > span:nth-of-type(1) {
+        -webkit-animation-name: basicTotalTickOne;
         animation-name: basicTotalTickOne;
       }
 
       .results.bonus .total > span:nth-of-type(2) {
+        -webkit-animation-name: basicTotalTickTwo;
         animation-name: basicTotalTickTwo;
       }
 
       .results.bonus .total > span:nth-of-type(3) {
+        -webkit-animation-name: basicTotalTickThree;
         animation-name: basicTotalTickThree;
       }
 
       .results.bonus .total > span:nth-of-type(4) {
+        -webkit-animation-name: basicTotalTickFour;
         animation-name: basicTotalTickFour;
       }
 
       .results.modified:not(.bonus) .total > span:first-child {
+        -webkit-animation-name: modifiedTotalTickOne;
         animation-name: modifiedTotalTickOne;
       }
 
       .results.bonus.modified .total > span:nth-of-type(4) {
+        -webkit-animation-name: modifiedTotalTickFour;
         animation-name: modifiedTotalTickFour;
       }
 
       .results.modified .total > span:last-of-type {
+        -webkit-animation-name: modifiedTotalTickFive;
         animation-name: modifiedTotalTickFive;
       }
 
@@ -1037,10 +1723,12 @@
       }
 
       #top .cover {
+        -webkit-animation-name: coverTop;
         animation-name: coverTop;
       }
 
       #bottom .cover {
+        -webkit-animation-name: coverBottom;
         animation-name: coverBottom;
       }
 
@@ -1081,13 +1769,18 @@
       #bottom .fate {
         align-items: flex-start;
         justify-content: flex-end;
+        -webkit-transform: translate(-5%, 20%);
         transform: translate(-5%, 20%);
 
+        -webkit-animation-name: fateBottom;
         animation-name: fateBottom;
+
+        /*-webkit-animation: fateBottom 10s;*/
       }
 
       #top .fate {
         align-items: flex-end;
+        -webkit-animation-name: fateTop;
         animation-name: fateTop;
       }
 
@@ -1096,14 +1789,17 @@
         left: 0;
         width: 100%;
         height: 100%;
+        -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
       }
 
       #top .breakdown {
+        -webkit-animation-name: breakdownTop;
         animation-name: breakdownTop;
       }
 
       #bottom .breakdown {
+        -webkit-animation-name: breakdownBottom;
         animation-name: breakdownBottom;
       }
 
@@ -1123,6 +1819,7 @@
       }
 
       .bottom-winner #top .health-lost {
+        -webkit-animation-name: healthLostTop;
         animation-name: healthLostTop;
       }
 
@@ -1131,6 +1828,7 @@
       }
 
       .top-winner #bottom .health-lost {
+        -webkit-animation-name: healthLostBottom;
         animation-name: healthLostBottom;
       }
 
@@ -1279,7 +1977,6 @@
               this.active = true;
 
               Polymer.dom(this.root).removeChild(this.$.scene);
-
               Polymer.dom(this.root).appendChild(this.$.scene);
             }));
 
@@ -1382,10 +2079,8 @@
 
           var results = Polymer.dom(this.$.scene).querySelectorAll('#scene .results');
 
-          results[0].style.transform =
-              'rotate(' + degrees + 'deg) translate(5%, -15.66666667%)';
-          results[1].style.transform =
-              'rotate(' + degrees + 'deg) translate(-5%, 31.77777776%)';
+          this.transform('rotate(' + degrees + 'deg) translate(5%, -15.66666667%)', results[0]);
+          this.transform('rotate(' + degrees + 'deg) translate(-5%, 31.77777776%)', results[1]);
         });
       },
 
@@ -1408,9 +2103,13 @@
             div.classList.add('alt');
           }
 
-          div.style.animationDelay = Math.floor(Math.random() * -10) * 3 + 's';
-          div.style.animationDuration = (0.5 - (Math.random() * 0.4)) + 's';
+          let delay = Math.floor(Math.random() * -10) * 3 + 's';
+          let duration = (0.5 - (Math.random() * 0.4)) + 's';
 
+          div.style.webkitAnimationDelay = delay;
+          div.style.animationDelay = delay;
+          div.style.webkitAnimationDuration = duration;
+          div.style.animationDuration = duration;
         }
       }
     });
