@@ -274,9 +274,10 @@
       "focus": 3
     },
     "name": "Beardiac",
+    "shortName": "pandabeard",
     "ldap": "bleigh",
     "twitter": "mbleigh",
-    "flavor": "Pandabeard is friendly and easygoing, unless you make trouble for the Web Platform. Then watch out!",
+    "flavor": "Beardiac is friendly and easygoing, unless you make trouble for the Web Platform. Then watch out!",
     "atSummit": "Yes"
   },
   {
@@ -358,6 +359,7 @@
       "focus": 3
     },
     "name": "Ramulan",
+    "shortName": "caprani",
     "ldap": "justinfagnani",
     "twitter": "justinfagnani",
     "flavor": "Obsessively curious, and will eat almost anything. Skilled at balancing in precarious places.",
@@ -526,6 +528,7 @@
       "focus": 6
     },
     "name": "Komorama",
+    "shortName": "pandasnore",
     "ldap": "komoroske",
     "twitter": "komorama",
     "flavor": "Big and slow and unintimidating.",

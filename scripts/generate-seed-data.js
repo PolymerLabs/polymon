@@ -77,7 +77,7 @@ readJson(envJsonPath).then(config => {
       let qrCodeData = polymons.map((polymon, index) => {
         polymon = Object.assign({
           lastSeen: randomSighting(),
-          shortName: polymon.name.toLowerCase(),
+          shortName: polymon.shortName || polymon.name.toLowerCase(),
           spriteIndex: index
         }, polymon);
 
