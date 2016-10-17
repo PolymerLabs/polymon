@@ -181,6 +181,8 @@
 
             console.log('Got fine-grained geolocation point!');
             navigator.geolocation.clearWatch(watchId);
+          }, error => console.error(e), {
+            enableHighAccuracy: true
           });
         } catch (e) {}
       },
@@ -197,6 +199,8 @@
             // the map..
             this.mapLatLng = this.playerLatLng;
             this.__watchGeolocationOnce();
+          }, error => console.error(e), {
+            enableHighAccuracy: true
           });
         } catch (e) {}
       },
@@ -215,6 +219,8 @@
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
               };
+            }, error => console.error(e), {
+              enableHighAccuracy: true
             });
           } catch (e) {}
         } else {
