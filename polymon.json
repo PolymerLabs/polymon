@@ -4,7 +4,7 @@
     "github": "tjsavage",
     "stats": {
       "attack": 3,
-      "counter": 1,
+      "counter": 2,
       "focus": 3
     },
     "name": "Productasaur",
@@ -18,8 +18,8 @@
     "github": "samccone",
     "stats": {
       "attack": 1,
-      "counter": 1,
-      "focus": 7
+      "counter": 4,
+      "focus": 3
     },
     "name": "Horse",
     "ldap": "samccone",
@@ -31,8 +31,8 @@
     "codePoint": "U+1F98E",
     "github": "wmginsberg",
     "stats": {
-      "attack": 6,
-      "counter": 1,
+      "attack": 4,
+      "counter": 2,
       "focus": 1
     },
     "name": "Ginzard",
@@ -73,8 +73,8 @@
     "codePoint": "U+1F428",
     "github": "robdodson",
     "stats": {
-      "attack": 5,
-      "counter": 1,
+      "attack": 3,
+      "counter": 3,
       "focus": 1
     },
     "name": "Bobdod",
@@ -102,8 +102,8 @@
     "github": "ebidel",
     "stats": {
       "attack": 1,
-      "counter": 1,
-      "focus": 7
+      "counter": 4,
+      "focus": 2
     },
     "name": "Bideldore",
     "ldap": "ericbidelman",
@@ -116,7 +116,7 @@
     "github": "x",
     "stats": {
       "attack": 3,
-      "counter": 6,
+      "counter": 3,
       "focus": 1
     },
     "name": "Brainana",
@@ -129,7 +129,7 @@
     "codePoint": "U+1F980",
     "github": "arthurevans",
     "stats": {
-      "attack": 6,
+      "attack": 3,
       "counter": 2,
       "focus": 2
     },
@@ -171,7 +171,7 @@
     "codePoint": "U+1F419",
     "github": "x",
     "stats": {
-      "attack": 4,
+      "attack": 3,
       "counter": 4,
       "focus": 1
     },
@@ -185,9 +185,9 @@
     "codePoint": "U+1F453",
     "github": "x",
     "stats": {
-      "attack": 4,
+      "attack": 2,
       "counter": 2,
-      "focus": 2
+      "focus": 3
     },
     "name": "Spector",
     "ldap": "shanestephens",
@@ -200,7 +200,7 @@
     "github": "x",
     "stats": {
       "attack": 3,
-      "counter": 4,
+      "counter": 2,
       "focus": 3
     },
     "name": "Shquid",
@@ -241,9 +241,9 @@
     "codePoint": "U+1F4A3",
     "github": "andybons",
     "stats": {
-      "attack": 6,
+      "attack": 2,
       "counter": 1,
-      "focus": 1
+      "focus": 4
     },
     "name": "KABONS",
     "ldap": "andybons",
@@ -255,8 +255,8 @@
     "codePoint": "U+1F389",
     "github": "fredkschott",
     "stats": {
-      "attack": 5,
-      "counter": 1,
+      "attack": 4,
+      "counter": 2,
       "focus": 1
     },
     "name": "Fredosaurus",
@@ -284,8 +284,8 @@
     "codePoint": "U+1F42C",
     "github": "dalmaer",
     "stats": {
-      "attack": 8,
-      "counter": 1,
+      "attack": 4,
+      "counter": 2,
       "focus": 1
     },
     "name": "Dalphinaer",
@@ -298,9 +298,9 @@
     "codePoint": "U+1F332",
     "github": "sjmiles",
     "stats": {
-      "attack": 6,
-      "counter": 1,
-      "focus": 1
+      "attack": 1,
+      "counter": 4,
+      "focus": 6
     },
     "name": "Rootsfirmiles",
     "ldap": "sjmiles",
@@ -312,9 +312,9 @@
     "codePoint": "U+1F47E",
     "github": "blasten",
     "stats": {
-      "attack": 7,
-      "counter": 2,
-      "focus": 1
+      "attack": 2,
+      "counter": 3,
+      "focus": 2
     },
     "name": "Alienuel",
     "ldap": "egarciad",
@@ -354,7 +354,7 @@
     "codePoint": "U+1F40F",
     "github": "justinfagnani",
     "stats": {
-      "attack": 1,
+      "attack": 2,
       "counter": 3,
       "focus": 3
     },
@@ -369,9 +369,9 @@
     "codePoint": "U+1F40A",
     "github": "x",
     "stats": {
-      "attack": 7,
-      "counter": 2,
-      "focus": 1
+      "attack": 2,
+      "counter": 3,
+      "focus": 3
     },
     "name": "Keanugator",
     "ldap": "keanulee",
@@ -384,8 +384,8 @@
     "github": "x",
     "stats": {
       "attack": 1,
-      "counter": 1,
-      "focus": 7
+      "counter": 2,
+      "focus": 4
     },
     "name": "Domdriform",
     "ldap": "dominicc",
@@ -397,7 +397,7 @@
     "codePoint": "U+1F914",
     "github": "x",
     "stats": {
-      "attack": 3,
+      "attack": 2,
       "counter": 5,
       "focus": 1
     },
@@ -411,8 +411,8 @@
     "codePoint": "U+1F43C",
     "github": "frankiefu",
     "stats": {
-      "attack": 5,
-      "counter": 3,
+      "attack": 1,
+      "counter": 4,
       "focus": 2
     },
     "name": "Frankiemon",
@@ -425,9 +425,9 @@
     "codePoint": "U+1F639",
     "github": "x",
     "stats": {
-      "attack": 6,
+      "attack": 4,
       "counter": 1,
-      "focus": 1
+      "focus": 3
     },
     "name": "Salgoud",
     "ldap": "dstockwell",
@@ -439,7 +439,7 @@
     "codePoint": "U+1F346",
     "github": "x",
     "stats": {
-      "attack": 5,
+      "attack": 3,
       "counter": 1,
       "focus": 3
     },
@@ -453,8 +453,8 @@
     "codePoint": "U+1F575",
     "github": "x",
     "stats": {
-      "attack": 5,
-      "counter": 2,
+      "attack": 2,
+      "counter": 4,
       "focus": 1
     },
     "name": "KonfusedKevin",
@@ -468,8 +468,8 @@
     "github": "mattsmcnulty",
     "stats": {
       "attack": 6,
-      "counter": 1,
-      "focus": 1
+      "counter": 4,
+      "focus": 2
     },
     "name": "Mattata",
     "ldap": "matthewmcnulty",
@@ -481,9 +481,9 @@
     "codePoint": "U+1F428",
     "github": "mikelawther",
     "stats": {
-      "attack": 2,
+      "attack": 3,
       "counter": 3,
-      "focus": 2
+      "focus": 3
     },
     "name": "Marsupimike",
     "ldap": "mikelawther",
@@ -495,9 +495,9 @@
     "codePoint": "U+1F385",
     "github": "x",
     "stats": {
-      "attack": 8,
-      "counter": 1,
-      "focus": 1
+      "attack": 4,
+      "counter": 6,
+      "focus": 3
     },
     "name": "Gläzfather",
     "ldap": "dglazkov",
@@ -509,7 +509,7 @@
     "codePoint": "U+1F344",
     "github": "namchid",
     "stats": {
-      "attack": 5,
+      "attack": 2,
       "counter": 1,
       "focus": 4
     },
@@ -523,9 +523,9 @@
     "codePoint": "U+1F43C",
     "github": "jkomoros",
     "stats": {
-      "attack": 1,
-      "counter": 1,
-      "focus": 6
+      "attack": 2,
+      "counter": 3,
+      "focus": 4
     },
     "name": "Komorama",
     "shortName": "pandasnore",
@@ -542,25 +542,25 @@
     "codePoint": "U+1F937",
     "atSummit": "Yes",
     "stats": {
-      "attack": 5,
-      "focus": 4,
-      "counter": 1
+      "attack": 2,
+      "focus": 1,
+      "counter": 4
     },
     "flavor": "It's not lazy; it's efficient."
   },
   {
     "stats": {
       "attack": 1,
-      "counter": 1,
-      "focus": 1
+      "counter": 2,
+      "focus": 3
     },
     "name": "Ramen",
     "flavor": "A steaming bowl of soup. It is extra tasty on a rainy day."
   },
   {
     "stats": {
-      "attack": 1,
-      "counter": 1,
+      "attack": 3,
+      "counter": 2,
       "focus": 1
     },
     "name": "Taco",
@@ -568,9 +568,9 @@
   },
   {
     "stats": {
-      "attack": 1,
+      "attack": 3,
       "counter": 1,
-      "focus": 1
+      "focus": 2
     },
     "name": "Dumpling",
     "flavor": "A tasty dumpling. Yum!"
@@ -578,25 +578,25 @@
   {
     "stats": {
       "attack": 1,
-      "counter": 1,
-      "focus": 1
+      "counter": 3,
+      "focus": 2
     },
     "name": "Pie",
     "flavor": "It is haunted by the sense that the better part of itself has gone missing."
   },
   {
     "stats": {
-      "attack": 1,
+      "attack": 2,
       "counter": 1,
-      "focus": 1
+      "focus": 3
     },
     "name": "Bao",
     "flavor": "Who doesn't love a good steamed bun? No one. Love the Bao, or else."
   },
   {
     "stats": {
-      "attack": 1,
-      "counter": 1,
+      "attack": 2,
+      "counter": 3,
       "focus": 1
     },
     "name": "Hargow",
