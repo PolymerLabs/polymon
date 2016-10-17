@@ -30,6 +30,10 @@
         opacity: 1;
       }
 
+      :host(:not(.active)) google-map {
+        pointer-events: none;
+      }
+
       #controls {
         z-index: 1;
         position: absolute;
