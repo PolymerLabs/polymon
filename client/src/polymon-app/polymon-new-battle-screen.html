@@ -28,6 +28,8 @@
       #team {
         flex: 1;
         @apply --layout-vertical;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       #team .hidden {
@@ -57,12 +59,47 @@
 
       .bottom-row > :last-child {
         flex: 1;
-        margin-left: 8px;
+        /*margin-left: 8px;*/
       }
 
       polymon-button {
         width: 100%;
         margin-top: 8px;
+      }
+
+      #team {
+        color: rgba(0, 0, 0, 0.8);
+      }
+
+      h1 {
+        font-family: 'Bungee Inline', sans-serif;
+        font-weight: normal;
+        font-size: 40px;
+        margin: 16px 0;
+      }
+
+      p {
+        font-family: sans-serif;
+        font-size: 18px;
+        margin: 0 0 18px;
+      }
+
+      h2 {
+        font-weight: normal;
+        margin: 8px 0;
+      }
+
+      ul {
+        text-align: left;
+        margin: 0;
+        margin-bottom: 18px;
+        padding-left: 24px;
+        font-family: sans-serif;
+        font-size: 18px;
+      }
+
+      .strong {
+        font-weight: bold;
       }
     </style>
 
@@ -78,11 +115,34 @@
     </polymon-qr-code-scanner-proxy>
 
     <section id="team">
-      <template is="dom-repeat" items="[[teamPolymons]]" as="polymons">
+      <h1>How to battle</h1>
+      <p>So you've caught 3-5 Polymon and you're ready to get out there and start battling. Follow these instructions and you'll be sure to become a Polymon Master in no time!</p>
+
+      <h2>The Basics</h2>
+      <ul>
+        <li>Select one of <span class="strong">ATTACK</span>, <span class="strong">FOCUS</span>, or <span class="strong">COUNTER</span></li>
+        <li>When you tap one of the Action buttons, a drawer will slide up revealing all of your remaining Polymon and their respective statistics for that Action.</li>
+        <li>Select a Polymon to lock in your move for the round.</li>
+        <li>When both you and your opponent have submitted your moves, an animation will play showing the results of the round.</li>
+        <li>After the round, the Polymon that just battled will disappear from each player's team.</li>
+        <li>This rock, paper, scissors-style battle repeats until at least one player has run out of Polymon.</li>
+      </ul>
+
+      <h2>The Rules</h2>
+      <ul>
+        <li><span class="strong">ATTACK</span>, <span class="strong">FOCUS</span>, and <span class="strong">COUNTER</span> are analogous to rock, paper, scissors.</li>
+        <li><span class="strong">ATTACK</span> has a 3 point advantage over <span class="strong">FOCUS</span></li>
+        <li><span class="strong">FOCUS</span> has a 3 point advantage over <span class="strong">COUNTER</span></li>
+        <li><span class="strong">COUNTER</span> has a 3 point advantage over <span class="strong">ATTACK</span></li>
+      </ul>
+
+      <p>When the battle starts, you will see your own team on the grassy platform in the foreground, and your opponent's team in the background. You can click the "Opponent Stats" button to snoop on the strength of your opponent's Polymon.</p>
+
+      <!-- <template is="dom-repeat" items="[[teamPolymons]]" as="polymons">
         <div class="entry [[__entryClass(polymon)]]">
           <polymon-portrait polymon="[[polymon]]"></polymon-portrait>
         </div>
-      </template>
+      </template> -->
     </section>
 
     <section id="controls">
@@ -96,9 +156,9 @@
         <a href="/polydex">
           <polymon-button class="alt">Back</polymon-button>
         </a>
-        <a href="javascript:void(0)">
+        <!-- <a href="javascript:void(0)">
           <polymon-button class="help">Tutorial</polymon-button>
-        </a>
+        </a> -->
       </div>
     </section>
 
