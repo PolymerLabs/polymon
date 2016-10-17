@@ -170,6 +170,21 @@
         '__playerLatLngChanged(overlay, playerLatLng)'
       ],
 
+      __watchGeolocationOnce() {
+        try {
+          console.log('Requesting one-time fine-grained geolocation point.');
+          let watchId = navigator.geolocation.watchPosition(position => {
+            this.playerLatLng = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            console.log('Got fine-grained geolocation point!');
+            navigator.geolocation.clearWatch(watchId);
+          });
+        } catch (e) {}
+      },
+
       attached: function() {
         try {
           navigator.geolocation.getCurrentPosition(position => {
@@ -181,6 +196,7 @@
             // TODO(cdata): Add some UI so that the player can easily re-center
             // the map..
             this.mapLatLng = this.playerLatLng;
+            this.__watchGeolocationOnce();
           });
         } catch (e) {}
       },
