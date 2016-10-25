@@ -6,6 +6,7 @@
 <link rel="import" href="polymon-qr-code-scanner-proxy.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-map-overlay.html">
+<link rel="import" href="polymon-polydex-query.html">
 <dom-module id="polymon-map">
   <template>
     <style>
@@ -94,6 +95,11 @@
         route="{{route}}"
         active="{{scanRouteActive}}">
     </app-route>
+
+    <polymon-polydex-query
+        user="[[user]]"
+        entire-polydex="{{polymons}}">
+    </polymon-polydex-query>
 
     <polymon-qr-code-scanner-proxy
         return-to="[[route.prefix]]"

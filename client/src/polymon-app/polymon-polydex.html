@@ -7,6 +7,7 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-detail.html">
+<link rel="import" href="polymon-polydex-query.html">
 
 <dom-module id="polymon-polydex">
   <template>
@@ -177,6 +178,12 @@
         data="{{showPolymonData}}">
     </app-route>
 
+    <polymon-polydex-query
+        caught-polymons="{{caughtPolymons}}"
+        entire-polydex="{{entries}}"
+        user="[[user]]">
+    </polymon-polydex-query>
+
     <h2>Your team &middot; Tap spot to swap</h2>
 
     <iron-selector id="team" selected="{{selectedTeamSpot}}">
@@ -236,10 +243,6 @@
           observer: '__editingTeamChanged'
         },
 
-        caughtPolymons: {
-          type: Array
-        },
-
         team: {
           type: Array,
           value: function() {
@@ -253,19 +256,16 @@
           notify: true
         },
 
-        entries: {
-          type: Object,
-          notify: true,
-          readOnly: true
+        caughtPolymons: {
+          type: Array
         },
 
-        availablePolymons: {
-          type: Array
+        entries: {
+          type: Array,
         }
       },
 
       observers: [
-        '__updateEntries(availablePolymons.length, caughtPolymons.length)',
         '__updateTeamPolymon(caughtPolymons.length, team.*)'
       ],
 
@@ -317,77 +317,34 @@
         return selectedTeamSpot != null;
       },
 
-      __polymonById: function(polymonId) {
-        return firebase.app('polymon').database()
-            .ref(`/polymons/${polymonId}`)
-            .once('value')
-            .then(snapshot => snapshot.val());
-      },
-
-      __fetchCaughtPolymon: function() {
-        if (!this.availablePolymons || !this.caughtPolymons) {
-          return Promise.resolve([]);
-        }
-
-        return Promise.all(this.caughtPolymons.map(
-            polydexEntry => this.__polymonById(polydexEntry.polymonId)))
-            .then(caughtPolymons => caughtPolymons.map((caughtPolymon, index) =>
-                Object.assign(caughtPolymon,
-                    { polydexId: this.caughtPolymons[index].$key })));
-      },
-
-      __updateEntries: function() {
-        this.deraf('update-entries', () => {
-          this.__fetchCaughtPolymon().then(caughtPolymons => {
-            let entries = this.availablePolymons.map(polymon => {
-              let caught = false;
-              let caughtPolymon = {};
-
-              for (let i = 0; i < caughtPolymons.length; ++i) {
-                if (caughtPolymons[i].shortName === polymon.shortName) {
-                  caught = true;
-                  caughtPolymon = caughtPolymons.splice(i, 1)[0];
-                  break;
-                }
-              }
-
-              return Object.assign({}, { caught }, caughtPolymon, polymon);
-            });
-
-            this._setEntries(entries);
-          }).catch(e => console.error(e));
-        });
-      },
-
       __updateTeamPolymon: function() {
         this.deraf('update-team-polymon', () => {
-          this.__fetchCaughtPolymon().then(caughtPolymons => {
-            let team = Array.from(this.team);
-            let teamPolymons = [{}, {}, {}, {}, {}];
+          let team = Array.from(this.team);
+          let teamPolymons = [{}, {}, {}, {}, {}];
+          let caughtPolymons = this.caughtPolymons || [];
 
-            for (let i = 0; team.length && i < caughtPolymons.length; ++i) {
-              let caughtPolymon = caughtPolymons[i];
+          for (let i = 0; team.length && i < caughtPolymons.length; ++i) {
+            let caughtPolymon = caughtPolymons[i];
 
-              for (let j = 0; j < team.length; j++) {
-                let teamPosition = team[j];
+            for (let j = 0; j < team.length; j++) {
+              let teamPosition = team[j];
 
-                if (teamPosition.polydexId === caughtPolymon.polydexId) {
-                  teamPolymons[teamPosition.index] = caughtPolymon;
-                  team.splice(j, 1);
-                  break;
-                }
+              if (teamPosition.polydexId === caughtPolymon.polydexId) {
+                teamPolymons[teamPosition.index] = caughtPolymon;
+                team.splice(j, 1);
+                break;
               }
             }
+          }
 
-            this._setTeamPolymons(teamPolymons);
-          });
+          this._setTeamPolymons(teamPolymons);
         })
       },
 
       __isCaught: function(polymonId) {
         if (polymonId) {
           for (var i = 0; i < this.caughtPolymons.length; ++i) {
-            if (this.caughtPolymons[i].polymonId === polymonId) {
+            if (this.caughtPolymons[i].id === polymonId) {
               return true;
             }
           }

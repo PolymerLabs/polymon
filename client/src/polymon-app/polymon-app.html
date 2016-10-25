@@ -45,12 +45,6 @@
 
     <firebase-query
         app-name="polymon"
-        path="/polymons"
-        data="{{polymons}}">
-    </firebase-query>
-
-    <firebase-query
-        app-name="polymon"
         path="[[__computePolydexPath(user)]]"
         data="{{polydex}}">
     </firebase-query>
@@ -134,7 +128,6 @@
           tail="{{polydexRoute}}"
           active="{{polydexRouteActive}}"
           data-fragments='[
-            "polymon-map.html",
             "polymon-panel.html",
             "polymon-polydex.html"
           ]'>
@@ -192,7 +185,6 @@
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
         user="[[user]]"
-        polymons="[[polymons]]"
         player-lat-lng="{{playerLatLng}}">
     </polymon-map>
 
@@ -220,8 +212,6 @@
         active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
       <polymon-polydex
           active="[[polydexRouteActive]]"
-          available-polymons="[[polymons]]"
-          caught-polymons="[[polydex]]"
           team="[[team]]"
           route="{{polydexRoute}}"
           user="[[user]]">
@@ -279,10 +269,6 @@
       ],
 
       properties: {
-        polymons: {
-          type: Array
-        },
-
         polydex: {
           type: Array
         },
