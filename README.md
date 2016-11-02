@@ -7,6 +7,11 @@ Seek out Polymer team members and capture them as Polymon!
 Polymon is a PWA, so most of the code runs in a browser. But, Polymon also uses Firebase for some business logic, persistance and web hosting.
 
 First, ensure that you have the latest Node.js and NPM installed.
+Also, ensure the firebase CLI is available globally:
+
+```sh
+npm install -g firebase-tools
+```
 
 Next, from your project root, install Node.js dependencies:
 
@@ -28,7 +33,7 @@ already have one to target, go create one in the Firebase web control panel.
 By default, the `.firebaserc` is configured for the official Polymon
 deployment environments. If you are creating a your own Firebase project to
 deploy to, you will need to update the `.firebaserc` file to reflect your
-project's ID. For example, if your project ID is `polymon-foo`, your
+**project's ID**. For example, if your project ID is `polymon-foo`, your
 `.firebaserc` should look something like:
 
 ```json
@@ -54,7 +59,8 @@ the example `.firebaserc` above), the files should be named:
  2. `.foo.service-account.json`
 
 The `.foo.env.json` file should describe a Firebase configuration, and
-optionally a Google Analytics configuration:
+optionally a Google Analytics configuration; if you're copying these values from
+firebase, ensure the keys match:
 
 ```json
 {
@@ -79,14 +85,14 @@ Once you have completed the above steps, there are two scripts you need to
 run before you can start working:
 
 ```sh
-# Generate the seed data in your Firebase Realtime Database
-# WARNING: Running this script will delete everything in your database and
-# reset it to its initial state!
-./scripts/generate-seed-data.sh
-
 # Set the local environment, and generate an appropriate index.html for that
 # environment. Replace `foo` with your Firebase project alias:
 ./scripts/set-env.sh foo
+
+# Generate the seed data in your Firebase Realtime Database
+# WARNING: Running this script will delete everything in your database and
+# reset it to its initial state!
+node ./scripts/generate-seed-data.js
 ```
 
 Finally, you need to make sure that both the Firebase Functions and Firebase
@@ -106,9 +112,12 @@ firebase serve
 
 And then open up a browser to [http://localhost:5000][2] and check it out!
 
+Remember to enable the Google sign-in method in the Firebase console section
+Authentication -> sign-in method.
+
 ## Building and Deploying
 
-Assuming you have bootstraped your envionrment successfully, the following
+Assuming you have bootstrapped your environment successfully, the following
 scripts should also work:
 
 ```sh
