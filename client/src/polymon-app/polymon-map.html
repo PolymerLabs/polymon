@@ -213,7 +213,9 @@
 
       __computeOverlay: function(map, polymons) {
         if (map && polymons) {
-          return makePolymonMapOverlay(map, polymons);
+          const overlay = makePolymonMapOverlay(map, polymons);
+          overlay.overlayElement.active = this.active;
+          return overlay;
         }
       },
 
@@ -233,6 +235,10 @@
           try {
             navigator.geolocation.clearWatch(this.__watchId);
           } catch (e) {}
+        }
+
+        if (this.overlay && this.overlay.overlayElement) {
+          this.overlay.overlayElement.active = active;
         }
       },
 
