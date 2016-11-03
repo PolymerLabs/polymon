@@ -112,8 +112,10 @@ firebase serve
 
 And then open up a browser to [http://localhost:5000][2] and check it out!
 
-Remember to enable the Google sign-in method in the Firebase console section
-Authentication -> sign-in method.
+Finally, remember to:
+- enable the Google sign-in method in the Firebase console section
+Authentication -> sign-in method
+- get a [Google Maps API key][3] for your project
 
 ## Building and Deploying
 
@@ -142,3 +144,4 @@ firebase deploy --only functions
 
 [1]: https://firebase.google.com/docs/server/setup#add_firebase_to_your_app
 [2]: http://localhost:5000
+[3]: https://developers.google.com/maps/documentation/javascript/get-api-key
