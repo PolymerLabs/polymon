@@ -1,0 +1,180 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="polymon-element.html">
+<dom-module id="polymon-polydex-query">
+  <template>
+    <template is="dom-if" if="[[master]]">
+      <firebase-query
+          app-name="polymon"
+          path="[[__computePolydexPath(master, user)]]"
+          data="{{__polydexEntries}}">
+      </firebase-query>
+      <firebase-query
+          app-name="polymon"
+          path="[[__computePolymonsPath(master)]]"
+          data="{{__polymons}}">
+      </firebase-query>
+    </template>
+  </template>
+  <script>
+    (() => {
+      const polymonLookupCache = {};
+      let masterQuery = null;
+
+      Polymer({
+        is: 'polymon-polydex-query',
+
+        behaviors: [PolymonElement],
+
+        properties: {
+          master: {
+            type: Boolean,
+            readOnly: true,
+            notify: true,
+            value: false
+          },
+
+          polymons: {
+            type: Array,
+            notify: true,
+            readOnly: true
+          },
+
+          caughtPolymons: {
+            type: Array,
+            notify: true,
+            readOnly: true
+          },
+
+          polydexEntries: {
+            type: Array,
+            notify: true,
+            readOnly: true
+          },
+
+          entirePolydex: {
+            type: Array,
+            readOnly: true,
+            notify: true,
+            value: function() {
+              return [];
+            }
+          }
+        },
+
+        observers: [
+          '__updateEntirePolydex(polymons.length, polydexEntries.length)',
+          '__announceChanges(master, __polymons.length, __polydexEntries.length)'
+        ],
+
+        attached() {
+          if (masterQuery == null) {
+            masterQuery = this;
+            this._setMaster(true);
+          } else {
+            this.__onMasterQueriesUpdated();
+          }
+
+          this.listen(
+              masterQuery, 'queries-updated', '__onMasterQueriesUpdated');
+        },
+
+        detached() {
+          this.unlisten(
+              masterQuery, 'queries-updated', '__onMasterQueriesUpdated');
+        },
+
+        copyPolymons() {
+          return this.master
+              ? this.__polymons.slice()
+              : this.polymons.slice();
+        },
+
+        copyPolydexEntries() {
+          return this.master
+              ? this.__polydexEntries.slice()
+              : this.polydexEntries.slice();
+        },
+
+        __announceChanges() {
+          this.deraf('announce-changes', () => {
+            if (this.master) {
+              this.fire('queries-updated');
+            }
+          });
+        },
+
+        __onMasterQueriesUpdated() {
+          this._setPolymons(masterQuery.copyPolymons());
+          this._setPolydexEntries(masterQuery.copyPolydexEntries());
+        },
+
+        __computePolydexPath(master, user) {
+          if (!master || !user) {
+            return null;
+          }
+
+          return `/users/${user.uid}/polydex`;
+        },
+
+        __computePolymonsPath(master) {
+          if (!master) {
+            return null;
+          }
+
+          return '/polymons';
+        },
+
+        __getPolymonById(polymonId) {
+          if (!polymonLookupCache[polymonId]) {
+            polymonLookupCache[polymonId] = firebase.app('polymon').database()
+                .ref(`/polymons/${polymonId}`)
+                .once('value')
+                .then(snapshot => snapshot.val());
+          }
+
+          return polymonLookupCache[polymonId];
+        },
+
+        __mapPolydexEntriesToPolymon: function(polydexEntries) {
+          let polymonsAreFetched = polydexEntries.map(polydexEntry =>
+              this.__getPolymonById(polydexEntry.polymonId));
+
+          return Promise.all(polymonsAreFetched)
+              .then(polymons => polymons.map((polymon, index) =>
+                  Object.assign({}, polymon, {
+                    polydexId: polydexEntries[index].$key,
+                    id: polydexEntries[index].polymonId
+                  })));
+        },
+
+        __updateEntirePolydex() {
+          this.deraf('update-entire-polydex', () => {
+            this.__mapPolydexEntriesToPolymon(this.polydexEntries)
+                .then(caughtPolymons => {
+                  this._setCaughtPolymons(caughtPolymons.slice());
+
+                  const entirePolydex = this.polymons.map(polymon => {
+                    let caught = false;
+                    let caughtPolymon = {};
+
+                    for (let i = 0; i < caughtPolymons.length; ++i) {
+                      if (caughtPolymons[i].shortName === polymon.shortName) {
+                        caught = true;
+                        caughtPolymon = caughtPolymons.splice(i, 1)[0];
+                        break;
+                      }
+                    }
+
+                    return Object.assign(
+                        {}, { caught }, caughtPolymon, polymon);
+                  });
+
+                  this._setEntirePolydex(entirePolydex);
+                });
+          });
+        }
+      });
+    })();
+  </script>
+</dom-module>

@@ -6,6 +6,7 @@
 <link rel="import" href="polymon-qr-code-scanner-proxy.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-map-overlay.html">
+<link rel="import" href="polymon-polydex-query.html">
 <dom-module id="polymon-map">
   <template>
     <style>
@@ -94,6 +95,11 @@
         route="{{route}}"
         active="{{scanRouteActive}}">
     </app-route>
+
+    <polymon-polydex-query
+        user="[[user]]"
+        entire-polydex="{{polymons}}">
+    </polymon-polydex-query>
 
     <polymon-qr-code-scanner-proxy
         return-to="[[route.prefix]]"
@@ -207,7 +213,9 @@
 
       __computeOverlay: function(map, polymons) {
         if (map && polymons) {
-          return makePolymonMapOverlay(map, polymons);
+          const overlay = makePolymonMapOverlay(map, polymons);
+          overlay.overlayElement.active = this.active;
+          return overlay;
         }
       },
 
@@ -227,6 +235,10 @@
           try {
             navigator.geolocation.clearWatch(this.__watchId);
           } catch (e) {}
+        }
+
+        if (this.overlay && this.overlay.overlayElement) {
+          this.overlay.overlayElement.active = active;
         }
       },
 

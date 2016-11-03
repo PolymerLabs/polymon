@@ -8,6 +8,10 @@
       :host {
         position: absolute;
       }
+
+      :host(:not(.active)) polymon-map-marker {
+        display: none;
+      }
     </style>
 
     <template is="dom-repeat"
@@ -92,7 +96,8 @@
           spriteIndex: 290,
           lastSeen: Object.assign({
             timestamp: 0
-          }, playerLatLng)
+          }, playerLatLng),
+          caught: false
         };
       },
 
