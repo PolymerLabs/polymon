@@ -47,15 +47,10 @@
 
       #overlay {
         @apply --layout-fit;
-        @apply --layout-vertical;
-        @apply --layout-end-justified;
+        @apply --layout-horizontal;
+        align-items: flex-end;
         margin: 1em;
         z-index: 4;
-        pointer-events: none;
-      }
-
-      :host(.active) #overlay polymon-button {
-        pointer-events: all;
       }
 
       #cancel {
@@ -89,19 +84,14 @@
         text-shadow: 0 1px 0 #a31733;
       }
 
-      #fallback > :not(:last-child):after {
-        content: 'OR';
-        display: block;
-        margin: 3em;
-        text-align: center;
-        color: #fafafa;
-        text-shadow: none;
-        font-size: 14px;
+      #upload-container {
+        flex: 1;
+        margin-left: 1em;
+        position: relative;
       }
 
-      #upload-container {
-        display: inline-block;
-        position: relative;
+      #upload-container polymon-button {
+        width: 100%;
       }
 
       #input {
@@ -132,10 +122,6 @@
     </style>
     <section id="fallback">
       <span class="warning">Please enable your camera to scan for QR codes!</span>
-      <div id="upload-container">
-        <polymon-button>Upload a QR Code Photo</polymon-button>
-        <input id="input" type="file" capture="camera" accept="image/*">
-      </div>
     </section>
     <section id="camera">
       <meat-scope-devices
@@ -162,6 +148,10 @@
             id="cancel"
             class="alt">Cancel</polymon-button>
       </a>
+      <div id="upload-container">
+        <polymon-button>Upload a QR Code Photo</polymon-button>
+        <input id="input" type="file" capture="camera" accept="image/*">
+      </div>
     </section>
   </template>
   <script>
@@ -248,6 +238,10 @@
         let root = Polymer.dom(this).getOwnerRoot();
 
         return (root && root.host) || document;
+      },
+
+      ready: function() {
+        this.__updateVideoDisplay();
       },
 
       attached: function() {
@@ -450,14 +444,22 @@
 
 
       __cameraChanged: function(camera) {
+        this.__updateVideoDisplay();
         if (!camera) {
           return;
         }
-
         if (!/environment|rear|back/i.test(camera.label) &&
             this.$.devices.hasMultipleCameras) {
           this.$.devices.switchToNextCamera();
         }
+      },
+
+      __updateVideoDisplay: function() {
+        // On iOs 10 safari displays the Play button of the <video> tag inside
+        // <meat-scope-video> even if it is visibility: hidden, so we fix it by
+        // displaying the element when we have the camera.
+        // TODO remove this method when/if meat-scope-video fixes it.
+        this.$.video.style.display = this.camera ? '' : 'none';
       }
     });
   </script>
