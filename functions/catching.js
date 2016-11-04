@@ -65,3 +65,50 @@ exports.validateCaughtPolymon = functions => functions
         console.error(`Validation: ${error}`);
       }).then(() => event.data.ref.remove());
     });
+
+
+exports.beaconCapture = functions => functions
+    .cloud
+    .https()
+    .onRequest((req, res) => {
+      const db = functions.app.database();
+      const reference = req.query.reference;
+      const target = req.query.target;
+      const redirect = functions.env.beaconRedirect;
+
+      return db.ref(`/references/${reference}`).once('value')
+          .then(snapshot => snapshot.val())
+          .then(polymonId => db.ref(`/polymons/${polymonId}`).once('value'))
+          .then(snapshot => snapshot.val())
+          .then(polymon => {
+            let polymonRedirect = redirect;
+
+            if (polymon != null) {
+              polymonRedirect += `/code/reference.${reference}`;
+            }
+
+            return res.send(
+`
+<!doctype html>
+<html>
+  <head>
+    <title>A ${polymon.name} Polymon is nearby</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Tap here to catch the ${polymon.name}!">
+    <link rel="icon" sizes="356x356" href="${redirect}/images/polymon_monster_${polymon.spriteIndex}.png">
+  </head>
+  <body>
+    <script>
+      // Redirect...
+      console.log('Redirecting to ${polymonRedirect}...');
+      window.location = '${polymonRedirect}';
+    </script>
+    <p>Follow <a href="${polymonRedirect}">this link</a> to catch the ${polymon.name} Polymon!</p>
+  </body>
+</html>
+`);
+          }).catch(error => {
+            console.error(error);
+            return res.send(`<script>window.location='${redirect}';`);
+          });
+    });
