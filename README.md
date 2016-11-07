@@ -112,8 +112,11 @@ firebase serve
 
 And then open up a browser to [http://localhost:5000][2] and check it out!
 
-Remember to enable the Google sign-in method in the Firebase console section
-Authentication -> sign-in method.
+Finally, remember to:
+- enable the Google sign-in method in the [Firebase Console][3]
+(Authentication -> sign-in method -> Google -> Enable)
+- enable the Google Maps Javascript API in the [Google Cloud API Console][4]
+(Library -> Google Maps Javascript API -> Enable)
 
 ## Building and Deploying
 
@@ -142,3 +145,5 @@ firebase deploy --only functions
 
 [1]: https://firebase.google.com/docs/server/setup#add_firebase_to_your_app
 [2]: http://localhost:5000
+[3]: https://console.firebase.google.com/
+[4]: https://console.developers.google.com/
