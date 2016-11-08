@@ -18,7 +18,7 @@ exports.validateCaughtPolymon = functions => functions
         return event.data.val();
       }
 
-      const catchId = event.data.key;
+      const catchId = event.params.catchId;
       const db = functions.app.database();
       const auth = functions.app.auth();
       const referenceRef = db.ref(`/references/${referenceId}`);

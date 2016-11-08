@@ -115,9 +115,10 @@
 
           <span>[[selectedDatum.polymon.shortName]]</span>
           <a target="_blank" href="[[__urlFor(selectedDatum.reference, qrCodeOrigin)]]">Catch Link</a>
+          <a target="_blank" href="[[__beaconUrlFor(selectedDatum.reference, data.projectId)]]">Beacon URL</a>
         </div>
 
-        <template is="dom-repeat" items="[[data]]" as="datum">
+        <template is="dom-repeat" items="[[data.polymons]]" as="datum">
           <a href="#/polymon/[[datum.polymon.shortName]]" hidden$="[[polymonRouteActive]]">
             <polymon-qr-code data="[[__urlFor(datum.reference, qrCodeOrigin)]]"></polymon-qr-code>
             <span>[[datum.polymon.shortName]]</span>
@@ -130,12 +131,12 @@
 
           properties: {
             data: {
-              type: Array
+              type: Object
             },
 
             selectedDatum: {
               type: Object,
-              computed: '__computeSelectedDatum(data, polymonSelection.shortName)'
+              computed: '__computeSelectedDatum(data.polymons, polymonSelection.shortName)'
             },
 
             qrCodeOrigin: {
@@ -144,16 +145,20 @@
             }
           },
 
-          __computeSelectedDatum: function(data, shortName) {
-            for (var i = 0; i < data.length; ++i) {
-              if (data[i].polymon.shortName === shortName) {
-                return data[i];
+          __computeSelectedDatum: function(polymons, shortName) {
+            for (var i = 0; i < polymons.length; ++i) {
+              if (polymons[i].polymon.shortName === shortName) {
+                return polymons[i];
               }
             }
           },
 
           __urlFor: function(reference, origin) {
             return `${origin}/code/reference.${reference}`;
+          },
+
+          __beaconUrlFor: function(reference, projectId) {
+            return `https://us-central1-${projectId}.cloudfunctions.net/beaconCapture?reference=${reference}`;
           }
         });
       </script>

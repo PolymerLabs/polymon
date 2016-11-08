@@ -7,31 +7,11 @@
  *  1. qr-code-data.json, a file mapping references to Polymon resources.
  */
 
-const path = require('path');
-
+const common = require('./_common');
 const readJson = require('then-read-json');
 const writeJson = require('then-write-json');
-const del = require('del');
-const SHA256 = require('crypto-js/sha256');
-const firebase = require('firebase');
 
-const secret = process.env.POLYMON_SECRET || 'NO_SECRET_SPECIFIED';
-const polymonJsonPath = path.resolve(__dirname, '../polymon.json');
-const envJsonPath = path.resolve(__dirname, '../.active.env.json');
-const serviceAccountJsonPath = path.resolve(__dirname, '../.active.service-account.json');
-const qrCodeDataPath =
-    path.resolve(__dirname, '../client/qr-code-data.json');
-
-console.log(`Using secret: ${secret}`);
-
-readJson(envJsonPath).then(config => {
-  const app = firebase.initializeApp({
-    name: config.firebase.appName,
-    apiKey: config.firebase.apiKey,
-    databaseURL: config.firebase.databaseUrl,
-    serviceAccount: serviceAccountJsonPath
-  });
-
+common.getPolymonEnv().then(polymon => {
   const initialBounds = {
     northEast: {
       lat: 37.881054,
@@ -44,24 +24,6 @@ readJson(envJsonPath).then(config => {
     }
   };
 
-  const db = app.database();
-  const polymonsRef = db.ref('/polymons');
-  const referencesRef = db.ref('/references');
-  const usersRef = db.ref('/users');
-
-  function makeReference(polymon) {
-    return SHA256(`${polymon.shortName}${secret}`).toString();
-  }
-
-  function clean() {
-    return Promise.all([
-      del([qrCodeDataPath]),
-      polymonsRef.remove(),
-      referencesRef.remove(),
-      usersRef.remove()
-    ]);
-  }
-
   function randomSighting() {
     const {northEast, southWest} = initialBounds;
     return {
@@ -71,17 +33,27 @@ readJson(envJsonPath).then(config => {
     };
   }
 
-  return clean().then(() => {
-    return readJson(polymonJsonPath).then(polymons => {
+  const app = polymon.firebaseApp;
+  const projectId = polymon.config.firebase.projectId;
+  const secret = polymon.secret;
+  const db = app.database();
+
+  const polymonsRef = db.ref('/polymons');
+  const referencesRef = db.ref('/references');
+
+  console.log(`Generating seed data for ${projectId}...`);
+
+  return common.cleanEverything().then(() => {
+    return readJson(common.polymonJsonPath).then(polymons => {
       let writes = [];
-      let qrCodeData = polymons.map((polymon, index) => {
+      polymons = polymons.map((polymon, index) => {
         polymon = Object.assign({
           lastSeen: randomSighting(),
           shortName: polymon.shortName || polymon.name.toLowerCase(),
           spriteIndex: index
         }, polymon);
 
-        let reference = makeReference(polymon);
+        let reference = common.makeReference(polymon);
         let polymonRef = polymonsRef.push(polymon);
         let referenceSet = referencesRef.child(reference).set(polymonRef.key);
 
@@ -93,13 +65,19 @@ readJson(envJsonPath).then(config => {
         };
       });
 
-      writes.push(writeJson(qrCodeDataPath, qrCodeData))
+      let qrCodeData = {
+        projectId,
+        polymons
+      };
+
+      writes.push(writeJson(common.qrCodeDataPath, qrCodeData))
 
       return Promise.all(writes);
-    });
+    }).then(() => console.log('Seed data created successfully.'));
   }).catch(error => {
     console.error(error);
   }).then(() => {
+    console.log('Done!');
     process.exit();
   });
 });
