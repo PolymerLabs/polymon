@@ -226,16 +226,7 @@
         if (uploadedImageUrl) {
           // Disable the camera while processing the image.
           this.stopScanning();
-
-          // Rotate the transform once to accomodate for Safari's
-          // dizzyingly awful tendency to rotate photos taken with the camera
-          // to "fix" user orientation.
-          const transform = new MeatScopeTransform();
-          this.__captureFromUploadedImage(transform)
-            .catch(() => {
-              transform.rotateRight();
-              return this.__captureFromUploadedImage(transform);
-            })
+          this.__captureFromUploadedImage()
             .catch(error => this.__showError('QR Code scan failed:', error))
             .then(() => {
               // Reset the fallback file input:
@@ -284,10 +275,12 @@
         this.$.media.active = true;
         // Wait a second, then check if can scan.
         this.debounce('scan', () => {
-          if (!this.stream || !this.$.media.active) {
+          if (!this.$.media.active) {
             return;
           }
-          this.__captureFromCamera()
+          // If we have a stream, capture, else we just wait for another second.
+          const capturePromise = this.stream ? this.__captureFromCamera() : Promise.resolve();
+          capturePromise
             .catch(error => this.__showError('QR Code scan failed:', error))
             .then(() => this.scan());
         }, 1000);
@@ -362,7 +355,7 @@
           .then(data => this.__saveQRCode(data));
       },
 
-      __captureFromUploadedImage: function(transform) {
+      __captureFromUploadedImage: function() {
         return new Promise((resolve, reject) => {
           let image = document.createElement('img');
           // NOTE(cdata): scale, x and y are here to trick the meat scope
@@ -379,7 +372,7 @@
                 image, 600, 0, 0, image.width, image.height);
 
             this.imagePreview
-                .draw(image, captureRect, transform);
+                .draw(image, captureRect, new MeatScopeTransform());
 
             try {
               resolve(this.__process(this.imagePreview, captureRect));
@@ -446,8 +439,8 @@
         console.log(title, error);
       },
 
-      __windowFocusChanged: function(e) {
-        if (e.type === 'focus') {
+      __windowFocusChanged: function(event) {
+        if (event.type === 'focus') {
           this.scan();
         } else {
           this.stopScanning();
