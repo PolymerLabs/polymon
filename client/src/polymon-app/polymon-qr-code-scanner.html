@@ -8,7 +8,7 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-spinner.html">
 <dom-module id="polymon-qr-code-scanner">
-  <template>
+  <template strip-whitespace>
     <style>
       :host {
         @apply --layout-fit;
@@ -150,7 +150,10 @@
       </a>
       <div id="upload-container">
         <polymon-button>Upload a QR Code Photo</polymon-button>
-        <input id="input" type="file" capture="camera" accept="image/*">
+        <!-- NOTE(valdrin) the `capture` attribute causes Android to directly
+         open the camera instead of asking the user to choose between camera or
+         the photo library -->
+        <input id="input" type="file" accept="image/*">
       </div>
     </section>
   </template>
@@ -436,7 +439,7 @@
 
       // TODO implement ui to show error to user
       __showError: function(title, error) {
-        console.log(title, error);
+        console.error(title, error);
       },
 
       __windowFocusChanged: function(event) {
