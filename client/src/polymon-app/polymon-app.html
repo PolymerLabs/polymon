@@ -71,6 +71,13 @@
         data="{{userData}}">
     </firebase-document>
 
+    <polymon-polydex-query
+        caught-polymons="{{caughtPolymons}}"
+        entire-polydex="{{entirePolydex}}"
+        polydex-entries="{{polydex}}"
+        user="[[user]]">
+    </polymon-polydex-query>
+
     <app-location
         route="{{route}}"
         query-params="{{queryParams}}">
@@ -185,7 +192,8 @@
         active="[[mapRouteActive]]"
         route="{{mapRoute}}"
         user="[[user]]"
-        player-lat-lng="{{playerLatLng}}">
+        player-lat-lng="{{playerLatLng}}"
+        polymons="[[entirePolydex]]">
     </polymon-map>
 
     <polymon-start-screen
@@ -214,6 +222,8 @@
           active="[[polydexRouteActive]]"
           team="[[team]]"
           route="{{polydexRoute}}"
+          caught-polymons="[[caughtPolymons]]"
+          entries="[[entirePolydex]]"
           user="[[user]]">
       </polymon-polydex>
       <polymon-new-battle-screen
@@ -385,7 +395,7 @@
             break;
           default:
             if (continueTo) {
-              console.log(`Don't know how to handle ${type} QR code..`)
+              console.log(`Don't know how to handle ${type} QR code..`);
               // TODO(cdata): Notify that code is unhandled..
               this.set('route.path', continueTo);
             }

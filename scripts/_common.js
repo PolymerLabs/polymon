@@ -15,6 +15,8 @@ const serviceAccountJsonPath =
 const envJsonPath = path.resolve(__dirname, '../.active.env.json');
 const secret = process.env.POLYMON_SECRET || 'NO_SECRET_SPECIFIED';
 
+let polymonEnvResolves = null;
+
 console.log(`Polymon secret: ${secret}`);
 
 function makeReference(polymon) {
@@ -44,36 +46,48 @@ function getActiveFirebaseProject() {
 }
 
 function getPolymonEnv() {
-  return readJson(envJsonPath).then(config => {
-    config.firebase = Object.assign(config.firebase, {
-      projectId: getActiveFirebaseProject()
-    });
+  if (polymonEnvResolves == null) {
+    polymonEnvResolves = readJson(envJsonPath).then(config => {
+      config.firebase = Object.assign(config.firebase, {
+        projectId: getActiveFirebaseProject()
+      });
 
-    return {
-      config,
-      secret,
-      firebaseApp: firebase.initializeApp({
-        name: config.firebase.appName,
-        apiKey: config.firebase.apiKey,
-        databaseURL: config.firebase.databaseUrl,
-        serviceAccount: serviceAccountJsonPath
-      })
-    };
-  });
+      return {
+        config,
+        secret,
+        firebaseApp: firebase.initializeApp({
+          name: config.firebase.appName,
+          apiKey: config.firebase.apiKey,
+          databaseURL: config.firebase.databaseUrl,
+          serviceAccount: serviceAccountJsonPath
+        })
+      };
+    });
+  }
+
+  return polymonEnvResolves;
 }
 
 function cleanEverything() {
   const confirmed =
-      confirm(`This action will reset the state of Polymon by deleting a lot of
-things. Are you sure you want to do this? [y/N]`, false);
+      confirm(`This action will reset the state of Polymon by deleting a lot of things. Are you sure you want to do this? [y/N] `, false);
 
   if (confirmed) {
-    return Promise.all([
-      del([qrCodeDataPath]),
-      polymonsRef.remove(),
-      referencesRef.remove(),
-      usersRef.remove()
-    ]);
+    return getPolymonEnv().then(polymon => {
+      const db = polymon.firebaseApp.database();
+      const polymonsRef = db.ref('/polymons');
+      const referencesRef = db.ref('/references');
+      const usersRef = db.ref('/users');
+
+      return Promise.all([
+        del([qrCodeDataPath]),
+        polymonsRef.remove(),
+        referencesRef.remove(),
+        usersRef.remove()
+      ]);
+    });
+  } else {
+    return Promise.reject(new Error('Clean canceled by user intervention.'));
   }
 }
 
