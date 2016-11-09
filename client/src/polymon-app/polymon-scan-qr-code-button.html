@@ -1,0 +1,190 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-film-strip.html">
+<link rel="import" href="polymon-button.html">
+<dom-module id="polymon-scan-qr-code-button">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+      }
+
+      polymon-button {
+        width: 100%;
+      }
+
+      #input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        opacity: 0;
+      }
+    </style>
+    <polymon-button>
+      <content></content>
+    </polymon-button>
+    <input id="input" type="file" capture="camera" accept="image/*">
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-scan-qr-code-button',
+
+      properties: {
+
+        imagePreview: {
+          type: Object,
+          value: function() {
+            return new MeatScopeImagePreview();
+          }
+        },
+
+        urlRe: {
+          type: Object,
+          value: /^http[s]?:\/\//
+        },
+
+        polymonCodeRe: {
+          type: Object,
+          value: /^[a-z]+\..+/
+        },
+
+        originRe: {
+          type: Object,
+          value: new RegExp(`^${window.location.origin}/code/(.*)`)
+        },
+
+        uploadedImageUrl: {
+          type: Object,
+          readOnly: true,
+          value: null,
+          observer: '__uploadedImageUrlChanged'
+        },
+
+        code: {
+          type: Object,
+          readOnly: true
+        },
+      },
+
+      listeners: {
+        'input.change': '__onInputChange'
+      },
+
+      __uploadedImageUrlChanged: function(uploadedImageUrl, oldUploadedImageUrl) {
+        if (oldUploadedImageUrl != null) {
+          try {
+            URL.revokeObjectURL(oldUploadedImageUrl);
+          } catch (e) {}
+        }
+        if (uploadedImageUrl) {
+          this.__getQRCodeDataFromImageUrl(uploadedImageUrl)
+            .then(data => this.__saveQRCode(data))
+            .catch(error => this.__handleError(error))
+            .then(() => {
+              // Reset the fallback file input:
+              this.$.input.value = null;
+              // Unset the uploaded image URL if one exists:
+              this._setUploadedImageUrl(null);
+            });
+        }
+      },
+
+      __onInputChange: function() {
+        let file = this.$.input.files[0];
+        if (file != null) {
+          this._setUploadedImageUrl(URL.createObjectURL(file));
+        }
+      },
+
+      /**
+       * Returns a promise that resolves with data containing the QR code.
+       */
+      __getQRCodeDataFromImageUrl: function(imageUrl) {
+        return new Promise((resolve, reject) => {
+          let image = document.createElement('img');
+          // NOTE(cdata): scale, x and y are here to trick the meat scope
+          // elements into thinking this is a <meat-scope-video>. Tiz a dirty
+          // hack to be sure, but allows us to re-use the canvas processing
+          // in the MeatScopeImagePreview instance for better performance.
+          image.scale = 1;
+          image.x = 0;
+          image.y = 0;
+          image.crossOrigin = "Anonymous";
+
+          image.onload = event => {
+            let captureRect = new MeatScopeCaptureRect(
+              image, 600, 0, 0, image.width, image.height);
+
+            this.imagePreview
+              .draw(image, captureRect, new MeatScopeTransform());
+
+            try {
+              resolve(this.__process(this.imagePreview, captureRect));
+            } catch (e) {
+              reject(e);
+            }
+          };
+
+          image.src = imageUrl;
+        });
+      },
+
+      __process: function(imagePreview, captureRect) {
+        // Lazy load the QR Code reader library.
+        // NOTE(cdata): For some reason, if this loads at the same time as the
+        // map, the map will not render. This is kind of crazy, and it deserves
+        // to be looked into more deeply. For now, lazy loading addresses the
+        // problem except in the condition when the user refreshes while using
+        // the scanner (probably rare, but who knows).
+        if (this.__qrCodeLibraryLoads == null) {
+          this.__qrCodeLibraryLoads = new Promise((resolve, reject) => {
+            this.importHref(this.resolveUrl('third-party/jsqrcode.html'),
+              event => resolve(), error => reject(error));
+          });
+        }
+
+        return this.__qrCodeLibraryLoads.then(() => {
+          qrcode.width = captureRect.clampedWidth;
+          qrcode.height = captureRect.clampedHeight;
+          qrcode.imagedata = imagePreview.context
+            .getImageData(0, 0, qrcode.width, qrcode.height);
+
+          return qrcode.process(imagePreview.context);
+        });
+      },
+
+      /**
+       * Parses and saves `data` into `code`, throws an error if `data` is
+       * not valid.
+       */
+      __saveQRCode: function(data) {
+        let validData;
+        if (this.urlRe.test(data)) {
+          const [url, fragment] = data.match(this.originRe) || [];
+          validData = fragment;
+        } else if (this.polymonCodeRe.test(data)) {
+          validData = data;
+        }
+        if (validData) {
+          const [type, code] = validData.split('.');
+          this._setCode({
+            code,
+            type
+          });
+          this.fire('polymon-code', this.code);
+        } else {
+          throw new Error('Cannot use QR Code data');
+        }
+      },
+
+      __handleError: function(error) {
+        this._setCode(null);
+        // TODO show error (maybe paper-toast?)
+        console.error(error);
+      }
+    });
+  </script>
+</dom-module>

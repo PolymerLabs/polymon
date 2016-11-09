@@ -1,9 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-qr-code-scanner-proxy.html">
+<link rel="import" href="polymon-scan-qr-code-button.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-map-overlay.html">
 <link rel="import" href="polymon-polydex-query.html">
@@ -79,10 +78,6 @@
         width: 100%;
       }
 
-      polymon-qr-code-scanner {
-        z-index: 10;
-      }
-
       google-map {
         height: 100vh;
       }
@@ -90,16 +85,6 @@
     <span id="warning">
       If the map does not load, please refresh!
     </span>
-    <app-route
-        pattern="/scan"
-        route="{{route}}"
-        active="{{scanRouteActive}}">
-    </app-route>
-
-    <polymon-qr-code-scanner-proxy
-        return-to="[[route.prefix]]"
-        active="[[scanRouteActive]]">
-    </polymon-qr-code-scanner-proxy>
 
     <google-map
         disable-default-ui
@@ -113,9 +98,7 @@
       <a href="/">
         <polymon-button class="alt">Back</polymon-button>
       </a>
-      <a href="[[route.prefix]]/scan">
-        <polymon-button>Scan Polymon QR Code</polymon-button>
-      </a>
+      <polymon-scan-qr-code-button unresolved>Scan Polymon QR Code</polymon-scan-qr-code-button>
     </section>
   </template>
   <script>

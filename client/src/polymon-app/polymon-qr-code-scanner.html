@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-film-strip.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-scan-qr-code-button.html">
 <link rel="import" href="polymon-spinner.html">
 <dom-module id="polymon-qr-code-scanner">
   <template strip-whitespace>
@@ -84,20 +85,9 @@
         text-shadow: 0 1px 0 #a31733;
       }
 
-      #upload-container {
+      polymon-scan-qr-code-button {
         flex: 1;
         margin-left: 1em;
-        position: relative;
-      }
-
-      #upload-container > * {
-        width: 100%;
-      }
-
-      #input {
-        @apply --layout-fit;
-        z-index: 2;
-        opacity: 0;
       }
 
       :host(.has-code) #code-scanned-indicator {
@@ -148,13 +138,7 @@
             id="cancel"
             class="alt">Cancel</polymon-button>
       </a>
-      <div id="upload-container">
-        <polymon-button>Upload a QR Code Photo</polymon-button>
-        <!-- NOTE(valdrin) the `capture` attribute causes Android to directly
-         open the camera instead of asking the user to choose between camera or
-         the photo library -->
-        <input id="input" type="file" accept="image/*">
-      </div>
+      <polymon-scan-qr-code-button>Upload a QR Code Photo</polymon-scan-qr-code-button>
     </section>
   </template>
   <script>
@@ -167,11 +151,6 @@
         returnTo: {
           type: String,
           notify: true
-        },
-
-        scanning: {
-          type: Boolean,
-          value: false
         },
 
         imagePreview: {
@@ -196,13 +175,6 @@
           value: new RegExp(`^${window.location.origin}/code/(.*)`)
         },
 
-        uploadedImageUrl: {
-          type: Object,
-          readOnly: true,
-          value: null,
-          observer: '__uploadedImageUrlChanged'
-        },
-
         code: {
           type: Object,
           readOnly: true,
@@ -215,39 +187,6 @@
         '__cameraChanged(camera, hasMultipleCameras)',
         '__activeChanged(active)'
       ],
-
-      listeners: {
-        'input.change': '__onInputChange'
-      },
-
-      __uploadedImageUrlChanged: function(uploadedImageUrl, oldUploadedImageUrl) {
-        if (oldUploadedImageUrl != null) {
-          try {
-            URL.revokeObjectURL(oldUploadedImageUrl);
-          } catch (e) {}
-        }
-        if (uploadedImageUrl) {
-          // Disable the camera while processing the image.
-          this.stopScanning();
-          this.__captureFromUploadedImage()
-            .catch(error => this.__showError('QR Code scan failed:', error))
-            .then(() => {
-              // Reset the fallback file input:
-              this.$.input.value = null;
-              // Unset the uploaded image URL if one exists:
-              this._setUploadedImageUrl(null);
-              // Restart scanning.
-              this.scan();
-            });
-        }
-      },
-
-      __onInputChange: function() {
-        let file = this.$.input.files[0];
-        if (file != null) {
-          this._setUploadedImageUrl(URL.createObjectURL(file));
-        }
-      },
 
       get ownerHost() {
         let root = Polymer.dom(this).getOwnerRoot();
@@ -356,37 +295,6 @@
           }
         })
           .then(data => this.__saveQRCode(data));
-      },
-
-      __captureFromUploadedImage: function() {
-        return new Promise((resolve, reject) => {
-          let image = document.createElement('img');
-          // NOTE(cdata): scale, x and y are here to trick the meat scope
-          // elements into thinking this is a <meat-scope-video>. Tiz a dirty
-          // hack to be sure, but allows us to re-use the canvas processing
-          // in the MeatScopeImagePreview instance for better performance.
-          image.scale = 1;
-          image.x = 0;
-          image.y = 0;
-          image.crossOrigin = "Anonymous";
-
-          image.onload = event => {
-            let captureRect = new MeatScopeCaptureRect(
-                image, 600, 0, 0, image.width, image.height);
-
-            this.imagePreview
-                .draw(image, captureRect, new MeatScopeTransform());
-
-            try {
-              resolve(this.__process(this.imagePreview, captureRect));
-            } catch (e) {
-              reject(e);
-            }
-          };
-
-          image.src = this.uploadedImageUrl;
-        })
-        .then(data => this.__saveQRCode(data));
       },
 
       __process: function(imagePreview, captureRect) {

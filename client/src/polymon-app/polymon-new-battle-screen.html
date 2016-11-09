@@ -1,12 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
-<link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-scan-qr-code-button.html">
 <link rel="import" href="polymon-portrait.html">
-<link rel="import" href="polymon-qr-code-scanner-proxy.html">
 
 <dom-module id="polymon-new-battle-screen">
   <template>
@@ -103,17 +102,6 @@
       }
     </style>
 
-    <app-route
-        pattern="/scan"
-        route="{{route}}"
-        active="{{scanRouteActive}}">
-    </app-route>
-
-    <polymon-qr-code-scanner-proxy
-        active="[[scanRouteActive]]"
-        return-to="[[route.prefix]]">
-    </polymon-qr-code-scanner-proxy>
-
     <section id="team">
       <h1>How to battle</h1>
       <p>So you've caught 3-5 Polymon and you're ready to get out there and start battling. Follow these instructions and you'll be sure to become a Polymon Master in no time!</p>
@@ -146,9 +134,7 @@
     </section>
 
     <section id="controls">
-      <a id="join" href="/battle/new/scan">
-        <polymon-button>Join a Friend</polymon-button>
-      </a>
+      <polymon-scan-qr-code-button unresolved>Join a Friend</polymon-scan-qr-code-button>
       <a id="start" on-tap="__onStartTap">
         <polymon-button>Start a Battle</polymon-button>
       </a>
