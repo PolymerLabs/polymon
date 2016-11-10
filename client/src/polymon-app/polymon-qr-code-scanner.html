@@ -4,7 +4,6 @@
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-devices.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-user-media.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-film-strip.html">
-<link rel="import" href="polymon-notification.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-spinner.html">
@@ -157,7 +156,6 @@
         <input id="input" type="file" accept="image/*">
       </div>
     </section>
-    <polymon-notification id="notification" message="QR Code scan failed"></polymon-notification>
   </template>
   <script>
     Polymer({
@@ -230,8 +228,8 @@
             .catch(error => {
               this.__showError(error);
               // Restart scanning after 3 seconds to give time to read the
-              // notification.
-              this.async(this.scan, 3000);
+              // notification. Re-use debouncer so it can be stopped after.
+              this.debounce('scan', this.scan, 3000);
             })
             .then(() => {
               // Reset the fallback file input:
@@ -291,11 +289,15 @@
 
       stopScanning: function() {
         console.log('STOP SCANNING');
-        this.$.notification.active = false;
 
         // Stop any debouncer that might change `active`.
         this.cancelDebouncer('activeChanged');
         this.cancelDebouncer('scan');
+
+        // Hide qr-code notification.
+        this.fire('polymon-hide-notification', {
+          notificationId: 'qr-code'
+        });
 
         // Stop the media stream:
         this.$.media.active = false;
@@ -308,7 +310,9 @@
       __codeChanged: function(code) {
         if (code != null) {
           this.$.media.active = false;
-          this.$.notification.active = false;
+          this.fire('polymon-hide-notification', {
+            notificationId: 'qr-code'
+          });
           this.fire('polymon-code', code);
           this.classList.add('has-code');
         } else {
@@ -440,8 +444,10 @@
       },
 
       __showError: function(error) {
-        this.$.notification.message = error.message || error;
-        this.$.notification.active = true;
+        this.fire('polymon-show-notification', {
+          notificationId: 'qr-code',
+          message: (error.message || error)
+        });
       },
 
       __windowFocusChanged: function(event) {
