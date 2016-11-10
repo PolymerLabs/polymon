@@ -73,7 +73,7 @@
         box-shadow: 0px 1px 0px #8C0300;
       }
     </style>
-    <span id="content">[[notification.message]]</span>
+    <span id="content">[[message]]</span>
     <div id="button">OK</div>
   </template>
   <script>
@@ -83,14 +83,12 @@
       behaviors: [PolymonElement],
 
       properties: {
-        notification: {
-          type: Object,
-          notify: true
+        message: {
+          type: String
         },
 
         type: {
           type: String,
-          computed: '__computeType(notification.type)',
           observer: '__typeChanged'
         }
       },
@@ -99,22 +97,18 @@
         'button.tap': '__onButtonTap'
       },
 
-      __computeType: function(type) {
-        return type;
-      },
-
       __typeChanged: function(type, oldType) {
         if (oldType != null) {
           this.classList.remove(oldType);
         }
-
         if (type != null) {
           this.classList.add(type);
         }
       },
 
       __onButtonTap: function() {
-        this.set('notification.acknowledged', true);
+        this.fire('acknowledged');
+        this.active = false;
       }
     })
   </script>

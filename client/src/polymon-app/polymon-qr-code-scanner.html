@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-devices.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-user-media.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-film-strip.html">
+<link rel="import" href="polymon-notification.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-spinner.html">
@@ -156,6 +157,7 @@
         <input id="input" type="file" accept="image/*">
       </div>
     </section>
+    <polymon-notification id="notification" message="QR Code scan failed"></polymon-notification>
   </template>
   <script>
     Polymer({
@@ -203,7 +205,7 @@
           readOnly: true,
           value: null,
           observer: '__codeChanged'
-        },
+        }
       },
 
       observers: [
@@ -225,14 +227,17 @@
           // Disable the camera while processing the image.
           this.stopScanning();
           this.__captureFromUploadedImage()
-            .catch(error => this.__showError('QR Code scan failed:', error))
+            .catch(error => {
+              this.__showError(error);
+              // Restart scanning after 3 seconds to give time to read the
+              // notification.
+              this.async(this.scan, 3000);
+            })
             .then(() => {
               // Reset the fallback file input:
               this.$.input.value = null;
               // Unset the uploaded image URL if one exists:
               this._setUploadedImageUrl(null);
-              // Restart scanning.
-              this.scan();
             });
         }
       },
@@ -279,13 +284,14 @@
           // If we have a stream, capture, else we just wait for another second.
           const capturePromise = this.stream ? this.__captureFromCamera() : Promise.resolve();
           capturePromise
-            .catch(error => this.__showError('QR Code scan failed:', error))
+            .catch(error => this.__showError(error))
             .then(() => this.scan());
         }, 1000);
       },
 
       stopScanning: function() {
         console.log('STOP SCANNING');
+        this.$.notification.active = false;
 
         // Stop any debouncer that might change `active`.
         this.cancelDebouncer('activeChanged');
@@ -302,6 +308,7 @@
       __codeChanged: function(code) {
         if (code != null) {
           this.$.media.active = false;
+          this.$.notification.active = false;
           this.fire('polymon-code', code);
           this.classList.add('has-code');
         } else {
@@ -432,9 +439,9 @@
         }
       },
 
-      // TODO implement ui to show error to user
-      __showError: function(title, error) {
-        console.error(title, error);
+      __showError: function(error) {
+        this.$.notification.message = error.message || error;
+        this.$.notification.active = true;
       },
 
       __windowFocusChanged: function(event) {
