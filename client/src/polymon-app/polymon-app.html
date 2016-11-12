@@ -370,17 +370,20 @@
           // the database. When a reference is scanned, we attempt to catch
           // the Polymon by pushing the details on to the user's catch queue.
           case 'reference':
-            let catchData = { code };
-
-            if (this.playerLatLng) {
-              catchData.latLng = this.playerLatLng;
-            }
-
-            let catchId = firebase.app('polymon').database()
-                .ref(`/users/${this.user.uid}/catchQueue`)
-                .push(catchData).key;
-
-            this.push('unconfirmedCatches', catchId);
+            this.__polydexEntryForCode(code).then(polydexEntry => {
+              if (polydexEntry) {
+                // Duplicate catch! Navigate to the caught page.
+                this.set('route.path', `/caught/${polydexEntry.polymonId}`);
+                return;
+              }
+              const catchData = { code };
+              if (this.playerLatLng) {
+                catchData.latLng = this.playerLatLng;
+              }
+              const catchId = firebase.app('polymon').database()
+                  .ref(`/users/${this.user.uid}/catchQueue`).push(catchData).key;
+              this.push('unconfirmedCatches', catchId);
+            });
             break;
           // A battle code is typically shared from one user to another when one
           // user starts a battle and the other user scans the code on her
@@ -401,6 +404,18 @@
             }
             break;
         }
+      },
+
+      __polydexEntryForCode: function(code) {
+        return firebase.app('polymon').database()
+          .ref(`/users/${this.user.uid}/catchQueue`).once('value')
+          .then(snapshot => snapshot.val())
+          .then(catchQueue => {
+            // Leverage local polydex to find the polydexEntry.
+            return this.polydex.find(function(polydexEntry) {
+              return catchQueue[polydexEntry.catchId].code === code;
+            });
+          });
       },
 
       __computePolydexPath: function(user) {

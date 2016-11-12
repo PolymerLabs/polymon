@@ -1,4 +1,7 @@
-const { recordPolymonSighting } = require('./common');
+const {
+  recordPolymonSighting,
+  userErrorNotifier
+} = require('./common');
 
 exports.validateCaughtPolymon = functions => functions
     .database()
@@ -21,49 +24,45 @@ exports.validateCaughtPolymon = functions => functions
       const catchId = event.params.catchId;
       const db = functions.app.database();
       const auth = functions.app.auth();
-      const referenceRef = db.ref(`/references/${referenceId}`);
 
       // If we don't have a referenceId, it means this is probably the write
       // performed by the function removing the queued catch event
-
 
       console.log(`Reference ID: ${referenceId}`);
       console.log(`Catch ID: ${catchId}`);
       console.log(`User ID: ${userId}`);
 
-      return referenceRef.once('value').then(snapshot => {
-        if (snapshot.exists()) {
-          let polymonId = snapshot.val();
-
-          console.log('Polymon ID:', polymonId);
-
-          return db.ref(`/users/${userId}/polydex`)
-              .orderByChild('polymonId').once('value')
-              .then(snapshot => {
-                let polydexEntries = snapshot.val();
-
-                for (var id in polydexEntries) {
-                  if (polydexEntries[id].polymonId === polymonId) {
-                    console.log(
-                        `This Polymon was already caught..`);
-                    return;
-                  }
+      return db.ref(`/references/${referenceId}`).once('value')
+        .then(snapshot => {
+          if (!snapshot.exists()) {
+            throw new Error('Reference not found.');
+          }
+          const polymonId = snapshot.val();
+          // Get polydex.
+          return db.ref(`/users/${userId}/polydex`).once('value')
+            .then(snapshot => {
+              // Search entry with matching polymonId.
+              const polydexEntries = snapshot.val();
+              for (let id in polydexEntries) {
+                // Found matching polymon! Search for its name for nicer error msg.
+                if (polydexEntries[id].polymonId === polymonId) {
+                  return db.ref(`/polymons/${polymonId}`).once('value')
+                      .then(snapshot => snapshot.val().name)
+                      .then(polymonName => {
+                        throw new Error(`You already caught ${polymonName}.`);
+                      });
                 }
-
-                console.log('Recording catch in Polydex.');
-
-                return db.ref(`/users/${userId}/polydex`).push({
-                  caughtAt: Date.now(),
-                  catchId,
-                  polymonId
-                });
-              })
-              .then(() =>
-                  recordPolymonSighting(db, polymonId, catchValue.latLng));
-        }
-      }).catch(error => {
-        console.error(`Validation: ${error}`);
-      }).then(() => event.data.ref.remove());
+              }
+              console.log('Recording catch in Polydex.');
+              return db.ref(`/users/${userId}/polydex`).push({
+                caughtAt: Date.now(),
+                catchId,
+                polymonId
+              }).then(() => recordPolymonSighting(db, polymonId, catchValue.latLng));
+            });
+        })
+        .catch(userErrorNotifier(db, userId))
+        .then(() => event.data.ref.remove());
     });
 
 
