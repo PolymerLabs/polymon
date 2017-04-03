@@ -1,4 +1,5 @@
 {
+  "root": "./client",
   "entrypoint": "index.html",
   "shell": "src/polymon-app/polymon-app.html",
   "fragments": [

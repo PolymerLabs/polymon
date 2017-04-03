@@ -1,11 +1,14 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const battle = require('./battle');
 const team = require('./team');
 const notifications = require('./notifications');
 const catching = require('./catching');
 
-exports.processBattleQueue = battle.processBattleQueue(functions);
-exports.modifyTeam = team.modifyTeam(functions);
-exports.validateCaughtPolymon = catching.validateCaughtPolymon(functions);
-exports.popNotifications = notifications.popNotifications(functions);
-exports.beaconCapture = catching.beaconCapture(functions);
+admin.initializeApp(functions.config().firebase);
+
+exports.processBattleQueue = battle.processBattleQueue(functions, admin);
+exports.modifyTeam = team.modifyTeam(functions, admin);
+exports.validateCaughtPolymon = catching.validateCaughtPolymon(functions, admin);
+exports.popNotifications = notifications.popNotifications(functions, admin);
+exports.beaconCapture = catching.beaconCapture(functions, admin);

@@ -4,9 +4,8 @@ const {
   userErrorNotifier
 } = require('./common');
 
-exports.modifyTeam = functions => functions
-    .database()
-    .path('/users/{userId}/teamQueue/{messageId}')
+exports.modifyTeam = (functions, admin) => functions.database
+    .ref('/users/{userId}/teamQueue/{messageId}')
     .onWrite(event => {
       const messageId = event.data.key;
       const message = event.data.val();
@@ -18,7 +17,7 @@ exports.modifyTeam = functions => functions
       }
 
       const { polydexId, index } = message;
-      const db = functions.app.database();
+      const db = admin.database();
       const teamRef = db.ref(`/users/${userId}/team`);
 
       console.log(`User ID: ${userId}`);

@@ -543,13 +543,14 @@ function withdrawFromBattle(db, userId, battleId) {
 }
 
 
-exports.processBattleQueue = functions => functions
-    .database()
-    .path('/users/{userId}/battleQueue/{messageId}')
+exports.processBattleQueue = (functions, admin) => functions.database
+    .ref('/users/{userId}/battleQueue/{messageId}')
     .onWrite(event => {
       const message = event.data.val();
       const userId = event.params.userId;
-      const db = functions.app.database();
+      //const db = functions.app.database();
+      const db = admin.database();
+      //const db = event.data.ref.root;
 
       if (message == null) {
         console.log('No Battle message, ignoring...');

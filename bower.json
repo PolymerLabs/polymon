@@ -3,7 +3,7 @@
   "description": "Seek out Polymer Team members and capture their Polymon!",
   "main": "index.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#~1.6.0",
+    "polymer": "Polymer/polymer#^1.6.0",
     "iron-behaviors": "polymerelements/iron-behaviors#^1.0.0",
     "qr.js": "lifthrasiir/qr.js#^0.0.20110119",
     "webrtc-polyfill": "https://webrtc.github.io/adapter/adapter-latest.js",

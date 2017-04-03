@@ -9,3 +9,4 @@ build
 .*.service-account.json
 .*.env.json
 client/index.html
+build-compare

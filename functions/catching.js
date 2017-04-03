@@ -1,8 +1,7 @@
 const { recordPolymonSighting } = require('./common');
 
-exports.validateCaughtPolymon = functions => functions
-    .database()
-    .path('/users/{userId}/catchQueue/{catchId}')
+exports.validateCaughtPolymon = (functions, admin) => functions.database
+    .ref('/users/{userId}/catchQueue/{catchId}')
     .onWrite(event => {
       const userId = event.params.userId;
       const catchValue = event.data.val();
@@ -19,8 +18,7 @@ exports.validateCaughtPolymon = functions => functions
       }
 
       const catchId = event.params.catchId;
-      const db = functions.app.database();
-      const auth = functions.app.auth();
+      const db = admin.database();
       const referenceRef = db.ref(`/references/${referenceId}`);
 
       // If we don't have a referenceId, it means this is probably the write
@@ -67,14 +65,12 @@ exports.validateCaughtPolymon = functions => functions
     });
 
 
-exports.beaconCapture = functions => functions
-    .cloud
-    .https()
+exports.beaconCapture = (functions, admin) => functions.https
     .onRequest((req, res) => {
-      const db = functions.app.database();
+      const db = admin.database();
       const reference = req.query.reference;
       const target = req.query.target;
-      const redirect = functions.env.beaconRedirect;
+      const redirect = functions.config().beacon.redirect;
 
       return db.ref(`/references/${reference}`).once('value')
           .then(snapshot => snapshot.val())
