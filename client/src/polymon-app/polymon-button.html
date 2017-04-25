@@ -5,10 +5,8 @@
   <template>
     <style>
       :host {
-        --polymon-button-shadow: #166E93;
-        --polymon-button-border: #1989B8;
-        --polymon-button-background: #3EBBF0;
-        --polymon-button-background-shadow: #2BA8DE;
+        --polymon-button-background: #536DFE; /* Indigo A200 */
+        --polymon-button-shadow: #435DEE; /* Indigo A200 - #101010 */
 
         -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
         -webkit-tap-highlight-color: transparent;
@@ -21,27 +19,12 @@
         font-family: var(--polymon-font-family);
         cursor: pointer;
         text-align: center;
+        padding: 0 0 4px 0;
       }
 
       :host(.alt) {
-        --polymon-button-shadow: #A51430;
-        --polymon-button-border: #CC1746;
-        --polymon-button-background: #F73463;
-        --polymon-button-background-shadow: #E22D54;
-      }
-
-      :host(.help) {
-        --polymon-button-shadow: #498231;
-        --polymon-button-border: #62AF42;
-        --polymon-button-background: #8BDE67;
-        --polymon-button-background-shadow: #76CB53;
-      }
-
-      :host(.plain) {
-        --polymon-button-shadow: #999999;
-        --polymon-button-border: #bbb;
-        --polymon-button-background: #eee;
-        --polymon-button-background-shadow: #ddd;
+        --polymon-button-background: #1CE8B5; /* Teal A400 */
+        --polymon-button-shadow: #0CD8A5; /* Teal A400 - #101010 */
       }
 
       :host:before {
@@ -53,64 +36,34 @@
         right: 0;
         bottom: 4px;
         border-radius: 4px;
-        background-color: var(--polymon-button-border);
-      }
-
-      :host:after {
-        content: '';
-        display: block;
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        right: 2px;
-        bottom: 6px;
         background-color: var(--polymon-button-background);
-        border-radius: 3px;
-      }
-
-      :host(.pressed) {
-        top: 4px;
-        background-color: transparent;
       }
 
       :host(.iron-selected) {
-        background-color: var(--polymon-button-border);
+        background-color: #00D4EF; /* Cyan A400 - #101010 */
       }
-
       :host(.iron-selected):before {
-        background-color: #fff;
-      }
-
-      :host(.iron-selected) #content {
-        text-shadow: none;
-        background-image: none;
-        color: #fff;
+        background-color: #00E4FF; /* Cyan A400 */
       }
 
       #content {
         position: relative;
         padding: 7px 20px 5px;
-        margin: 4px 4px 8px 4px;
+        margin: 4px;
         border-radius: 2px;
         z-index: 1;
-        color: rgba(255, 255, 255, 0.85);
-        background-image:
-            linear-gradient(
-                transparent 50%,
-                var(--polymon-button-background-shadow) 50%);
+        color: #FFFFFF;
         pointer-events: none;
         -webkit-user-select: none;
-        background-position-y: 0;
+      }
 
-        text-shadow:
-            2px -2px 0px var(--polymon-button-background-shadow),
-            -2px -2px 0px var(--polymon-button-background-shadow),
-            0px -2px 0px var(--polymon-button-background-shadow),
-            0px 2px 0px var(--polymon-button-background-shadow),
-            2px 0px 0px var(--polymon-button-background-shadow),
-            -2px 0px 0px var(--polymon-button-background-shadow),
-            2px 2px 0px var(--polymon-button-background-shadow),
-            -2px 2px 0px var(--polymon-button-background-shadow);
+      :host(.pressed) {
+        padding: 4px 0 0 0;
+        background-color: transparent;
+      }
+      :host(.pressed):before {
+        top: 4px;
+        bottom: 0;
       }
     </style>
     <div id="content">
