@@ -2,7 +2,7 @@ const path = require('path');
 const readJson = require('then-read-json');
 const del = require('del');
 const SHA256 = require('crypto-js/sha256');
-const firebase = require('firebase');
+const firebaseAdmin = require('firebase-admin');
 const firebaseConfigstore = require('firebase-tools/lib/configstore');
 const firebaseDetectProjectRoot = require('firebase-tools/lib/detectProjectRoot');
 const firebaseLoadRCFile = require('firebase-tools/lib/loadRCFile.js');
@@ -12,6 +12,7 @@ const qrCodeDataPath =
 const polymonJsonPath = path.resolve(__dirname, '../polymon.json');
 const serviceAccountJsonPath =
     path.resolve(__dirname, '../.active.service-account.json');
+const serviceAccount = require(serviceAccountJsonPath);
 const envJsonPath = path.resolve(__dirname, '../.active.env.json');
 const secret = process.env.POLYMON_SECRET || 'NO_SECRET_SPECIFIED';
 
@@ -55,11 +56,9 @@ function getPolymonEnv() {
       return {
         config,
         secret,
-        firebaseApp: firebase.initializeApp({
-          name: config.firebase.appName,
-          apiKey: config.firebase.apiKey,
-          databaseURL: config.firebase.databaseUrl,
-          serviceAccount: serviceAccountJsonPath
+        firebaseApp: firebaseAdmin.initializeApp({
+          databaseURL: config.firebase.databaseURL,
+          credential: firebaseAdmin.credential.cert(serviceAccount)
         })
       };
     });
