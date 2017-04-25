@@ -51,12 +51,6 @@ the example `.firebaserc` above), the files should be named:
  1. `.dev.env.json`
  2. `.dev.service-account.json`
 
- And the production project with the alias `prod` should have the corresponding
- filenames:
-
- 1. `.prod.env.json`
- 2. `.prod.service-account.json`
-
 The `.dev.env.json` file should describe a Firebase configuration, and
 optionally a Google Analytics configuration; if you're copying these values from
 firebase, ensure the keys match:
@@ -115,8 +109,8 @@ Firebase CLI to serve the compiled source:
 firebase serve
 ```
 
-To serve the uncompiled version of polymon, first change the `hosting.public`
-value in `firebase.json` from `build` to `client`.
+To serve the uncompiled version of polymon, change the `hosting.public`
+value in `firebase.json` from `build` to `client` before serving.
 
 And then open up a browser to [http://localhost:5000][2] and check it out!
 
