@@ -19,27 +19,20 @@ Next, from your project root, install Node.js dependencies:
 npm install
 ```
 
-Then, install your client-side dependencies with `bower`:
-
-```sh
-bower install
-```
-
-These dependencies will be installed to `./client/bower_components`.
-
 Next, you will need at least one Firebase project to deploy to. If you don't
 already have one to target, go create one in the Firebase web control panel.
 
 By default, the `.firebaserc` is configured for the official Polymon
 deployment environments. If you are creating a your own Firebase project to
 deploy to, you will need to update the `.firebaserc` file to reflect your
-**project's ID**. For example, if your project ID is `polymon-foo`, your
-`.firebaserc` should look something like:
+**project's ID**. For example, if your dev project's ID is `polymon-foo` and your
+production project's ID is `polymon-prod`, your `.firebaserc` should look something like:
 
 ```json
 {
   "projects": {
-    "foo": "polymon-foo"
+    "prod": "polymon-prod",
+    "dev": "polymon-foo"
   }
 }
 ```
@@ -52,24 +45,31 @@ files for each project you want to work with:
     access to the Firebase project.
 
 These files should be named based on the alias that corresponds to each
-Firebase project in `.firebaserc`. So, for a project with alias `foo` (as in
+Firebase project in `.firebaserc`. So, for a project with alias `dev` (as in
 the example `.firebaserc` above), the files should be named:
 
- 1. `.foo.env.json`
- 2. `.foo.service-account.json`
+ 1. `.dev.env.json`
+ 2. `.dev.service-account.json`
 
-The `.foo.env.json` file should describe a Firebase configuration, and
+ And the production project with the alias `prod` should have the corresponding
+ filenames:
+
+ 1. `.prod.env.json`
+ 2. `.prod.service-account.json`
+
+The `.dev.env.json` file should describe a Firebase configuration, and
 optionally a Google Analytics configuration; if you're copying these values from
 firebase, ensure the keys match:
 
 ```json
 {
   "firebase": {
-    "appName": "polymon",
+    "projectId": "polymon",
     "apiKey": "AIzaSyDBzqU7s3b6hVu309lbYQABJr2xmioiIV0",
     "authDomain": "polymon-foo.firebaseapp.com",
-    "databaseUrl": "https://polymon-foo.firebaseio.com",
-    "storageBucket": "polymon-foo.appspot.com"
+    "databaseURL": "https://polymon-foo.firebaseio.com",
+    "storageBucket": "polymon-foo.appspot.com",
+    "messagingSenderId": "447537573236"
   },
 
   "googleAnalytics": {
@@ -81,34 +81,42 @@ firebase, ensure the keys match:
 If you don't know how to generate a Service Account credential file, please
 consult the documentation [here][1].
 
-Once you have completed the above steps, there are two scripts you need to
-run before you can start working:
+Once you have completed the above steps, you can now build the project:
 
 ```sh
-# Set the local environment, and generate an appropriate index.html for that
-# environment. Replace `foo` with your Firebase project alias:
-./scripts/set-env.sh foo
-
-# Generate the seed data in your Firebase Realtime Database
-# WARNING: Running this script will delete everything in your database and
-# reset it to its initial state!
-node ./scripts/generate-seed-data.js
+# This will:
+# 1. do a clean build of polymon
+# 2. clear and generate data on your firebase dev project
+# 3. deploy firebase functions, database rules, and hosting files to firebase
+gulp --genData --deploy
 ```
 
-Finally, you need to make sure that both the Firebase Functions and Firebase
-Realtime Database rules are deployed for your project. Use the following
-command to deploy these:
-
+If you want to do a rebuild you can simply just run:
 ```sh
-firebase deploy --only functions,database
+# clean rebuild
+gulp
+
+# dirty rebuild
+gulp build
 ```
+
+If you want to generate data and deploy to prod, you just need to specify the
+alias from the `.firebaserc`
+```
+gulp --genData --deploy --env prod
+```
+
+See the `gulpfile.js` for more gulp tasks.
 
 Assuming everything worked, you should be ready to hack on Polymon. Use the
-Firebase CLI to start up a web server:
+Firebase CLI to serve the compiled source:
 
 ```sh
 firebase serve
 ```
+
+To serve the uncompiled version of polymon, first change the `hosting.public`
+value in `firebase.json` from `build` to `client`.
 
 And then open up a browser to [http://localhost:5000][2] and check it out!
 

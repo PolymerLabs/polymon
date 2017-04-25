@@ -1,20 +1,49 @@
 {
-  "root": "./client",
-  "entrypoint": "index.html",
-  "shell": "src/polymon-app/polymon-app.html",
+  "entrypoint": "./client/index.html",
+  "shell": "./client/src/polymon-app/polymon-app.html",
+  "builds": [
+    {
+      "name": "bundled",
+      "js": {
+        "compile": true,
+        "minify": false
+      },
+      "html": {
+        "minify": true
+      },
+      "css": {
+        "minify": true
+      },
+      "bundle": true,
+      "addServiceWorker": true,
+      "swPrecacheConfig": "sw-precache-config.js"
+    }
+  ],
+  "lint": {
+    "rules": [
+      "polymer-1"
+    ]
+  },
   "fragments": [
-    "src/polymon-app/third-party/jsqrcode.html",
-    "src/polymon-app/polymon-qr-code-scanner.html",
-    "src/polymon-app/polymon-polydex.html",
-    "src/polymon-app/polymon-new-battle-screen.html",
-    "src/polymon-app/polymon-battle-screen.html",
-    "src/polymon-app/polymon-caught-screen.html",
-    "src/polymon-app/polymon-start-screen.html",
-    "src/polymon-app/polymon-panel.html",
-    "src/polymon-app/polymon-map.html",
-    "src/polymon-app/polymon-coded-url-screen.html",
-    "src/polymon-app/polymon-music.html",
-    "src/polymon-app/polymon-about-screen.html",
-    "bower_components/polymerfire/firebase-app.html"
+    "./client/src/polymon-app/third-party/jsqrcode.html",
+    "./client/src/polymon-app/polymon-qr-code-scanner.html",
+    "./client/src/polymon-app/polymon-polydex.html",
+    "./client/src/polymon-app/polymon-new-battle-screen.html",
+    "./client/src/polymon-app/polymon-battle-screen.html",
+    "./client/src/polymon-app/polymon-caught-screen.html",
+    "./client/src/polymon-app/polymon-start-screen.html",
+    "./client/src/polymon-app/polymon-panel.html",
+    "./client/src/polymon-app/polymon-map.html",
+    "./client/src/polymon-app/polymon-coded-url-screen.html",
+    "./client/src/polymon-app/polymon-music.html",
+    "./client/src/polymon-app/polymon-about-screen.html",
+    "./client/bower_components/polymerfire/firebase-app.html"
+  ],
+  "sources": [
+    "./client/fonts/**/*",
+    "./client/images/**/*",
+    "./client/music/**/*",
+    "./client/manifest.json",
+    "./client/bower_components/webrtc-polyfill/index.js"
   ]
 }
