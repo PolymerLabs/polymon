@@ -1,22 +1,21 @@
 const path = require('path');
 
 const readJson = require('then-read-json');
-const firebase = require('firebase');
+const firebaseAdmin = require('firebase-admin');
 
 const polymonJsonPath = path.resolve(__dirname, '../polymon.json');
 const envJsonPath = path.resolve(__dirname, '../.active.env.json');
 const serviceAccountJsonPath = path.resolve(__dirname, '../.active.service-account.json');
+const serviceAccount = require(serviceAccountJsonPath);
 
 Promise.all([
   readJson(envJsonPath),
   readJson(polymonJsonPath)
 ]).then(results => {
   const [config, polymons] = results;
-  const app = firebase.initializeApp({
-    name: config.firebase.appName,
-    apiKey: config.firebase.apiKey,
-    databaseURL: config.firebase.databaseUrl,
-    serviceAccount: serviceAccountJsonPath
+  const app = firebaseAdmin.initializeApp({
+    databaseURL: config.firebase.databaseURL,
+    credential: firebaseAdmin.credential.cert(serviceAccount)
   });
 
   const db = app.database();
