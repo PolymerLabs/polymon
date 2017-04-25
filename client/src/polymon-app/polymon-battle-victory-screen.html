@@ -18,6 +18,10 @@
         transition-delay: 1s;
       }
 
+      :host(:not(.active)) {
+        display: none;
+      }
+
       :host(.active) {
         transition-delay: 0s;
       }

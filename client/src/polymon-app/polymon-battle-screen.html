@@ -30,6 +30,10 @@
       :host(:not(.active)) > * {
         pointer-events: none;
       }
+
+      [hidden] {
+        display: none;
+      }
     </style>
 
     <firebase-document
@@ -67,6 +71,7 @@
     </polymon-initiate-battle-screen>
 
     <polymon-battle-field
+        id="battleField"
         user-team-status="[[userTeamStatus]]"
         opposing-team-status="[[opposingTeamStatus]]"
         user-state="[[userState]]"
@@ -74,6 +79,7 @@
         active="[[active]]"
         waiting="[[waiting]]"
         battle-finished="[[battleFinished]]"
+        hidden$="[[visualizerAnimating]]"
         on-polymon-move="__onPolymonMove">
     </polymon-battle-field>
 
@@ -85,6 +91,7 @@
 
     <polymon-battle-round-visualizer
         id="roundVisualizer"
+        active="{{visualizerAnimating}}"
         user-id="[[user.uid]]"
         opposing-user-id="[[opposingUserId]]"
         user-team-status="[[userTeamStatus]]"
@@ -152,6 +159,11 @@
         battleFinished: {
           type: Boolean,
           computed: '__computeBattleFinished(battleData.*)'
+        },
+
+        visualizerAnimating: {
+          type: Boolean,
+          observer: '__visualizerAnimatingChanged'
         }
       },
 
@@ -162,6 +174,12 @@
         '__battleRoundsChanged(battleRounds.length)',
         '__updatePlayerState(battleData.players.*, opposingUserId)'
       ],
+
+      __visualizerAnimatingChanged: function() {
+        if (!this.visualizerAnimating) {
+          this.$.battleField.resetControls();
+        }
+      },
 
       __updatePlayerState: function() {
         this.deraf('update-player-status', () => {
