@@ -5,6 +5,7 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-qr-code.html">
+<link rel="import" href="polymon-button.html">
 <dom-module id="polymon-battle-field">
   <template>
     <style>
@@ -181,24 +182,14 @@
       }
 
       .info-button {
-        display: flex;
-        box-sizing: border-box;
-        align-items: center;
-        justify-content: center;
         top: -180px;
         left: 10px;
         position: absolute;
 
-        color: #FFFFFF;
         border-radius: 12px;
         height: 80px;
         font-size: 28px;
-        padding: 27px 24px 24px;
-        background: #536DFE; /* Indigo A200 */
-
-        cursor: pointer;
-        -webkit-user-select: none;
-        user-select: none;
+        padding: 24px;
 
         transition: transform 0.3s, opacity 0.3s;
         transform: translateY(-10px);
@@ -443,7 +434,7 @@
     <section class="landscape">
       <div class="background">
         <div class="opposing island">
-          <div class="info-button" on-tap="__onInfoButtonTap">opponent stats</div>
+          <polymon-button class="info-button" on-tap="__onInfoButtonTap">opponent stats</polymon-button>
           <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
             <polymon-portrait
                 polymon="[[teamPosition.polymon]]"
