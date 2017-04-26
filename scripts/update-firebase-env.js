@@ -8,6 +8,10 @@ polymon.getPolymonEnv().then(polymonEnv => {
   const env = firebaseConfig.env || {};
   const args = Object.keys(env).map(key => `${key}=${env[key]}`);
 
+  if (!firebaseTools.env) {
+    return;
+  }
+
   console.log(`Updating Firebase env for ${projectId}...`);
 
   return firebaseTools.env.set(args, { project: projectId })

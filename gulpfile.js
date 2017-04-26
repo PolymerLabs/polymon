@@ -32,13 +32,15 @@ gulp.task('install', () => {
 });
 
 gulp.task('deploy-functions-database', ['install'], () => {
-  return exec('firebase deploy --only functions,database');
+  if (!argv.skipFunctions == true || !argv.skipFunctions == 'true') {
+    return exec('firebase deploy --only functions,database');
+  }
 });
 
 gulp.task('deploy', ['build', 'deploy-functions-database'], async (done) => {
   if (argv.deploy == true || argv.deploy == 'true') {
     await exec('node ./scripts/update-firebase-env.js');
-    await exec('firebase deploy --only hosting -p build/');
+    await exec('firebase deploy --only hosting -p ./build');
   }
 });
 
@@ -70,14 +72,9 @@ gulp.task('generate-index', ['set-env'], () => {
 });
 
 gulp.task('build', ['generate-index', 'install'], async () => {
-  await exec('polymer build');
-
-  await Promise.all([
-    exec(`cp -R ./build/bundled/client/** ${buildDestination}`),
-    exec(`cp ./build/bundled/service-worker.js ${buildDestination}`)
-  ]);
-
-  await exec('rm -rf ./build/bundled');
+  await exec('cd client && polymer build && cd ..');
+  await exec(`cp -R ./client/build/bundled ${buildDestination}`);
+  await exec('rm -rf ./client/build');
 });
 
 gulp.task('init', ['clean', 'install']);
