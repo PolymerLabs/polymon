@@ -11,3 +11,4 @@ build
 client/index.html
 build-compare
 build/*
+firebase.json
