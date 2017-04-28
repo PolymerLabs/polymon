@@ -72,7 +72,25 @@
         flex: 1 1 50%;
       }
 
+      #options {
+        display: flex;
+        position: relative;
+        flex: 1 1 33.33333%;
+      }
+
+      #options > section {
+        flex: 1;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+        transition: opacity 0.3s, transform 0.3s;
+      }
+
       #for-anon {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
         opacity: 1;
         transform: translateY(80px);
       }
@@ -84,62 +102,36 @@
         transition-delay: 0.5s;
       }
 
-      #for-anon, #for-user {
-        transition: opacity 0.3s, transform 0.3s;
-      }
-
-      #options {
-        display: flex;
-        position: relative;
-        flex: 1 1 33.33333%;
-      }
-
-      #options > section {
-        flex: 1;
-        @apply --layout-vertical;
-        @apply --layout-center-center;
-      }
-
-      #for-anon {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-        z-index: 1;
-      }
-
-      #options polymon-button {
-        margin-bottom: 1em;
-        width: 50%;
-        max-width: 280px;
-      }
-
-      #options a {
-        width: 100%;
-        text-align: center;
-        -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
-      }
-
-      #options polymon-button {
-        width: 100%;
-      }
-
       #options .row {
         @apply --layout-horizontal;
         width: 100%;
         max-width: 280px;
+        margin: 0.5em 0px;
       }
 
-      #options .row a:last-child  {
-        display: inline-block;
+      #options .row > a {
+        width: 100%;
+        margin: 0px 0.5em;
+        text-align: center;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+      }
+
+      #options .row > a + a {
         width: auto;
         flex-grow: 0;
-        margin-left: 1em;
       }
 
-      #options .row a:last-child > polymon-button {
-        font-size: 22px;
-        line-height: 1em;
+      #options .row > a > polymon-button {
+        width: 100%;
+        height: 100%;
+        max-width: 280px;
+        font-size: 18px;
+      }
+
+      #audio-toggle-button {
+        display: inline-block;
+        flex-grow: 0;
+        line-height: 1.2em;
       }
     </style>
 
@@ -153,18 +145,23 @@
 
     <section id="options">
       <section id="for-user">
-        <a href="/map">
-          <polymon-button>Catch Polymon</polymon-button>
-        </a>
-        <a href="/polydex">
-          <polymon-button class="alt">Polydex</polymon-button>
-        </a>
+        <div class="row">
+          <a href="/map">
+            <polymon-button>Catch Polymon</polymon-button>
+          </a>
+        </div>
+        <div class="row">
+          <a href="/polydex">
+            <polymon-button class="alt">Polydex</polymon-button>
+          </a>
+        </div>
         <div class="row">
           <a href="/about">
             <polymon-button class="alt">About</polymon-button>
           </a>
           <a href="javascript:void(0)">
             <polymon-button
+                id="audio-toggle-button"
                 on-tap="requestToggleAudio"
                 class="alt">[[__computeAudioIcon(musicEnabled)]]</polymon-button>
           </a>
