@@ -8,7 +8,6 @@
       "focus": 3
     },
     "name": "Productasaur",
-    "ldap": "tjsavage",
     "twitter": "taylorthesavage",
     "flavor": "Product-type. Likes to schedule meetings. Good at having other Polymon battle.",
     "atSummit": "Yes"
@@ -22,7 +21,6 @@
       "focus": 3
     },
     "name": "Horse",
-    "ldap": "samccone",
     "twitter": "samccone",
     "flavor": "horse",
     "atSummit": "Yes"
@@ -36,7 +34,6 @@
       "focus": 1
     },
     "name": "Ginzard",
-    "ldap": "wmginsberg",
     "twitter": "wmginsberg",
     "flavor": "Quick and agile, though enjoys basking in the sun atop a warm rock.",
     "atSummit": "Yes"
@@ -46,11 +43,10 @@
     "github": "cdata",
     "stats": {
       "attack": 4,
-      "counter": 2,
-      "focus": 1
+      "counter": 3,
+      "focus": 2
     },
     "name": "Seadata",
-    "ldap": "cdata",
     "twitter": "x",
     "flavor": "It likes to munch on DOM tree leaves while basking under a shadow root.",
     "atSummit": "Yes"
@@ -59,12 +55,11 @@
     "codePoint": "U+1F418",
     "github": "e111077",
     "stats": {
-      "attack": 2,
+      "attack": 1,
       "counter": 1,
-      "focus": 5
+      "focus": 6
     },
     "name": "Elliophant",
-    "ldap": "emarquez",
     "twitter": "Elliott_Marquez",
     "flavor": "Though last to the office, it can quickly sneak up behind you for a \"quick\" question. After gaining speed, it can rampage through issues.",
     "atSummit": "Yes"
@@ -73,12 +68,11 @@
     "codePoint": "U+1F428",
     "github": "robdodson",
     "stats": {
-      "attack": 3,
-      "counter": 3,
+      "attack": 2,
+      "counter": 4,
       "focus": 1
     },
     "name": "Bobdod",
-    "ldap": "robdodson",
     "twitter": "rob_dodson",
     "flavor": "Is a bear or a koala or something. Its secret weapon is the hug. Of death.",
     "atSummit": "Yes"
@@ -87,12 +81,11 @@
     "codePoint": "U+1F63B",
     "github": "notwaldorf",
     "stats": {
-      "attack": 3,
-      "counter": 2,
-      "focus": 2
+      "attack": 2,
+      "counter": 4,
+      "focus": 1
     },
     "name": "Meownicat",
-    "ldap": "noms",
     "twitter": "notwaldorf",
     "flavor": "Meownicat is a byproduct of unchecked Unicode experiments. It is perceptive and smells faintly of blueberries.",
     "atSummit": "Yes"
@@ -106,7 +99,6 @@
       "focus": 2
     },
     "name": "Bideldore",
-    "ldap": "ericbidelman",
     "twitter": "ebidel",
     "flavor": "Bideldore will unleash a deadly fire vomit at the mention of native apps or CoffeeScript.",
     "atSummit": "Yes"
@@ -120,7 +112,6 @@
       "focus": 1
     },
     "name": "Brainana",
-    "ldap": "brendanb",
     "twitter": "x",
     "flavor": "Brainana is clever, but clumsy.  It's friendliness make it an a-peeling addition to any roster.  (Take not to slip on it, though!)",
     "atSummit": "Yes"
@@ -134,7 +125,6 @@
       "focus": 2
     },
     "name": "Jigglystache",
-    "ldap": "arthure",
     "twitter": "devdocdude",
     "flavor": "A pedantic type Polymon, Jigglystache's main weapons are sarcasm, persiflage, and an almost fanatical devotion to the web.",
     "atSummit": "Yes"
@@ -148,7 +138,6 @@
       "focus": 5
     },
     "name": "Danguin",
-    "ldap": "dfreedm",
     "twitter": "danfreedman",
     "flavor": "It usually stays hidden under the snow, but can pop out at any time to solve problems.",
     "atSummit": "Yes"
@@ -162,7 +151,6 @@
       "focus": 3
     },
     "name": "Ilmasil",
-    "ldap": "samli",
     "twitter": "x",
     "flavor": "",
     "atSummit": "Yes"
@@ -171,12 +159,11 @@
     "codePoint": "U+1F419",
     "github": "x",
     "stats": {
-      "attack": 3,
+      "attack": 1,
       "counter": 4,
-      "focus": 1
+      "focus": 3
     },
     "name": "Octorvel",
-    "ldap": "sorvell",
     "twitter": "x",
     "flavor": "It will jump at the opportunity to share its deep wisdom. It likes to share for long periods of time.",
     "atSummit": "Yes"
@@ -190,7 +177,6 @@
       "focus": 3
     },
     "name": "Spector",
-    "ldap": "shanestephens",
     "twitter": "x",
     "flavor": "It likes to mess around with specifications, imagining it is making them better.",
     "atSummit": "Yes"
@@ -204,7 +190,6 @@
       "focus": 3
     },
     "name": "Shquid",
-    "ldap": "thorogood",
     "twitter": "x",
     "flavor": "This Polymon will shrug, say \"why not\", and work out a solution when asked deep and meaningful development questions.",
     "atSummit": "Yes"
@@ -218,7 +203,6 @@
       "focus": 4
     },
     "name": "Aerotwist",
-    "ldap": "paullewis",
     "twitter": "aerotwist",
     "flavor": "Full of hot air and may trash your stuff.",
     "atSummit": "Yes"
@@ -232,7 +216,6 @@
       "focus": 1
     },
     "name": "Valtorb",
-    "ldap": "valdrin",
     "twitter": "x",
     "flavor": "Very Focused, can be Blurred only by a soccer ball.",
     "atSummit": "Yes"
@@ -246,7 +229,6 @@
       "focus": 4
     },
     "name": "KABONS",
-    "ldap": "andybons",
     "twitter": "andybons",
     "flavor": "A fan of chain reactions, KABONS knows that sometimes you have to blow the whole thing up and start fresh.",
     "atSummit": "Yes"
@@ -260,7 +242,6 @@
       "focus": 1
     },
     "name": "Fredosaurus",
-    "ldap": "fschott",
     "twitter": "fredkschott",
     "flavor": "Tadannosaurus always shows up to celebrate a job well done. But don't be fooled: He's really here to snack on your easy-to-reach plants.",
     "atSummit": "Yes"
@@ -275,7 +256,6 @@
     },
     "name": "Beardiak",
     "shortName": "pandabeard",
-    "ldap": "bleigh",
     "twitter": "mbleigh",
     "flavor": "Fire(base) type Polymon. Friendly and easygoing, unless you make trouble for the Web Platform. Then watch out!",
     "atSummit": "Yes"
@@ -289,7 +269,6 @@
       "focus": 1
     },
     "name": "Dalphinaer",
-    "ldap": "dalmaer",
     "twitter": "dalmaer",
     "flavor": "Aggregator of things",
     "atSummit": "Yes"
@@ -303,7 +282,6 @@
       "focus": 6
     },
     "name": "Rootsfirmiles",
-    "ldap": "sjmiles",
     "twitter": "scottjmiles",
     "flavor": "Ancient Polymon, hard to uproot. It's bark is worse than it's bite.",
     "atSummit": "Yes"
@@ -317,7 +295,6 @@
       "focus": 2
     },
     "name": "Alienuel",
-    "ldap": "egarciad",
     "twitter": "blasten",
     "flavor": "Alienuel came from a planet in the constellation of sagittarius! ",
     "atSummit": "Yes"
@@ -331,7 +308,6 @@
       "focus": 3
     },
     "name": "Noreasturr",
-    "ldap": "graynorton",
     "twitter": "graynorton",
     "flavor": "Materializes out of the apparent calm, enveloping friends and enemies alike in a blanket of gray",
     "atSummit": "Yes"
@@ -345,7 +321,6 @@
       "focus": 1
     },
     "name": "Ricitic",
-    "ldap": "rictic",
     "twitter": "rictic",
     "flavor": "Curious and inquisitive, it loves to bounce from project, trying a little bit of everything. Anxious but excitable.",
     "atSummit": "Yes"
@@ -360,7 +335,6 @@
     },
     "name": "Ramulan",
     "shortName": "caprani",
-    "ldap": "justinfagnani",
     "twitter": "justinfagnani",
     "flavor": "Obsessively curious, and will eat almost anything. Skilled at balancing in precarious places.",
     "atSummit": "Yes"
@@ -369,12 +343,11 @@
     "codePoint": "U+1F40A",
     "github": "x",
     "stats": {
-      "attack": 2,
+      "attack": 3,
       "counter": 3,
-      "focus": 3
+      "focus": 2
     },
     "name": "Keanugator",
-    "ldap": "keanulee",
     "twitter": "x",
     "flavor": "It likes to sit in the sun and take a bite out of bugs. It wishes there's a real emoji for alligators.",
     "atSummit": "Yes"
@@ -388,7 +361,6 @@
       "focus": 4
     },
     "name": "Domdriform",
-    "ldap": "dominicc",
     "twitter": "x",
     "flavor": "Domdriform is tree-shaped Polymon which can detach, rearrange and reattach its many branches.",
     "atSummit": "Yes"
@@ -402,7 +374,6 @@
       "focus": 1
     },
     "name": "Slightlyoff",
-    "ldap": "slightlyoff",
     "twitter": "x",
     "flavor": "",
     "atSummit": "Yes"
@@ -416,7 +387,6 @@
       "focus": 2
     },
     "name": "Frankiemon",
-    "ldap": "ffu",
     "twitter": "x",
     "flavor": "I like to build cool things.",
     "atSummit": "Yes"
@@ -430,7 +400,6 @@
       "focus": 3
     },
     "name": "Salgoud",
-    "ldap": "dstockwell",
     "twitter": "x",
     "flavor": "",
     "atSummit": "No (don't worry, you still get a Polymon!)"
@@ -444,7 +413,6 @@
       "focus": 3
     },
     "name": "Moussaka",
-    "ldap": "andymutton",
     "twitter": "x",
     "flavor": "Old and weary, it laughs at the world, those around it and (most of all) itself.",
     "atSummit": "No (don't worry, you still get a Polymon!)"
@@ -458,7 +426,6 @@
       "focus": 1
     },
     "name": "KonfusedKevin",
-    "ldap": "kschaaf",
     "twitter": "x",
     "flavor": "Excels at factual exchanges. Has trouble understanding references to games, fiction, and other fun things.",
     "atSummit": "No (don't worry, you still get a Polymon!)"
@@ -472,7 +439,6 @@
       "focus": 2
     },
     "name": "Mattata",
-    "ldap": "matthewmcnulty",
     "twitter": "mattsmcnulty",
     "flavor": "King of the jungle. Mostly looks cuddly and chill until another polymon rouses his ire.",
     "atSummit": "Yes"
@@ -486,7 +452,6 @@
       "focus": 3
     },
     "name": "Marsupimike",
-    "ldap": "mikelawther",
     "twitter": "x",
     "flavor": "Looks cuddly, from a distance. Protective of its team. Big claws are kept hidden, but will come out if provoked.",
     "atSummit": "No (don't worry, you still get a Polymon!)"
@@ -500,7 +465,6 @@
       "focus": 3
     },
     "name": "Gläzfather",
-    "ldap": "dglazkov",
     "twitter": "x",
     "flavor": "Lives on North Pole and only appears once in a blue moon, mostly to eat cookies, spread the cheer, and share hopelessly optimistic timelines.",
     "atSummit": "No (don't worry, you still get a Polymon!)"
@@ -514,7 +478,6 @@
       "focus": 4
     },
     "name": "Mushron",
-    "ldap": "namchi",
     "twitter": "x",
     "flavor": "An unpredictable, shady character. May or may not be poisonous.",
     "atSummit": "Yes"
@@ -529,13 +492,11 @@
     },
     "name": "Komorama",
     "shortName": "pandasnore",
-    "ldap": "komoroske",
     "twitter": "komorama",
     "flavor": "Big and slow and unintimidating.",
     "atSummit": "Yes"
   },
   {
-    "ldap": "katejeffreys",
     "name": "Writerpuff",
     "twitter": "x",
     "github": "x",
