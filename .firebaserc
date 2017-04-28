@@ -1,7 +1,7 @@
 {
   "projects": {
     "production": "polymon-b105e",
-    "dev": "polymon-645aa",
+    "dev": "polymon-dev",
     "default": "polymon-b105e"
   }
 }
