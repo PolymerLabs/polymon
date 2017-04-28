@@ -39,26 +39,6 @@
         transform: translateY(0);
       }
 
-      :host(.active.authenticated) #for-user {
-        pointer-events: all;
-      }
-
-      :host(.active:not(.authenticated)) #for-anon {
-        pointer-events: all;
-      }
-
-      :host(.authenticated) #for-anon {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(60px);
-      }
-
-      :host(.authenticated) #for-user {
-        opacity: 1;
-        transform: translateY(0px);
-        transition-delay: 0.5s;
-      }
-
       polymon-carousel {
         flex: 1 0 auto;
       }
@@ -73,33 +53,51 @@
       }
 
       #options {
-        display: flex;
-        position: relative;
         flex: 1 1 33.33333%;
+        position: relative;
       }
 
       #options > section {
-        flex: 1;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        transition: opacity 0.3s, transform 0.3s;
+
+        display: flex;
         @apply --layout-vertical;
         @apply --layout-center-center;
-        transition: opacity 0.3s, transform 0.3s;
       }
 
       #for-anon {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-        z-index: 1;
         opacity: 1;
-        transform: translateY(80px);
+      }
+
+      :host(.authenticated) #for-anon {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-20px);
+      }
+
+      :host(.active:not(.authenticated)) #for-anon {
+        pointer-events: all;
       }
 
       #for-user {
         opacity: 0;
         pointer-events: none;
         transform: translateY(20px);
+      }
+
+      :host(.authenticated) #for-user {
+        opacity: 1;
+        transform: translateY(0px);
         transition-delay: 0.5s;
+      }
+
+      :host(.active.authenticated) #for-user {
+        pointer-events: all;
       }
 
       #options .row {
@@ -109,7 +107,9 @@
         margin: 0.5em 0px;
       }
 
-      #options .row > a {
+      #options .row > a,
+      #options .row > polymon-button {
+        display: inline-block;
         width: 100%;
         margin: 0px 0.5em;
         text-align: center;
@@ -124,12 +124,10 @@
       #options .row > a > polymon-button {
         width: 100%;
         height: 100%;
-        max-width: 280px;
         font-size: 18px;
       }
 
       #audio-toggle-button {
-        display: inline-block;
         flex-grow: 0;
         line-height: 1.2em;
       }
@@ -168,7 +166,9 @@
         </div>
       </section>
       <section id="for-anon">
-        <polymon-button on-tap="requestLogin">Login with Google</polymon-button>
+        <div class="row">
+          <polymon-button on-tap="requestLogin">Login with Google</polymon-button>
+        </div>
       </section>
     </section>
   </template>
