@@ -601,5 +601,41 @@
     },
     "name": "Hargow",
     "flavor": "A mysterious dumpling from outer space. Legends say it has psychic flavor powers."
+  },
+  {
+    "stats": {
+      "attack": 7,
+      "counter": 1,
+      "focus": 1
+    },
+    "name": "Beet",
+    "flavor": "Some have a heart as big as their chest - but despite seeming rough, Beet has one as big as his belly."
+  },
+  {
+    "stats": {
+      "attack": 1,
+      "counter": 1,
+      "focus": 7
+    },
+    "name": "Shroom",
+    "flavor": "Being this miserable expression hides a great mind. Always here to help, he may seem reluctant but will get the job done."
+  },
+  {
+    "stats": {
+      "attack": 1,
+      "counter": 7,
+      "focus": 1
+    },
+    "name": "Donnie",
+    "flavor": "With an expression that take up almost her entire body, Donnie has no option but to wear her heart on her sleeve. Luckily that expression is mostly a happy one, unless you get on her bad side in which case..."
+  },
+  {
+    "stats": {
+      "attack": 4,
+      "counter": 3,
+      "focus": 2
+    },
+    "name": "Radish",
+    "flavor": "Extremely clumsy, but extremely fun. Don't underestimate him though, behind that goofy smile lies some dark secrets..."
   }
 ]
