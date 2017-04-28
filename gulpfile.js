@@ -64,7 +64,7 @@ const generateFirebaseConfig = () => {
     res = resolve;
   });
 
-  readJson('./firebase.json').then(firebaseConfig => {
+  readJson('./firebaseConfig.json').then(firebaseConfig => {
     firebaseConfig.hosting.public = firebasePublicTarget;
 
     const firebaseJson = JSON.stringify(firebaseConfig, null, 2) + '\n';
