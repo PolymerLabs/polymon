@@ -6,7 +6,7 @@ Seek out Polymer team members and capture them as Polymon!
 
 Polymon is a PWA, so most of the code runs in a browser. But, Polymon also uses Firebase for some business logic, persistance and web hosting.
 
-### Installs
+### Installing
 First, ensure that you have the latest Node.js and NPM installed.
 Also, ensure the firebase CLI is available globally:
 
@@ -77,17 +77,26 @@ firebase, ensure the keys match:
 If you don't know how to generate a Service Account credential file, please
 consult the documentation [here][1].
 
-### Generating Seed Data
-
-Once you have completed the above steps, and this is your first time building this project, then you must now generate seed data:
+### Quickstart
+Assuming you have a `.dev.env.json` and a `.dev.service-account.json` from the previous step, you can quickly build, generate data, deploy, and serve using the following command:'
 
 ```sh
-gulp dev generate-data
+gulp
+```
+
+If you want to customize your environment, follow the next sections.
+
+### Generating Seed Data
+
+Once you have completed the [above steps](#creating-aliases), and this is your first time building this project, then you must now generate seed data:
+
+```sh
+gulp gen-data:dev
 
 # alternatively you can generate data for your prod environment with
-gulp prod generate-data
+gulp prod gen-data:prod
 
-# you can also generate data for arbitrary .firebaserc alias:
+# you can also generate data for arbitrary .firebaserc alias (defaults to dev):
 gulp generate-data --env myFirebasercAlias
 ```
 
@@ -96,13 +105,26 @@ Assuming you have already [generated the seed data](#generating-seed-data) for t
 
 ```sh
 # deploys to dev
-gulp deploy
+gulp deploy:all:dev
 
 # deploys to prod
-gulp prod deploy
+gulp deploy:all:prod
 
-# deploys to arbitrary .firebaserc alias:
-gulp deploy --env myFirebasercAlias
+# deploys to arbitrary .firebaserc alias (defaults to dev):
+gulp deploy:all --env myFirebasercAlias
+```
+
+Alternatively, you can deploy the uncompiled source:
+
+```sh
+# deploys to dev
+gulp deploy:all:dev:source
+
+# deploys to prod
+gulp deploy:all:prod:source
+
+# deploys to arbitrary .firebaserc alias (defaults to dev):
+gulp deploy:all:source --env myFirebasercAlias
 ```
 
 ### Rebuilding
@@ -110,16 +132,16 @@ If you want to do a rebuild without deploying you can simply just run:
 
 ```sh
 # clean rebuild (env defaults to dev alias)
-gulp clean build
+gulp clean build:dev
 
 # dirty rebuild (env defaults to dev alias)
-gulp build
+gulp build:dev
 
 # alternatively you can build for different environments:
 # prod
-gulp prod build
+gulp build:prod
 
-# generic
+# arbirary (defaults to dev)
 gulp build --env myFirebasercAlias
 ```
 
@@ -131,7 +153,7 @@ Assuming everything worked, you should be ready to hack on Polymon. Use the foll
 gulp serve
 
 # serves compiled source
-gulp serve --compiled
+gulp serve:compiled
 ```
 
 And then open up a browser to [http://localhost:5000][2] and check it out!

@@ -83,7 +83,6 @@ module.exports.generate = confirmed => {
       console.error(error);
     }).then(() => {
       console.log('Done!');
-      process.exit();
     });
   });
 }

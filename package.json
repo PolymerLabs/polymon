@@ -8,11 +8,10 @@
   },
   "scripts": {
     "start": "gulp",
-    "genData": "gulp generate-data --genData",
-    "nukeDeploy": "gulp --genData --deploy",
-    "deployCurrent": "gulp deploy-current",
-    "clean": "gulp clean",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "gen-data": "gulp gen-data",
+    "deploy-all": "gulp deploy:all",
+    "deploy-hosting": "gulp deploy-hosting",
+    "clean": "gulp clean"
   },
   "author": "",
   "license": "BSD-3-Clause",
