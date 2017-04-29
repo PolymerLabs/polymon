@@ -13,14 +13,7 @@
         @apply --layout-fit;
         @apply --layout-vertical;
         background-color: #F9F9F9; /* Grey 50 */
-        color: rgba(0, 0, 0, 0.8);
-        text-align: center;
         align-items: center;
-      }
-
-      h2:nth-of-type(1) {
-        /*font-style: italic;*/
-        margin: 1em 0 1.5em;
       }
 
       #credits {
@@ -46,64 +39,65 @@
         width: 100%;
       }
 
+      h3 + div {
+        margin-bottom: 1em;
+      }
+
       .credit {
         width: 100%;
-        max-width: 480px;
-        margin: auto auto 0.25em auto;
-        box-sizing: border-box;
-        @apply --layout-horizontal;
-        justify-content: space-between;
+      }
+
+      .credit + .credit {
+        margin-top: 0.4em;
+      }
+
+      .credit a {
+        color: currentcolor;
       }
 
       .credit > span:nth-of-type(2) {
         font-weight: bold;
-        font-style: italic;
-      }
-
-      .credits {
-        margin-bottom: 1em;
       }
 
       .subtitle {
-        font-style: italic;
         font-weight: bold;
-        margin-bottom: 0;
       }
     </style>
     <section id="credits">
       <polymon-logo></polymon-logo>
-      <h2>Polymon is a multiplayer, location-based monster hunting game designed and maintained by the <a href="https://www.polymer-project.org/" target="_blank">Polymer</a> team</h2>
+      <h2>Polymon is a multiplayer, location-based monster hunting game designed and maintained by the <a href="https://www.polymer-project.org/" target="_blank">Polymer</a> team.</h2>
       <p>Polymon is still a young project and development is ongoing. Please track progress and file reports of any problems you find <a href="https://github.com/PolymerLabs/polymon-issues/issues" target="_blank">here</a>.</p>
+      <hr>
       <h3>Version 1.0 Credits</h3>
       <div class="credits">
-        <span class="credit">
+        <div class="credit">
           <span>
             <a href="https://twitter.com/wmginsberg" target="_blank">Wendy Ginsberg</a>
           </span>
           <span>Production</span>
-        </span>
-        <span class="credit">
+        </div>
+        <div class="credit">
           <span><a href="http://evi-pineschi.com" target="_blank">Evi Pineschi</a></span>
           <span>Art</span>
-        </span>
-        <span class="credit">
+        </div>
+        <div class="credit">
           <span><a href="http://www.donnaalmendrala.name" target="_blank">Donna Almendrala</a></span>
           <span>Art</span>
-        </span>
-        <span class="credit">
+        </div>
+        <div class="credit">
           <span><a href="https://soundcloud.com/cityfires" target="_blank">Cityfires</a></span>
           <span>Music</span>
-        </span>
-        <span class="credit">
+        </div>
+        <div class="credit">
           <span><a href="https://twitter.com/0xcda7a" target="_blank">Chris Joel</a></span>
           <span>Code</span>
-        </span>
+        </div>
       </div>
 
       <h3>Special thanks to</h3>
-      <p>Alex Russell, Dominick Ng, Chris Harrelson, Justin Fagnani, Gray Norton, Arthur Evans, Steve Orvell, Dan Freedman, Dimitri Glazkov, Elliott Marquez, Emmanuel Garcia, Fred Schott, Frankie Fu, AJ Ortega, Kate Jeffreys, Keanu Lee, Kevin Schaff, Matt McNulty, Monica Dinculescu, Namchi Do, Peter Burns, Russell Bicknell, Shane Stephens, Scott Miles, Taylor Savage, Brendan Baldwin, Valdrin Koshi, Michael Bleigh, Vanessa Wang, Doug Stockwell and everyone else who helped bring Polymon to life!</p>
+      <div>Alex Russell, Dominick Ng, Chris Harrelson, Justin Fagnani, Gray Norton, Arthur Evans, Steve Orvell, Dan Freedman, Dimitri Glazkov, Elliott Marquez, Emmanuel Garcia, Fred Schott, Frankie Fu, AJ Ortega, Kate Jeffreys, Keanu Lee, Kevin Schaff, Matt McNulty, Monica Dinculescu, Namchi Do, Peter Burns, Russell Bicknell, Shane Stephens, Scott Miles, Taylor Savage, Brendan Baldwin, Valdrin Koshi, Michael Bleigh, Vanessa Wang, Doug Stockwell and everyone else who helped bring Polymon to life!</div>
 
-      <p class="subtitle">Based on an original game design by Chris Joel &amp; Justin Fagnani</p>
+      <div class="subtitle">Based on an original game design by Chris Joel &amp; Justin Fagnani</div>
     </section>
     <section id="controls">
       <a href="/">
