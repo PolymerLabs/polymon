@@ -277,9 +277,9 @@
     "codePoint": "U+1F332",
     "github": "sjmiles",
     "stats": {
-      "attack": 1,
-      "counter": 4,
-      "focus": 6
+      "attack": 2,
+      "counter": 3,
+      "focus": 7
     },
     "name": "Rootsfirmiles",
     "twitter": "scottjmiles",
@@ -434,8 +434,8 @@
     "codePoint": "U+1F981",
     "github": "mattsmcnulty",
     "stats": {
-      "attack": 6,
-      "counter": 4,
+      "attack": 7,
+      "counter": 3,
       "focus": 2
     },
     "name": "Mattata",
@@ -460,9 +460,9 @@
     "codePoint": "U+1F385",
     "github": "x",
     "stats": {
-      "attack": 4,
-      "counter": 6,
-      "focus": 3
+      "attack": 3,
+      "counter": 7,
+      "focus": 2
     },
     "name": "Gläzfather",
     "twitter": "x",
