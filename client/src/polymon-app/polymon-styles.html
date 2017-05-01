@@ -157,28 +157,15 @@
         bottom: 8px;
         padding: 8px;
 
-        border-radius: 8px;
-        border: 2px solid #999999;
-        background-color: #f2f2f2;
+        border-radius: 4px;
+        border: 1px solid #BDBDBD; /* Grey 400 */
+        background-color: #F9F9F9; /* Grey 50 */
 
         @apply(--layout-vertical);
         align-items: stretch;
 
         text-align: center;
         overflow: hidden;
-      }
-
-      :host:after {
-        content: '';
-        position: absolute;
-        box-sizing: border-box;
-        pointer-events: none;
-        border-radius: 6px;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 2px solid #fff;
       }
     </style>
   </template>
