@@ -9,8 +9,7 @@
     },
     "name": "Productasaur",
     "twitter": "taylorthesavage",
-    "flavor": "Product-type. Likes to schedule meetings. Good at having other Polymon battle.",
-    "atSummit": "Yes"
+    "flavor": "Product-type. Likes to schedule meetings. Good at having other Polymon battle."
   },
   {
     "codePoint": "U+1F434",
@@ -22,8 +21,7 @@
     },
     "name": "Horse",
     "twitter": "samccone",
-    "flavor": "horse",
-    "atSummit": "Yes"
+    "flavor": "horse"
   },
   {
     "codePoint": "U+1F98E",
@@ -35,8 +33,7 @@
     },
     "name": "Ginzard",
     "twitter": "wmginsberg",
-    "flavor": "Quick and agile, though enjoys basking in the sun atop a warm rock.",
-    "atSummit": "Yes"
+    "flavor": "Quick and agile, though enjoys basking in the sun atop a warm rock."
   },
   {
     "codePoint": "U+1F410",
@@ -48,8 +45,7 @@
     },
     "name": "Seadata",
     "twitter": "x",
-    "flavor": "It likes to munch on DOM tree leaves while basking under a shadow root.",
-    "atSummit": "Yes"
+    "flavor": "It likes to munch on DOM tree leaves while basking under a shadow root."
   },
   {
     "codePoint": "U+1F418",
@@ -61,8 +57,7 @@
     },
     "name": "Elliophant",
     "twitter": "Elliott_Marquez",
-    "flavor": "Though last to the office, it can quickly sneak up behind you for a \"quick\" question. After gaining speed, it can rampage through issues.",
-    "atSummit": "Yes"
+    "flavor": "Though last to the office, it can quickly sneak up behind you for a \"quick\" question. After gaining speed, it can rampage through issues."
   },
   {
     "codePoint": "U+1F428",
@@ -74,8 +69,7 @@
     },
     "name": "Bobdod",
     "twitter": "rob_dodson",
-    "flavor": "Is a bear or a koala or something. Its secret weapon is the hug. Of death.",
-    "atSummit": "Yes"
+    "flavor": "Is a bear or a koala or something. Its secret weapon is the hug. Of death."
   },
   {
     "codePoint": "U+1F63B",
@@ -87,8 +81,7 @@
     },
     "name": "Meownicat",
     "twitter": "notwaldorf",
-    "flavor": "Meownicat is a byproduct of unchecked Unicode experiments. It is perceptive and smells faintly of blueberries.",
-    "atSummit": "Yes"
+    "flavor": "Meownicat is a byproduct of unchecked Unicode experiments. It is perceptive and smells faintly of blueberries."
   },
   {
     "codePoint": "U+1F409",
@@ -100,8 +93,7 @@
     },
     "name": "Bideldore",
     "twitter": "ebidel",
-    "flavor": "Bideldore will unleash a deadly fire vomit at the mention of native apps or CoffeeScript.",
-    "atSummit": "Yes"
+    "flavor": "Bideldore will unleash a deadly fire vomit at the mention of native apps or CoffeeScript."
   },
   {
     "codePoint": "U+1F34C",
@@ -113,8 +105,7 @@
     },
     "name": "Brainana",
     "twitter": "x",
-    "flavor": "Brainana is clever, but clumsy.  It's friendliness make it an a-peeling addition to any roster.  (Take not to slip on it, though!)",
-    "atSummit": "Yes"
+    "flavor": "Brainana is clever, but clumsy.  It's friendliness make it an a-peeling addition to any roster.  (Take not to slip on it, though!)"
   },
   {
     "codePoint": "U+1F980",
@@ -126,8 +117,7 @@
     },
     "name": "Jigglystache",
     "twitter": "devdocdude",
-    "flavor": "A pedantic type Polymon, Jigglystache's main weapons are sarcasm, persiflage, and an almost fanatical devotion to the web.",
-    "atSummit": "Yes"
+    "flavor": "A pedantic type Polymon, Jigglystache's main weapons are sarcasm, persiflage, and an almost fanatical devotion to the web."
   },
   {
     "codePoint": "U+1F427",
@@ -139,8 +129,7 @@
     },
     "name": "Danguin",
     "twitter": "danfreedman",
-    "flavor": "It usually stays hidden under the snow, but can pop out at any time to solve problems.",
-    "atSummit": "Yes"
+    "flavor": "It usually stays hidden under the snow, but can pop out at any time to solve problems."
   },
   {
     "codePoint": "U+1F648",
@@ -152,8 +141,7 @@
     },
     "name": "Ilmasil",
     "twitter": "x",
-    "flavor": "",
-    "atSummit": "Yes"
+    "flavor": ""
   },
   {
     "codePoint": "U+1F419",
@@ -165,8 +153,7 @@
     },
     "name": "Octorvel",
     "twitter": "x",
-    "flavor": "It will jump at the opportunity to share its deep wisdom. It likes to share for long periods of time.",
-    "atSummit": "Yes"
+    "flavor": "It will jump at the opportunity to share its deep wisdom. It likes to share for long periods of time."
   },
   {
     "codePoint": "U+1F453",
@@ -178,8 +165,7 @@
     },
     "name": "Spector",
     "twitter": "x",
-    "flavor": "It likes to mess around with specifications, imagining it is making them better.",
-    "atSummit": "Yes"
+    "flavor": "It likes to mess around with specifications, imagining it is making them better."
   },
   {
     "codePoint": "U+1F991",
@@ -191,8 +177,7 @@
     },
     "name": "Shquid",
     "twitter": "x",
-    "flavor": "This Polymon will shrug, say \"why not\", and work out a solution when asked deep and meaningful development questions.",
-    "atSummit": "Yes"
+    "flavor": "This Polymon will shrug, say \"why not\", and work out a solution when asked deep and meaningful development questions."
   },
   {
     "codePoint": "U+1F300",
@@ -204,8 +189,7 @@
     },
     "name": "Aerotwist",
     "twitter": "aerotwist",
-    "flavor": "Full of hot air and may trash your stuff.",
-    "atSummit": "Yes"
+    "flavor": "Full of hot air and may trash your stuff."
   },
   {
     "codePoint": "U+26BD",
@@ -217,8 +201,7 @@
     },
     "name": "Valtorb",
     "twitter": "x",
-    "flavor": "Very Focused, can be Blurred only by a soccer ball.",
-    "atSummit": "Yes"
+    "flavor": "Very Focused, can be Blurred only by a soccer ball."
   },
   {
     "codePoint": "U+1F4A3",
@@ -230,8 +213,7 @@
     },
     "name": "KABONS",
     "twitter": "andybons",
-    "flavor": "A fan of chain reactions, KABONS knows that sometimes you have to blow the whole thing up and start fresh.",
-    "atSummit": "Yes"
+    "flavor": "A fan of chain reactions, KABONS knows that sometimes you have to blow the whole thing up and start fresh."
   },
   {
     "codePoint": "U+1F389",
@@ -243,8 +225,7 @@
     },
     "name": "Fredosaurus",
     "twitter": "fredkschott",
-    "flavor": "Tadannosaurus always shows up to celebrate a job well done. But don't be fooled: He's really here to snack on your easy-to-reach plants.",
-    "atSummit": "Yes"
+    "flavor": "Fredosaurus always shows up to celebrate a job well done. But don't be fooled: He's really here to snack on your easy-to-reach plants."
   },
   {
     "codePoint": "U+1F43B",
@@ -257,8 +238,7 @@
     "name": "Beardiak",
     "shortName": "pandabeard",
     "twitter": "mbleigh",
-    "flavor": "Fire(base) type Polymon. Friendly and easygoing, unless you make trouble for the Web Platform. Then watch out!",
-    "atSummit": "Yes"
+    "flavor": "Fire(base) type Polymon. Friendly and easygoing, unless you make trouble for the Web Platform. Then watch out!"
   },
   {
     "codePoint": "U+1F42C",
@@ -270,8 +250,7 @@
     },
     "name": "Dalphinaer",
     "twitter": "dalmaer",
-    "flavor": "Aggregator of things",
-    "atSummit": "Yes"
+    "flavor": "Aggregator of things"
   },
   {
     "codePoint": "U+1F332",
@@ -283,8 +262,7 @@
     },
     "name": "Rootsfirmiles",
     "twitter": "scottjmiles",
-    "flavor": "Ancient Polymon, hard to uproot. It's bark is worse than it's bite.",
-    "atSummit": "Yes"
+    "flavor": "Ancient Polymon, hard to uproot. It's bark is worse than it's bite."
   },
   {
     "codePoint": "U+1F47E",
@@ -296,8 +274,7 @@
     },
     "name": "Alienuel",
     "twitter": "blasten",
-    "flavor": "Alienuel came from a planet in the constellation of sagittarius! ",
-    "atSummit": "Yes"
+    "flavor": "Alienuel came from a planet in the constellation of sagittarius! "
   },
   {
     "codePoint": "U+1F32A",
@@ -309,8 +286,7 @@
     },
     "name": "Noreasturr",
     "twitter": "graynorton",
-    "flavor": "Materializes out of the apparent calm, enveloping friends and enemies alike in a blanket of gray",
-    "atSummit": "Yes"
+    "flavor": "Materializes out of the apparent calm, enveloping friends and enemies alike in a blanket of gray."
   },
   {
     "codePoint": "U+1F98A",
@@ -322,8 +298,7 @@
     },
     "name": "Ricitic",
     "twitter": "rictic",
-    "flavor": "Curious and inquisitive, it loves to bounce from project, trying a little bit of everything. Anxious but excitable.",
-    "atSummit": "Yes"
+    "flavor": "Curious and inquisitive, it loves to bounce from project to project, trying a little bit of everything. Anxious but excitable."
   },
   {
     "codePoint": "U+1F40F",
@@ -336,8 +311,7 @@
     "name": "Ramulan",
     "shortName": "caprani",
     "twitter": "justinfagnani",
-    "flavor": "Obsessively curious, and will eat almost anything. Skilled at balancing in precarious places.",
-    "atSummit": "Yes"
+    "flavor": "Obsessively curious and will eat almost anything. Skilled at balancing in precarious places."
   },
   {
     "codePoint": "U+1F40A",
@@ -349,8 +323,7 @@
     },
     "name": "Keanugator",
     "twitter": "x",
-    "flavor": "It likes to sit in the sun and take a bite out of bugs. It wishes there's a real emoji for alligators.",
-    "atSummit": "Yes"
+    "flavor": "It likes to sit in the sun and take a bite out of bugs. It wishes there's a real emoji for alligators."
   },
   {
     "codePoint": "U+1F332",
@@ -362,8 +335,7 @@
     },
     "name": "Domdriform",
     "twitter": "x",
-    "flavor": "Domdriform is tree-shaped Polymon which can detach, rearrange and reattach its many branches.",
-    "atSummit": "Yes"
+    "flavor": "Domdriform is tree-shaped Polymon which can detach, rearrange and reattach its many branches."
   },
   {
     "codePoint": "U+1F914",
@@ -375,8 +347,7 @@
     },
     "name": "Slightlyoff",
     "twitter": "x",
-    "flavor": "",
-    "atSummit": "Yes"
+    "flavor": ""
   },
   {
     "codePoint": "U+1F43C",
@@ -388,8 +359,7 @@
     },
     "name": "Frankiemon",
     "twitter": "x",
-    "flavor": "I like to build cool things.",
-    "atSummit": "Yes"
+    "flavor": "I like to build cool things."
   },
   {
     "codePoint": "U+1F639",
@@ -440,8 +410,7 @@
     },
     "name": "Mattata",
     "twitter": "mattsmcnulty",
-    "flavor": "King of the jungle. Mostly looks cuddly and chill until another polymon rouses his ire.",
-    "atSummit": "Yes"
+    "flavor": "King of the jungle. Mostly looks cuddly and chill until another polymon rouses his ire."
   },
   {
     "codePoint": "U+1F428",
@@ -479,8 +448,7 @@
     },
     "name": "Mushron",
     "twitter": "x",
-    "flavor": "An unpredictable, shady character. May or may not be poisonous.",
-    "atSummit": "Yes"
+    "flavor": "An unpredictable, shady character. May or may not be poisonous."
   },
   {
     "codePoint": "U+1F43C",
@@ -493,15 +461,13 @@
     "name": "Komorama",
     "shortName": "pandasnore",
     "twitter": "komorama",
-    "flavor": "Big and slow and unintimidating.",
-    "atSummit": "Yes"
+    "flavor": "Big and slow and unintimidating."
   },
   {
     "name": "Writerpuff",
     "twitter": "x",
     "github": "x",
     "codePoint": "U+1F937",
-    "atSummit": "Yes",
     "stats": {
       "attack": 2,
       "focus": 1,
