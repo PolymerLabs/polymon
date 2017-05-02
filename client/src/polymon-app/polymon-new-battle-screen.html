@@ -36,11 +36,30 @@
       #controls {
         @apply --layout-vertical;
         flex: 0 0 auto;
+        margin-top: 8px;
       }
 
       #controls > a {
-        margin-top: 8px;
         width: 100%;
+      }
+
+      #controls > a + a {
+        margin-top: 8px;
+      }
+
+      @media (max-height: 525px) and (orientation: landscape) {
+        #controls {
+          @apply --layout-horizontal-reverse;
+        }
+
+        #controls > a + a {
+          margin-top: 0px;
+          margin-right: 8px;
+        }
+
+        #controls > a#back {
+          width: auto;
+        }
       }
 
       polymon-button {
@@ -107,7 +126,7 @@
       <a id="start" on-tap="__onStartTap">
         <polymon-button>Start a Battle</polymon-button>
       </a>
-      <a href="/polydex">
+      <a id="back" href="/polydex">
         <polymon-button class="alt">Back</polymon-button>
       </a>
     </section>
