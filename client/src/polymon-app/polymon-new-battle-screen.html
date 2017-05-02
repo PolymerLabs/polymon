@@ -10,7 +10,7 @@
 
 <dom-module id="polymon-new-battle-screen">
   <template>
-    <style>
+    <style include="typography">
       :host {
         position: relative;
 
@@ -21,82 +21,61 @@
         @apply --layout-vertical;
         align-items: stretch;
 
-        text-align: center;
+        text-align: initial;
         overflow: hidden;
       }
 
-      #team {
+      #howto {
         flex: 1;
         @apply --layout-vertical;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
-      }
-
-      #team .hidden {
-        display: none;
+        padding: 8px 12px;
       }
 
       #controls {
         @apply --layout-vertical;
         flex: 0 0 auto;
+        margin-top: 8px;
       }
 
-      #controls a {
-        -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
-      }
-
-      #controls > a  {
+      #controls > a {
         width: 100%;
       }
 
-      .bottom-row {
-        @apply --layout-horizontal;
+      #controls > a + a {
+        margin-top: 8px;
       }
 
-      .bottom-row > :first-child {
-        flex: 0;
-      }
+      @media (max-height: 525px) and (orientation: landscape) {
+        #controls {
+          @apply --layout-horizontal-reverse;
+        }
 
-      .bottom-row > :last-child {
-        flex: 1;
-        /*margin-left: 8px;*/
+        #controls > a + a {
+          margin-top: 0px;
+          margin-right: 8px;
+        }
+
+        #controls > a#back {
+          width: auto;
+        }
       }
 
       polymon-button {
         width: 100%;
-        margin-top: 8px;
       }
 
-      #team {
-        color: rgba(0, 0, 0, 0.8);
+      h1, h2 {
+        margin: 0px 0px 0.3em 0px;
       }
 
-      h1 {
-        font-size: 40px;
-        font-weight: bold;
-        text-transform: uppercase;
-        margin: 16px 0;
-      }
-
-      p {
-        font-family: var(--polymon-font-family);
-        font-size: 18px;
-        margin: 0 0 18px;
-      }
-
-      h2 {
-        font-weight: bold;
-        text-transform: uppercase;
-        margin: 8px 0;
+      p, ul {
+        margin: 0px 0px 18px 0px;
       }
 
       ul {
-        text-align: left;
-        margin: 0;
-        margin-bottom: 18px;
         padding-left: 24px;
-        font-family: var(--polymon-font-family);
-        font-size: 18px;
       }
 
       .strong {
@@ -115,13 +94,13 @@
         return-to="[[route.prefix]]">
     </polymon-qr-code-scanner-proxy>
 
-    <section id="team">
+    <section id="howto">
       <h1>How to battle</h1>
       <p>So you've caught 3-5 Polymon and you're ready to get out there and start battling. Follow these instructions and you'll be sure to become a Polymon Master in no time!</p>
 
       <h2>The Basics</h2>
       <ul>
-        <li>Select one of <span class="strong">ATTACK</span>, <span class="strong">FOCUS</span>, or <span class="strong">COUNTER</span></li>
+        <li>Select one of <span class="strong">Attack</span>, <span class="strong">Focus</span>, or <span class="strong">Counter</span>.</li>
         <li>When you tap one of the Action buttons, a drawer will slide up revealing all of your remaining Polymon and their respective statistics for that Action.</li>
         <li>Select a Polymon to lock in your move for the round.</li>
         <li>When both you and your opponent have submitted your moves, an animation will play showing the results of the round.</li>
@@ -131,19 +110,13 @@
 
       <h2>The Rules</h2>
       <ul>
-        <li><span class="strong">ATTACK</span>, <span class="strong">FOCUS</span>, and <span class="strong">COUNTER</span> are analogous to rock, paper, scissors.</li>
-        <li><span class="strong">ATTACK</span> has a 3 point advantage over <span class="strong">FOCUS</span></li>
-        <li><span class="strong">FOCUS</span> has a 3 point advantage over <span class="strong">COUNTER</span></li>
-        <li><span class="strong">COUNTER</span> has a 3 point advantage over <span class="strong">ATTACK</span></li>
+        <li><span class="strong">Attack</span>, <span class="strong">Focus</span>, and <span class="strong">Counter</span> are analogous to rock, paper, scissors.</li>
+        <li><span class="strong">Attack</span> has a 3 point advantage over <span class="strong">Focus</span>.</li>
+        <li><span class="strong">Focus</span> has a 3 point advantage over <span class="strong">Counter</span>.</li>
+        <li><span class="strong">Counter</span> has a 3 point advantage over <span class="strong">Attack</span>.</li>
       </ul>
 
       <p>When the battle starts, you will see your own team on the grassy platform in the foreground, and your opponent's team in the background. You can click the "Opponent Stats" button to snoop on the strength of your opponent's Polymon.</p>
-
-      <!-- <template is="dom-repeat" items="[[teamPolymons]]" as="polymons">
-        <div class="entry [[__entryClass(polymon)]]">
-          <polymon-portrait polymon="[[polymon]]"></polymon-portrait>
-        </div>
-      </template> -->
     </section>
 
     <section id="controls">
@@ -153,14 +126,9 @@
       <a id="start" on-tap="__onStartTap">
         <polymon-button>Start a Battle</polymon-button>
       </a>
-      <div class="bottom-row">
-        <a href="/polydex">
-          <polymon-button class="alt">Back</polymon-button>
-        </a>
-        <!-- <a href="javascript:void(0)">
-          <polymon-button class="help">Tutorial</polymon-button>
-        </a> -->
-      </div>
+      <a id="back" href="/polydex">
+        <polymon-button class="alt">Back</polymon-button>
+      </a>
     </section>
 
   </template>
@@ -169,12 +137,6 @@
       is: 'polymon-new-battle-screen',
 
       behaviors: [PolymonElement],
-
-      properties: {
-        teamPolymons: {
-          type: Array
-        }
-      },
 
       __onStartTap: function() {
         if (this.user) {
