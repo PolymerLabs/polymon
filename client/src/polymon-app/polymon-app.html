@@ -202,6 +202,7 @@
         authenticated="[[authenticated]]"
         music-enabled="[[musicPlaying]]"
         on-request-login="attemptLogin"
+        on-request-logout="attemptLogout"
         on-toggle-audio="toggleAudio">
     </polymon-start-screen>
 
@@ -317,6 +318,10 @@
 
       attemptLogin: function() {
         this.$.auth.signInWithPopup();
+      },
+
+      attemptLogout: function() {
+        this.$.auth.signOut();
       },
 
       toggleAudio: function() {
