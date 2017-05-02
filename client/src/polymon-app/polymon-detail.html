@@ -4,23 +4,20 @@
 <link rel="import" href="polymon-element.html">
 <dom-module id="polymon-detail">
   <template>
-    <style>
+    <style include="typography">
       :host {
         position: absolute;
-        top: 2px;
-        left: 2px;
-        right: 2px;
-        bottom: 2px;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
         overflow: hidden;
-        border-radius: 6px;
 
         pointer-events: none;
         z-index: 2;
 
         transition: opacity 0s 0.5s;
-
         opacity: 0;
-        --polymon-portrait-background: transparent;
 
         box-sizing: border-box;
 
@@ -37,7 +34,7 @@
 
       :host(.active.open) #background {
         transform: scale(22);
-        background-color: #eee;
+        background-color: #f9f9f9;
       }
 
       :host(.active:not(.open)) #portrait {
@@ -62,7 +59,7 @@
 
       #background {
         position: absolute;
-        background-color: #ccc;
+        background-color: #f9f9f9;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
         width: 64px;
@@ -110,15 +107,19 @@
         flex: 1 1 240px;
       }
 
+
       #stats {
-        margin-bottom: 20px;
+        margin: 0 24px 20px 24px;
+        border-bottom: 2px solid #1ce8b5;
       }
 
       #stats > h1 {
         font-size: 2.5em;
         font-weight: bold;
         text-transform: uppercase;
-        margin: 0 0 0.5em;
+        padding-bottom: .25em;
+        margin-bottom: .25em;
+        border-bottom: 2px solid #1ce8b5;
         color: #444;
       }
 
@@ -151,19 +152,8 @@
         width: 100%;
       }
 
-      .attack {
-        color: #F43865;
-        text-shadow: 0 1px 0 #a31733;
-      }
-
-      .focus {
-        color: #2BA8DE;
-        text-shadow: 0 1px 0 #09537E;
-      }
-
-      .counter {
-        color: #8BDE67;
-        text-shadow: 0 1px 0 #498231;
+      .slash {
+        color:#1ce8b5;
       }
 
       @media (max-height: 600px) {
@@ -176,6 +166,12 @@
       @media (min-width: 500px) {
         :host(.active.open) #background {
           transform: scale(30);
+        }
+      }
+
+      @media (min-width: 600px) {
+        #stats {
+          border-bottom: none;
         }
       }
 
@@ -218,9 +214,9 @@
     <section id="info">
       <section id="stats">
         <h1>[[__infoText(polymon.name, caught)]]</h1>
-        <h2 class="attack">Attack: <span>[[__infoText(polymon.stats.attack, caught)]]</span></h2>
-        <h2 class="focus">Focus: <span>[[__infoText(polymon.stats.focus, caught)]]</span></h2>
-        <h2 class="counter">Counter: <span>[[__infoText(polymon.stats.counter, caught)]]</span></h2>
+        <h2 class="attack">Attack <span class="slash">/</span> <span>[[__infoText(polymon.stats.attack, caught)]]</span></h2>
+        <h2 class="focus">Focus <span class="slash">/</span> <span>[[__infoText(polymon.stats.focus, caught)]]</span></h2>
+        <h2 class="counter">Counter <span class="slash">/</span> <span>[[__infoText(polymon.stats.counter, caught)]]</span></h2>
       </section>
       <section id="flavor">
         <span>[[__infoText(polymon.flavor, caught)]]</span>
