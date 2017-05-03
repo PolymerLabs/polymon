@@ -110,7 +110,6 @@
 
       #stats {
         margin: 0 24px 20px 24px;
-        border-bottom: 1px solid #1ce8b5;
       }
 
       #stats > h1 {
@@ -118,8 +117,8 @@
         font-weight: bold;
         text-transform: uppercase;
         padding-bottom: .25em;
+        margin-top: 0em;
         margin-bottom: .25em;
-        border-bottom: 1px solid #1ce8b5;
         color: #444;
       }
 
@@ -169,12 +168,6 @@
         }
       }
 
-      @media (min-width: 600px) {
-        #stats {
-          border-bottom: none;
-        }
-      }
-
       @media (min-width: 750px) {
         :host(.active.open) #background {
           transform: scale(35);
@@ -214,9 +207,11 @@
     <section id="info">
       <section id="stats">
         <h1>[[__infoText(polymon.name, caught)]]</h1>
+        <hr>
         <h2 class="attack">Attack <span class="slash">/</span> <span>[[__infoText(polymon.stats.attack, caught)]]</span></h2>
         <h2 class="focus">Focus <span class="slash">/</span> <span>[[__infoText(polymon.stats.focus, caught)]]</span></h2>
         <h2 class="counter">Counter <span class="slash">/</span> <span>[[__infoText(polymon.stats.counter, caught)]]</span></h2>
+        <hr>
       </section>
       <section id="flavor">
         <span>[[__infoText(polymon.flavor, caught)]]</span>
