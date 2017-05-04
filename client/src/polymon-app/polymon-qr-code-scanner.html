@@ -19,15 +19,17 @@
         background-color: #000;
         opacity: 0;
         pointer-events: none;
-        transform: translateY(10px);
-        transition: transform 0.3s, opacity 0.15s;
+        transition: opacity 0.15s;
         z-index: 3;
       }
 
       :host(.active) {
         opacity: 1;
         pointer-events: all;
-        transform: translateY(0);
+      }
+
+      :host(:not(.has-stream):not(.has-code)) {
+        background-color: #1CE8B5; /* Teal A400 */
       }
 
       polymon-button.alt {
@@ -37,7 +39,27 @@
       #camera {
         @apply --layout-fit;
         pointer-events: none;
-        z-index: 2;
+      }
+
+      #content {
+        @apply --layout-fit;
+        @apply --layout;
+        @apply --layout-vertical;
+        transition: transform 0.3s;
+        transform: translateY(10px);
+      }
+
+      :host(.active) #content {
+        transform: translateY(0px);
+      }
+
+      #content > * {
+        @apply --layout-flex;
+      }
+
+      #main {
+        position: relative;
+        margin: 1em;
       }
 
       #fallback {
@@ -46,33 +68,28 @@
 
         align-items: center;
         justify-content: center;
-        z-index: 1;
 
-        background-color: #1CE8B5; /* Teal A400 */
         color: #536DFE; /* Indigo A200 */
         font-size: 1.5em;
         font-family: var(--polymon-accent-font-family);
 
         opacity: 0;
-        transition: transform 0.3s, opacity 0.15s;
-        transition-delay: 1s;
+        transform: translateY(10px);
       }
 
-      :host(:not(.has-camera)) #fallback {
+      :host(:not(.has-stream):not(.has-code)) #fallback {
         opacity: 1;
+        transform: translateY(0px);
+
+        transition: transform 0.3s, opacity 0.15s;
+        transition-delay: 1s;
       }
 
       #fallback .warning {
         margin: 0 1em;
         display: inline-block;
         max-width: 40rem;
-        transform: translateY(10px);
-        transition: transform 0.3s;
-        transition-delay: 1s;
-      }
-
-      :host(:not(.has-camera)) #fallback .warning {
-        transform: translateY(0px);
+        transition: none;
       }
 
       #fallback .warning::before,
@@ -96,16 +113,37 @@
           );
       }
 
-      #controls {
+      #code-scanned-indicator {
         @apply --layout-fit;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+
+        opacity: 0;
+        transform: translateY(10px);
+
+        transition: opacity 0.3s, transform 0.3s;
+        pointer-events: none;
+      }
+
+      :host(.has-code) #code-scanned-indicator {
+        opacity: 1;
+        transform: translateY(0px);
+        pointer-events: all;
+      }
+
+      #controls {
+        @apply --layout-flex-none;
         @apply --layout-horizontal;
         align-items: flex-end;
-        margin: 1em;
-        z-index: 4;
+        margin: 0px 1em 1em 1em;
       }
 
       #controls > * {
         @apply --layout-flex;
+      }
+
+      #controls > * + * {
+        margin-left: 1em;
       }
 
       #controls > * > polymon-button {
@@ -117,39 +155,14 @@
       }
 
       #upload-container {
-        margin-left: 1em;
         position: relative;
       }
 
       #input {
         @apply --layout-fit;
-        z-index: 2;
         opacity: 0;
-      }
-
-      :host(.has-code) #code-scanned-indicator {
-        opacity: 1;
-        transform: translateY(0px);
-        pointer-events: all;
-      }
-
-      #code-scanned-indicator {
-        @apply --layout-fit;
-        @apply --layout-vertical;
-        @apply --layout-center-center;
-
-        opacity: 0;
-        transform: translateY(10px);
-
-        transition: opacity 0.3s, transform 0.3s;
-        pointer-events: none;
-        z-index: 3;
-        background-color: rgba(0, 0, 0, 0.5);
       }
     </style>
-    <section id="fallback">
-      <span class="warning">Please enable your camera to scan for QR codes!</span>
-    </section>
     <section id="camera">
       <meat-scope-devices
           id="devices"
@@ -166,18 +179,25 @@
           stream="[[stream]]">
       </meat-scope-video>
     </section>
-    <section id="code-scanned-indicator">
-      <polymon-spinner></polymon-spinner>
-    </section>
-    <section id="controls">
-      <a id="back" href="[[returnTo]]">
-        <polymon-button class="alt">Back</polymon-button>
-      </a>
-      <div id="upload-container">
-        <polymon-button>Upload a QR Code Photo</polymon-button>
-        <input id="input" type="file" capture="camera" accept="image/*">
+    <div id="content">
+      <div id="main">
+        <section id="fallback">
+          <span class="warning">Please enable your camera to scan for QR codes!</span>
+        </section>
+        <section id="code-scanned-indicator">
+          <polymon-spinner></polymon-spinner>
+        </section>
       </div>
-    </section>
+      <section id="controls">
+        <a id="back" href="[[returnTo]]">
+          <polymon-button class="alt">Back</polymon-button>
+        </a>
+        <div id="upload-container">
+          <polymon-button>Upload a QR Code Photo</polymon-button>
+          <input id="input" type="file" capture="camera" accept="image/*">
+        </div>
+      </section>
+    </div>
   </template>
   <script>
     Polymer({
@@ -234,8 +254,9 @@
       },
 
       observers: [
+        '__activeChanged(active)',
         '__cameraChanged(camera, hasMultipleCameras)',
-        '__activeChanged(active)'
+        '__streamChanged(stream)'
       ],
 
       listeners: {
@@ -469,14 +490,20 @@
       __cameraChanged: function(camera) {
         this.__updateVideoDisplay();
         if (!camera) {
-          this.classList.remove('has-camera');
           return;
         }
-        this.classList.add('has-camera');
         if (!/environment|rear|back/i.test(camera.label) &&
             this.$.devices.hasMultipleCameras) {
           this.$.devices.switchToNextCamera();
         }
+      },
+
+      __streamChanged: function(stream) {
+        if (!stream) {
+          this.classList.remove('has-stream');
+          return;
+        }
+        this.classList.add('has-stream');
       },
 
       __updateVideoDisplay: function() {
