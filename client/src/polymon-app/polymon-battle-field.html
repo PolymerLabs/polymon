@@ -5,6 +5,7 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-qr-code.html">
+<link rel="import" href="polymon-button.html">
 <dom-module id="polymon-battle-field">
   <template>
     <style>
@@ -181,29 +182,18 @@
       }
 
       .info-button {
-        display: flex;
-        box-sizing: border-box;
-        align-items: center;
-        justify-content: center;
         top: -180px;
         left: 10px;
         position: absolute;
 
-        color: rgba(255, 255, 255, 0.8);
-        border-bottom: 6px solid rgba(255, 255, 255, 0.5);
         border-radius: 12px;
         height: 80px;
         font-size: 28px;
-        padding: 27px 24px 24px;
-        background: rgba(255, 255, 255, 0.25);
-
-        cursor: pointer;
-        -webkit-user-select: none;
-        user-select: none;
+        padding: 24px;
 
         transition: transform 0.3s, opacity 0.3s;
         transform: translateY(-10px);
-        opacity: 1;
+        opacity: 0.85;
       }
 
       #ui {
@@ -326,17 +316,14 @@
       .attribute.attack {
         visibility: visible;
         background-color: #E22D54;
-        border-bottom: 2px solid #A51430;
       }
       .attribute.focus {
         visibility: visible;
         background-color: #76CB53;
-        border-bottom: 2px solid #498231;
       }
       .attribute.counter {
         visibility: visible;
         background-color: #3EBBF0;
-        border-bottom: 2px solid #166E93;
       }
 
       #bottom .attribute {
@@ -395,7 +382,8 @@
 
       #opponent-stats .attributes > span {
         @apply --layout-horizontal;
-        @apply --layout-center-center;
+        @apply --layout-center;
+        @apply --layout-justified;
         margin-bottom: 4px;
       }
 
@@ -446,7 +434,7 @@
     <section class="landscape">
       <div class="background">
         <div class="opposing island">
-          <div class="info-button" on-tap="__onInfoButtonTap">opponent stats</div>
+          <polymon-button class="info-button" on-tap="__onInfoButtonTap">opponent stats</polymon-button>
           <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
             <polymon-portrait
                 polymon="[[teamPosition.polymon]]"

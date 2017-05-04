@@ -6,26 +6,29 @@
     <style>
       :host {
         --polymon-button-background: #536DFE; /* Indigo A200 */
-        --polymon-button-shadow: #435DEE; /* Indigo A200 - #101010 */
 
         -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
         -webkit-tap-highlight-color: transparent;
 
         display: inline-block;
         position: relative;
-        background-color: var(--polymon-button-shadow);
+        background-color: var(--polymon-button-background);
         box-sizing: border-box;
         border-radius: 4px;
+        color: #FFFFFF;
         font-family: var(--polymon-accent-font-family);
         font-weight: bold;
         cursor: pointer;
         text-align: center;
-        padding: 0 0 4px 0;
+        padding: 12px 24px;
       }
 
       :host(.alt) {
         --polymon-button-background: #1CE8B5; /* Teal A400 */
-        --polymon-button-shadow: #0CD8A5; /* Teal A400 - #101010 */
+      }
+
+      :host(.iron-selected) {
+        background-color: #00D4EF; /* Cyan A400 - #101010 */
       }
 
       :host:before {
@@ -35,36 +38,18 @@
         top: 0;
         left: 0;
         right: 0;
-        bottom: 4px;
-        border-radius: 4px;
-        background-color: var(--polymon-button-background);
+        bottom: 0;
+        border-radius: inherit;
       }
 
-      :host(.iron-selected) {
-        background-color: #00D4EF; /* Cyan A400 - #101010 */
-      }
-      :host(.iron-selected):before {
-        background-color: #00E4FF; /* Cyan A400 */
+      :host(.pressed):before {
+        background-color: rgba(0, 0, 0, 0.3);
       }
 
       #content {
         position: relative;
-        padding: 7px 20px 5px;
-        margin: 4px;
-        border-radius: 2px;
-        z-index: 1;
-        color: #FFFFFF;
         pointer-events: none;
         -webkit-user-select: none;
-      }
-
-      :host(.pressed) {
-        padding: 4px 0 0 0;
-        background-color: transparent;
-      }
-      :host(.pressed):before {
-        top: 4px;
-        bottom: 0;
       }
     </style>
     <div id="content">
