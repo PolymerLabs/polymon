@@ -8,7 +8,7 @@
 
 <dom-module id="polymon-start-screen">
   <template>
-    <style>
+    <style include="typography">
       :host {
         @apply --layout-fit;
         @apply --layout-vertical;
@@ -26,11 +26,6 @@
 
         polymon-logo {
           flex-basis: 100%;
-        }
-
-        #options {
-          box-sizing: border-box;
-          margin-right: calc(5% * 0.66);
         }
       }
 
@@ -55,6 +50,8 @@
       #options {
         flex: 1 1 33.33333%;
         position: relative;
+        margin: 0.5rem;
+        font-size: 1.25em;
       }
 
       #options > section {
@@ -103,33 +100,42 @@
       #options .row {
         @apply --layout-horizontal;
         width: 100%;
-        max-width: 280px;
-        margin: 0.5em 0px;
+        max-width: 18rem;
+        margin: 0.375rem 0px;
       }
 
       #options .row > a,
       #options .row > polymon-button {
-        display: inline-block;
+        @apply --layout;
+        @apply --layout-center-justified;
         width: 100%;
-        margin: 0px 0.5em;
-        text-align: center;
-        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+        margin: 0px 0.375rem;
       }
 
       #options .row > a + a {
         width: auto;
         flex-grow: 0;
+        @apply --layout-flex-none;
       }
 
       #options .row > a > polymon-button {
-        width: 100%;
-        height: 100%;
-        font-size: 18px;
+        @apply --layout-flex-auto;
+        --polymon-button-content-wrapper: {
+          padding: 0.6em;
+        };
       }
 
-      #audio-toggle-button {
-        flex-grow: 0;
-        line-height: 1.2em;
+      #options .row > a > polymon-button.icon {
+        --polymon-button-content-wrapper: {
+          @apply --layout;
+          @apply --layout-center-center;
+          padding: 0.6em;
+        };
+      }
+
+      #options .row > a > polymon-button.icon > img {
+        width: 1.2em;
+        height: 1.2em;
       }
     </style>
 
@@ -159,9 +165,15 @@
           </a>
           <a href="javascript:void(0)">
             <polymon-button
-                id="audio-toggle-button"
                 on-tap="requestToggleAudio"
-                class="alt">[[__computeAudioIcon(musicEnabled)]]</polymon-button>
+                class="alt icon">
+              <img src="[[__computeAudioIcon(musicEnabled)]]" alt="Toggle audio">
+            </polymon-button>
+          </a>
+          <a href="javascript:void(0)">
+            <polymon-button on-tap="requestLogout" class="alt icon">
+              <img src="/images/logout_white_24px.svg" alt="Sign out">
+            </polymon-button>
           </a>
         </div>
       </section>
@@ -201,6 +213,10 @@
         this.fire('request-login');
       },
 
+      requestLogout: function() {
+        this.fire('request-logout');
+      },
+
       requestToggleAudio() {
         this.fire('toggle-audio');
       },
@@ -223,8 +239,8 @@
 
       __computeAudioIcon(musicEnabled) {
         return musicEnabled
-            ? '🔊'
-            : '🔇';
+            ? '/images/ic_volume_up_white_24px.svg'
+            : '/images/ic_volume_mute_white_24px.svg';
       }
     });
   </script>
