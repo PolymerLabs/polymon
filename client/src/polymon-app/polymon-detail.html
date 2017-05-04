@@ -115,7 +115,6 @@
       #stats > h1 {
         font-size: 2.5em;
         font-weight: bold;
-        text-transform: uppercase;
         padding-bottom: .25em;
         margin-top: 0em;
         margin-bottom: .25em;
@@ -128,8 +127,6 @@
       }
 
       #flavor {
-        font-family: sans-serif;
-        font-style: italic;
         margin: 0 24px 1em;
         color: #444;
       }
@@ -208,13 +205,13 @@
       <section id="stats">
         <h1>[[__infoText(polymon.name, caught)]]</h1>
         <hr>
-        <h2 class="attack">Attack <span class="slash">/</span> <span>[[__infoText(polymon.stats.attack, caught)]]</span></h2>
-        <h2 class="focus">Focus <span class="slash">/</span> <span>[[__infoText(polymon.stats.focus, caught)]]</span></h2>
-        <h2 class="counter">Counter <span class="slash">/</span> <span>[[__infoText(polymon.stats.counter, caught)]]</span></h2>
+        <h2>Attack <span class="slash">/</span> [[__infoText(polymon.stats.attack, caught)]]</h2>
+        <h2>Focus <span class="slash">/</span> [[__infoText(polymon.stats.focus, caught)]]</h2>
+        <h2>Counter <span class="slash">/</span> [[__infoText(polymon.stats.counter, caught)]]</h2>
         <hr>
       </section>
       <section id="flavor">
-        <span>[[__infoText(polymon.flavor, caught)]]</span>
+        [[__infoText(polymon.flavor, caught)]]
       </section>
     </section>
 
