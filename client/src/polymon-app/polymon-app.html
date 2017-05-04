@@ -111,6 +111,17 @@
       <!-- changes to data-fragments should be reflected here and in the lazy-import
           block at the top of the page -->
       <app-route
+          pattern="/tournament/:id"
+          route="{{route}}"
+          tail="{{tournamentRoute}}"
+          data="{{tournamentRouteData}}"
+          active="{{tournamentRouteActive}}"
+          data-fragments='[
+            "polymon-tournament-screen.html"
+          ]'>
+      </app-route>
+
+      <app-route
           pattern="/code/:data"
           route="{{route}}"
           data="{{codeRouteData}}"
@@ -283,6 +294,12 @@
         active="[[aboutRouteActive]]">
     </polymon-about-screen>
 
+    <polymon-tournament-screen
+        active="[[tournamentRouteActive]]"
+        route="{{tournamentRoute}}"
+        tournament-id="[[tournamentRouteData.id]]">
+    </polymon-tournament-screen>
+
     <polymon-notification-overlay
         id="notificationOverlay"
         notifications="{{notifications}}">
@@ -423,6 +440,14 @@
                 .ref(`/users/${this.user.uid}/battleQueue`).push({
                   action: 'join',
                   battleId: code,
+                  createdAt: Date.now()
+                });
+            break;
+          case 'tournament':
+            firebase.app('polymon').database()
+                .ref(`/users/${this.user.uid}/tournamentQueue`).push({
+                  action: 'join',
+                  token: code,
                   createdAt: Date.now()
                 });
             break;

@@ -1,0 +1,90 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-qr-code.html">
+<link rel="import" href="polymon-tournament-spectator.html">
+
+<dom-module id="polymon-tournament-screen">
+  <template>
+    <style>
+      :host {
+        @apply --layout-fit;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+    <firebase-document
+        app-name="polymon"
+        path="[[tournamentDataPath]]"
+        data="{{tournament}}">
+    </firebase-document>
+
+    <app-route
+        route="{{route}}"
+        pattern="/secret/:value"
+        data="{{secretData}}"
+        active="{{secretConfigured}}">
+    </app-route>
+
+    <app-route
+        route="{{route}}"
+        pattern="/player/:name"
+        data="{{playerSelectionData}}"
+        active="{{playerSelectionActive}}">
+    </app-route>
+
+    <template is="dom-if" if="[[secretConfigured]]">
+      <polymon-qr-code
+          data="[[tournamentJoinUrl]]">
+      </polymon-qr-code>
+    </template>
+    <template is="dom-if" if="[[playerSelectionActive]]">
+      <polymon-tournament-spectator
+          tournament="[[tournament]]"
+          player="[[playerSelectionData.name]]">
+      </polymon-tournament-spectator>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-tournament-screen',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        tournamentId: {
+          type: String
+        },
+
+        tournamentDataPath: {
+          type: String,
+          computed: '__computeTournamentDataPath(tournamentId)'
+        },
+
+        tournamentJoinUrl: {
+          type: String,
+          computed: '__computeTournamentJoinUrl(tournamentId, secretData.value)'
+        },
+
+        secretData: {
+          type: Object
+        }
+      },
+
+      __computeTournamentDataPath: function(tournamentId) {
+        if (tournamentId != null) {
+          return `/tournaments/${tournamentId}`;
+        }
+      },
+
+      __computeTournamentJoinUrl: function(tournamentId, secretValue) {
+        if (secretValue != null) {
+          return `${window.location.origin}/code/tournament.${tournamentId}|${secretValue}`;
+        }
+      }
+    });
+  </script>
+</dom-module>

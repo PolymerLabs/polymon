@@ -1,0 +1,120 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-team-query.html">
+<link rel="import" href="polymon-element.html">
+
+<dom-module id="polymon-tournament-spectator">
+  <template>
+    <style>
+      :host {
+      }
+    </style>
+    <firebase-document
+        app-name="polymon"
+        path="[[battlePath]]"
+        data="{{battle}}">
+    </firebase-document>
+    <firebase-query
+        app-name="polymon"
+        path="[[roundsPath]]"
+        data="{{rounds}}"
+        order-by-child="index">
+    </firebase-query>
+
+    <polymon-team-query
+        user-id="[[spectatedUserId]]"
+        battle-id="[[tournament.currentBattleId]]"
+        battle-rounds="[[rounds]]"
+        battle-status="{{spectatedTeamStatus}}">
+    </polymon-team-query>
+
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-tournament-spectator',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        tournament: {
+          type: Object
+        },
+
+        player: {
+          type: String
+        },
+
+        battle: {
+          type: Object
+        },
+
+        rounds: {
+          type: Array
+        },
+
+        spectatedTeamStatus: {
+          type: Array
+        },
+
+        spectatedRounds: {
+          type: Array,
+          computed: '__computeSpectatedRounds(rounds.*, spectatedUserId)'
+        },
+
+        spectatedUserId: {
+          type: String,
+          computed: '__computeSpectatedUserId(player, tournament.playerOneUserId, tournament.playerTwoUserId)'
+        },
+
+        battlePath: {
+          type: String,
+          computed: '__computeBattlePath(tournament.currentBattleId)'
+        },
+
+        roundsPath: {
+          type: String,
+          computed: '__computeRoundsPath(battlePath)'
+        },
+
+        playerStatusPath: {
+          type: String,
+          computed: '__computePlayerStatusPath(battlePath, spectatedUserId)'
+        }
+      },
+
+      __computeSpectatedRounds: function() {
+        if (this.rounds != null) {
+          return this.rounds.map(round => round[this.spectatedUserId]);
+        }
+      },
+
+      __computeBattlePath: function(battleId) {
+        if (battleId != null) {
+          return `/battles/${battleId}/status`;
+        }
+      },
+
+      __computeRoundsPath: function(battlePath) {
+        if (battlePath != null) {
+          return `${battlePath}/rounds`;
+        }
+      },
+
+      __computePlayerStatusPath: function(battlePath, spectatedUserId) {
+        if (battlePath != null && spectatedUserId != null) {
+          return `${battlePath}/players/${spectatedUserId}`;
+        }
+      },
+
+      __computeSpectatedUserId: function(player, playerOneUserId, playerTwoUserId) {
+        return player === 'one'
+            ? playerOneUserId
+            : playerTwoUserId;
+      }
+    });
+  </script>
+</dom-module>
