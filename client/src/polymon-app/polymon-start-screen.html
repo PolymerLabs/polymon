@@ -39,26 +39,6 @@
         transform: translateY(0);
       }
 
-      :host(.active.authenticated) #for-user {
-        pointer-events: all;
-      }
-
-      :host(.active:not(.authenticated)) #for-anon {
-        pointer-events: all;
-      }
-
-      :host(.authenticated) #for-anon {
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(60px);
-      }
-
-      :host(.authenticated) #for-user {
-        opacity: 1;
-        transform: translateY(0px);
-        transition-delay: 0.5s;
-      }
-
       polymon-carousel {
         flex: 1 0 auto;
       }
@@ -72,74 +52,84 @@
         flex: 1 1 50%;
       }
 
+      #options {
+        flex: 1 1 33.33333%;
+        position: relative;
+      }
+
+      #options > section {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        transition: opacity 0.3s, transform 0.3s;
+
+        display: flex;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+      }
+
       #for-anon {
         opacity: 1;
-        transform: translateY(80px);
+      }
+
+      :host(.authenticated) #for-anon {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-20px);
+      }
+
+      :host(.active:not(.authenticated)) #for-anon {
+        pointer-events: all;
       }
 
       #for-user {
         opacity: 0;
         pointer-events: none;
         transform: translateY(20px);
+      }
+
+      :host(.authenticated) #for-user {
+        opacity: 1;
+        transform: translateY(0px);
         transition-delay: 0.5s;
       }
 
-      #for-anon, #for-user {
-        transition: opacity 0.3s, transform 0.3s;
-      }
-
-      #options {
-        display: flex;
-        position: relative;
-        flex: 1 1 33.33333%;
-      }
-
-      #options > section {
-        flex: 1;
-        @apply --layout-vertical;
-        @apply --layout-center-center;
-      }
-
-      #for-anon {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-        z-index: 1;
-      }
-
-      #options polymon-button {
-        margin-bottom: 1em;
-        width: 50%;
-        max-width: 280px;
-      }
-
-      #options a {
-        width: 100%;
-        text-align: center;
-        -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
-      }
-
-      #options polymon-button {
-        width: 100%;
+      :host(.active.authenticated) #for-user {
+        pointer-events: all;
       }
 
       #options .row {
         @apply --layout-horizontal;
         width: 100%;
         max-width: 280px;
+        margin: 0.5em 0px;
       }
 
-      #options .row a:last-child  {
+      #options .row > a,
+      #options .row > polymon-button {
         display: inline-block;
+        width: 100%;
+        margin: 0px 0.5em;
+        text-align: center;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+      }
+
+      #options .row > a + a {
         width: auto;
         flex-grow: 0;
-        margin-left: 1em;
       }
 
-      #options .row a:last-child > polymon-button {
-        font-size: 22px;
-        line-height: 1em;
+      #options .row > a > polymon-button {
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+      }
+
+      #audio-toggle-button {
+        flex-grow: 0;
+        line-height: 1.2em;
       }
     </style>
 
@@ -153,25 +143,32 @@
 
     <section id="options">
       <section id="for-user">
-        <a href="/map">
-          <polymon-button>Catch Polymon</polymon-button>
-        </a>
-        <a href="/polydex">
-          <polymon-button class="alt">Polydex</polymon-button>
-        </a>
+        <div class="row">
+          <a href="/map">
+            <polymon-button>Catch Polymon</polymon-button>
+          </a>
+        </div>
+        <div class="row">
+          <a href="/polydex">
+            <polymon-button class="alt">Polydex</polymon-button>
+          </a>
+        </div>
         <div class="row">
           <a href="/about">
             <polymon-button class="alt">About</polymon-button>
           </a>
           <a href="javascript:void(0)">
             <polymon-button
+                id="audio-toggle-button"
                 on-tap="requestToggleAudio"
                 class="alt">[[__computeAudioIcon(musicEnabled)]]</polymon-button>
           </a>
         </div>
       </section>
       <section id="for-anon">
-        <polymon-button on-tap="requestLogin">Login with Google</polymon-button>
+        <div class="row">
+          <polymon-button on-tap="requestLogin">Login with Google</polymon-button>
+        </div>
       </section>
     </section>
   </template>
