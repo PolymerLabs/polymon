@@ -2,25 +2,23 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
 <dom-module id="polymon-detail">
   <template>
-    <style>
+    <style include="typography">
       :host {
         position: absolute;
-        top: 2px;
-        left: 2px;
-        right: 2px;
-        bottom: 2px;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
         overflow: hidden;
-        border-radius: 6px;
 
         pointer-events: none;
         z-index: 2;
 
         transition: opacity 0s 0.5s;
-
         opacity: 0;
-        --polymon-portrait-background: transparent;
 
         box-sizing: border-box;
 
@@ -37,7 +35,7 @@
 
       :host(.active.open) #background {
         transform: scale(22);
-        background-color: #eee;
+        background-color: #f9f9f9;
       }
 
       :host(.active:not(.open)) #portrait {
@@ -62,7 +60,7 @@
 
       #background {
         position: absolute;
-        background-color: #ccc;
+        background-color: #f9f9f9;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
         width: 64px;
@@ -110,16 +108,17 @@
         flex: 1 1 240px;
       }
 
+
       #stats {
-        margin-bottom: 20px;
+        margin: 0 24px 20px 24px;
       }
 
       #stats > h1 {
         font-size: 2.5em;
         font-weight: bold;
-        text-transform: uppercase;
-        margin: 0 0 0.5em;
-        color: #444;
+        padding-bottom: .25em;
+        margin-top: 0em;
+        margin-bottom: .25em;
       }
 
       #stats > h2 {
@@ -128,10 +127,7 @@
       }
 
       #flavor {
-        font-family: sans-serif;
-        font-style: italic;
         margin: 0 24px 1em;
-        color: #444;
       }
 
       #controls {
@@ -151,19 +147,8 @@
         width: 100%;
       }
 
-      .attack {
-        color: #F43865;
-        text-shadow: 0 1px 0 #a31733;
-      }
-
-      .focus {
-        color: #2BA8DE;
-        text-shadow: 0 1px 0 #09537E;
-      }
-
-      .counter {
-        color: #8BDE67;
-        text-shadow: 0 1px 0 #498231;
+      .slash {
+        color:#1ce8b5;
       }
 
       @media (max-height: 600px) {
@@ -218,12 +203,14 @@
     <section id="info">
       <section id="stats">
         <h1>[[__infoText(polymon.name, caught)]]</h1>
-        <h2 class="attack">Attack: <span>[[__infoText(polymon.stats.attack, caught)]]</span></h2>
-        <h2 class="focus">Focus: <span>[[__infoText(polymon.stats.focus, caught)]]</span></h2>
-        <h2 class="counter">Counter: <span>[[__infoText(polymon.stats.counter, caught)]]</span></h2>
+        <hr>
+        <h2>Attack <span class="slash">/</span> [[__infoText(polymon.stats.attack, caught)]]</h2>
+        <h2>Focus <span class="slash">/</span> [[__infoText(polymon.stats.focus, caught)]]</h2>
+        <h2>Counter <span class="slash">/</span> [[__infoText(polymon.stats.counter, caught)]]</h2>
+        <hr>
       </section>
       <section id="flavor">
-        <span>[[__infoText(polymon.flavor, caught)]]</span>
+        [[__infoText(polymon.flavor, caught)]]
       </section>
     </section>
 
