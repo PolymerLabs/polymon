@@ -30,11 +30,6 @@
         transform: translateY(0);
       }
 
-      :host(.active) #fallback {
-        opacity: 1;
-        transform: translateY(-10px);
-      }
-
       meat-scope-video {
         text-align: left;
       }
@@ -53,8 +48,9 @@
         z-index: 4;
       }
 
-      #cancel {
+      #back {
         width: 100%;
+        --polymon-button-background: #FF6C00; /* Orange A700 */
       }
 
       a {
@@ -69,19 +65,52 @@
         justify-content: center;
         z-index: 1;
 
+        background-color: #1CE8B5; /* Teal A400 */
+        color: #536DFE; /* Indigo A200 */
+        font-size: 1.5em;
+        font-family: var(--polymon-accent-font-family);
+
         opacity: 0;
-        transform: translateY(0);
         transition: transform 0.3s, opacity 0.15s;
         transition-delay: 1s;
       }
 
+      :host(.active) #fallback {
+        opacity: 1;
+      }
+
       #fallback .warning {
-        margin: 2em 2em 0;
+        margin: 0 1em;
         display: inline-block;
-        max-width: 640px;
-        font-size: 24px;
-        color: #F43865;
-        text-shadow: 0 1px 0 #a31733;
+        max-width: 40rem;
+        transform: translateY(10px);
+        transition: transform 0.3s;
+        transition-delay: 1s;
+      }
+
+      :host(.active) #fallback .warning {
+        transform: translateY(0px);
+      }
+
+      #fallback .warning::before,
+      #fallback .warning::after {
+        display: block;
+        content: '';
+        margin: 1em;
+        height: 0.25em;
+        background-image:
+          linear-gradient(90deg,
+            transparent 0px,
+            transparent 11%,
+            #536DFE 11%, /* Indigo A200 */
+            #536DFE 44%,
+            transparent 44%,
+            transparent 55%,
+            #536DFE 55%,
+            #536DFE 88%,
+            transparent 88%,
+            transparent 100%
+          );
       }
 
       #upload-container {
@@ -144,9 +173,7 @@
     </section>
     <section id="overlay">
       <a href="[[returnTo]]">
-        <polymon-button
-            id="cancel"
-            class="alt">Cancel</polymon-button>
+        <polymon-button id="back">Back</polymon-button>
       </a>
       <div id="upload-container">
         <polymon-button>Upload a QR Code Photo</polymon-button>
