@@ -134,12 +134,13 @@
       #controls {
         @apply --layout-flex-none;
         @apply --layout-horizontal;
-        align-items: flex-end;
+        @apply --layout-end;
         margin: 0px 1em 1em 1em;
       }
 
       #controls > * {
         @apply --layout-flex;
+        @apply --layout;
       }
 
       #controls > * + * {
@@ -147,7 +148,25 @@
       }
 
       #controls > * > polymon-button {
-        width: 100%;
+        @apply --layout-flex;
+      }
+
+      #controls polymon-button {
+        @apply --layout-flex-auto;
+      }
+
+      #controls polymon-button.icon {
+        @apply --layout-flex-none;
+        --polymon-button-content-wrapper: {
+          @apply --layout;
+          @apply --layout-center-center;
+          padding: 0.6em;
+        };
+      }
+
+      #controls polymon-button.icon > img {
+        width: 1.5em;
+        height: 1.5em;
       }
 
       #back {
@@ -193,9 +212,12 @@
           <polymon-button class="alt">Back</polymon-button>
         </a>
         <div id="upload-container">
-          <polymon-button>Upload a QR Code Photo</polymon-button>
+          <polymon-button>Upload a Photo</polymon-button>
           <input id="input" type="file" capture="camera" accept="image/*">
         </div>
+        <polymon-button class="icon" on-click="__changeCamera">
+          <img src="/images/ic_switch_camera_white_24px.svg" alt="Change camera">
+        </polymon-button>
       </section>
     </div>
   </template>
@@ -489,21 +511,10 @@
 
       __cameraChanged: function(camera) {
         this.__updateVideoDisplay();
-        if (!camera) {
-          return;
-        }
-        if (!/environment|rear|back/i.test(camera.label) &&
-            this.$.devices.hasMultipleCameras) {
-          this.$.devices.switchToNextCamera();
-        }
       },
 
       __streamChanged: function(stream) {
-        if (!stream) {
-          this.classList.remove('has-stream');
-          return;
-        }
-        this.classList.add('has-stream');
+        this.classList.toggle('has-stream', !!stream);
       },
 
       __updateVideoDisplay: function() {
@@ -512,7 +523,18 @@
         // displaying the element when we have the camera.
         // TODO remove this method when/if meat-scope-video fixes it.
         this.$.video.style.display = this.camera ? '' : 'none';
-      }
+      },
+
+      __changeCamera: function() {
+        // This is to work around a strange bug (?) where neglecting to stop all
+        // tracks of the previously live stream causes tracks of the next stream
+        // to be completely black and tiny.
+        if (this.stream) {
+          this.stream.getTracks().forEach(track => track.stop());
+        }
+
+        this.$.devices.switchToNextCamera();
+      },
     });
   </script>
 </dom-module>
