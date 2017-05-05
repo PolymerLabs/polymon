@@ -10,7 +10,7 @@
     "start": "gulp",
     "gen-data": "gulp gen-data",
     "deploy-all": "gulp deploy:all",
-    "deploy-hosting": "gulp deploy-hosting",
+    "deploy-hosting": "gulp deploy:hosting",
     "clean": "gulp clean"
   },
   "author": "",
