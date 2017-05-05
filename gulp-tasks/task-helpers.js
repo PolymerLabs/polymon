@@ -1,5 +1,6 @@
+const promisify = require('promisify-node');
 const readJson = require('then-read-json');
-const fs = require('fs');
+const fs = promisify('fs');
 const argv = require('yargs').argv;
 const confirm = require('positive');
 const __spawn = require('child_process').spawn;
@@ -45,47 +46,38 @@ const exec = (cmd) => {
 
   const child = __exec(cmd);
 
-  child.on('data', data => console.log(data))
   child.on('close', code => res(code));
 
   return promisifed;
 };
 
-const generateFirebaseConfig = hostingFolder => {
+const generateFirebaseConfig = async hostingFolder => {
   console.log('generating firebase.json...');
-  let res;
 
-  const generateFirebase = new Promise((resolve) => {
-    res = resolve;
-  });
+  const firebaseConfig = await readJson('./firebaseConfig.json');
 
-  readJson('./firebaseConfig.json').then(firebaseConfig => {
-    firebaseConfig.hosting.public = hostingFolder;
+  firebaseConfig.hosting.public = hostingFolder;
 
-    const firebaseJson = JSON.stringify(firebaseConfig, null, 2) + '\n';
+  const firebaseJson = JSON.stringify(firebaseConfig, null, 2) + '\n';
 
-    fs.writeFile('./firebase.json', firebaseJson, _ => {
-      console.log('firebase.json generated.');
-      res()
-    });
-  });
+  await fs.writeFile('./firebase.json', firebaseJson);
 
-  return generateFirebase;
+  console.log('firebase.json generated!');
 };
 
 const setEnv = async (env='dev') => {
   const environment = argv.env || env;
-  const missingEnv = await exec(`ls -a | grep .${environment}.env.json`, true) == '1';
-  const missingServiceAcct = await exec(`ls -a | grep .${environment}.service-account.json`, true) == '1';
+  const hasEnv = fs.existsSync(`.${environment}.env.json`);
+  const hasServiceAcct = fs.existsSync(`.${environment}.service-account.json`);
 
-  if (missingEnv || missingServiceAcct) {
+  if (!hasEnv || !hasServiceAcct) {
     let error = 'You are missing the following file(s):';
 
-    if (missingEnv) {
+    if (!hasEnv) {
       error += `\n\t.${environment}.env.json`;
     }
 
-    if (missingServiceAcct) {
+    if (!hasServiceAcct) {
       error += `\n\t.${environment}.service-account.json`
     }
 
