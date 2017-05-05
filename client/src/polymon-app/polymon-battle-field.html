@@ -2,10 +2,12 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase.html">
 <link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-qr-code.html">
 <link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-portrait.html">
 <dom-module id="polymon-battle-field">
   <template>
     <style>
@@ -351,10 +353,6 @@
         @apply --layout-horizontal;
         flex: 1;
         align-items: flex-end;
-      }
-
-      #opponent-status {
-
       }
 
       #opponent-stats {
