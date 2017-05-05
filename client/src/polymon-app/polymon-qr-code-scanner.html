@@ -222,7 +222,7 @@
           <input id="input" type="file" capture="camera" accept="image/*">
         </div>
         <polymon-button id="switch-camera" class="icon" on-click="__switchCamera" hidden$="[[!hasMultipleCameras]]">
-          <img src="[[__cameraSwitchIconSrc]]" alt="Switch camera">
+          <img src="[[__switchCameraIconSrc]]" alt="Switch camera">
         </polymon-button>
       </section>
     </div>
@@ -280,7 +280,7 @@
           observer: '__codeChanged'
         },
 
-        __cameraSwitchIconSrc: {
+        __switchCameraIconSrc: {
           type: String,
           value: "/images/ic_switch_camera_white_24px.svg",
         },
@@ -526,7 +526,7 @@
 
       __streamChanged: function(stream) {
         this.classList.toggle('has-stream', !!stream);
-        this.__computeSwitchCameraIconSrc(stream);
+        this.__switchCameraIconSrc = this.__computeSwitchCameraIconSrc(stream);
       },
 
       // This is an observer that sets a property rather than the more proper
@@ -535,25 +535,24 @@
       __computeSwitchCameraIconSrc: function(stream) {
         var defaultSrc = "/images/ic_switch_camera_white_24px.svg";
         if (!stream) {
-          this.__cameraSwitchIconSrc = defaultSrc;
-          return;
+          return defaultSrc;
         }
 
-        var isFront = false;
-        var isBack = false;
+        var hasWordFront = false;
+        var hasWordBack = false;
 
         stream.getTracks().forEach(track => {
-          isFront = isFront || track.label.indexOf("front") > -1;
-          isBack = isBack || track.label.indexOf("back") > -1;
+          hasWordFront = hasWordFront || track.label.indexOf("front") > -1;
+          hasWordBack = hasWordBack || track.label.indexOf("back") > -1;
         });
 
-        if (isFront && !isBack) {
-          this.__cameraSwitchIconSrc = "/images/ic_camera_front_white_24px.svg";
-        } else if (!isFront && isBack) {
-          this.__cameraSwitchIconSrc = "/images/ic_camera_rear_white_24px.svg";
-        } else {
-          this.__cameraSwitchIconSrc = defaultSrc;
+        if (hasWordFront && !hasWordBack) {
+          return "/images/ic_camera_front_white_24px.svg";
+        } else if (!hasWordFront && hasWordBack) {
+          return "/images/ic_camera_rear_white_24px.svg";
         }
+
+        return defaultSrc;
       },
 
       __updateVideoDisplay: function() {
