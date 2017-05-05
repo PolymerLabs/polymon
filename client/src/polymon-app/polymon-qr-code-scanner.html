@@ -10,6 +10,10 @@
 <dom-module id="polymon-qr-code-scanner">
   <template>
     <style>
+      [hidden] {
+        display: none !important;
+      }
+
       :host {
         @apply --layout-fit;
         @apply --layout-vertical;
@@ -96,7 +100,7 @@
       #fallback .warning::after {
         display: block;
         content: '';
-        margin: 1em;
+        margin: 1em 0px;
         height: 0.25em;
         background-image:
           linear-gradient(90deg,
@@ -215,8 +219,8 @@
           <polymon-button>Upload a Photo</polymon-button>
           <input id="input" type="file" capture="camera" accept="image/*">
         </div>
-        <polymon-button class="icon" on-click="__changeCamera">
-          <img src="/images/ic_switch_camera_white_24px.svg" alt="Change camera">
+        <polymon-button class="icon" on-click="__switchCamera" hidden$="[[!hasMultipleCameras]]">
+          <img src="[[__cameraSwitchIconSrc]]" alt="Switch camera">
         </polymon-button>
       </section>
     </div>
@@ -272,6 +276,11 @@
           readOnly: true,
           value: null,
           observer: '__codeChanged'
+        },
+
+        __cameraSwitchIconSrc: {
+          type: String,
+          value: "/images/ic_switch_camera_white_24px.svg",
         },
       },
 
@@ -515,6 +524,34 @@
 
       __streamChanged: function(stream) {
         this.classList.toggle('has-stream', !!stream);
+        this.__computeSwitchCameraIconSrc(stream);
+      },
+
+      // This is an observer that sets a property rather than the more proper
+      // computed property because it needs to have a default value even if
+      // `stream` is undefined, which doesn't trigger the computed property.
+      __computeSwitchCameraIconSrc: function(stream) {
+        var defaultSrc = "/images/ic_switch_camera_white_24px.svg";
+        if (!stream) {
+          this.__cameraSwitchIconSrc = defaultSrc;
+          return;
+        }
+
+        var isFront = false;
+        var isBack = false;
+
+        stream.getTracks().forEach(track => {
+          isFront = isFront || track.label.indexOf("front") > -1;
+          isBack = isBack || track.label.indexOf("back") > -1;
+        });
+
+        if (isFront && !isBack) {
+          this.__cameraSwitchIconSrc = "/images/ic_camera_front_white_24px.svg";
+        } else if (!isFront && isBack) {
+          this.__cameraSwitchIconSrc = "/images/ic_camera_rear_white_24px.svg";
+        } else {
+          this.__cameraSwitchIconSrc = defaultSrc;
+        }
       },
 
       __updateVideoDisplay: function() {
@@ -525,7 +562,7 @@
         this.$.video.style.display = this.camera ? '' : 'none';
       },
 
-      __changeCamera: function() {
+      __switchCamera: function() {
         // This is to work around a strange bug (?) where neglecting to stop all
         // tracks of the previously live stream causes tracks of the next stream
         // to be completely black and tiny.
