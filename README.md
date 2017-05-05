@@ -118,13 +118,13 @@ Alternatively, you can deploy the uncompiled source:
 
 ```sh
 # deploys to dev
-gulp deploy:all:dev:source
+gulp deploy:all:dev:debug
 
 # deploys to prod
-gulp deploy:all:prod:source
+gulp deploy:all:prod:debug
 
 # deploys to arbitrary .firebaserc alias (defaults to dev):
-gulp deploy:all:source --env myFirebasercAlias
+gulp deploy:all:debug --env myFirebasercAlias
 ```
 
 ### Rebuilding
