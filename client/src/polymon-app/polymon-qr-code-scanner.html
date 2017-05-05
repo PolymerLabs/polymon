@@ -10,10 +10,6 @@
 <dom-module id="polymon-qr-code-scanner">
   <template>
     <style>
-      [hidden] {
-        display: none !important;
-      }
-
       :host {
         @apply --layout-fit;
         @apply --layout-vertical;
@@ -152,6 +148,10 @@
         @apply --layout-flex;
       }
 
+      #controls a {
+        text-decoration: none;
+      }
+
       #controls polymon-button {
         @apply --layout-flex-auto;
       }
@@ -170,17 +170,22 @@
         height: 1.5em;
       }
 
-      #back {
+      #controls #back {
         @apply --layout-flex-none;
       }
 
-      #upload-container {
+      #controls #upload-container {
         position: relative;
       }
 
-      #input {
+      #controls #input {
         @apply --layout-fit;
         opacity: 0;
+      }
+
+      :host(:not(.has-stream)) #controls #switch-camera,
+      #controls #switch-camera[hidden] {
+        display: none !important;
       }
     </style>
     <section id="camera">
@@ -216,7 +221,7 @@
           <polymon-button>Upload a Photo</polymon-button>
           <input id="input" type="file" capture="camera" accept="image/*">
         </div>
-        <polymon-button class="icon" on-click="__switchCamera" hidden$="[[!hasMultipleCameras]]">
+        <polymon-button id="switch-camera" class="icon" on-click="__switchCamera" hidden$="[[!hasMultipleCameras]]">
           <img src="[[__cameraSwitchIconSrc]]" alt="Switch camera">
         </polymon-button>
       </section>
