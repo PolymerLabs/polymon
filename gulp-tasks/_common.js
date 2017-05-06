@@ -6,7 +6,6 @@ const firebaseAdmin = require('firebase-admin');
 const firebaseConfigstore = require('firebase-tools/lib/configstore');
 const firebaseDetectProjectRoot = require('firebase-tools/lib/detectProjectRoot');
 const firebaseLoadRCFile = require('firebase-tools/lib/loadRCFile.js');
-const confirm = require('positive');
 const qrCodeDataPath =
     path.resolve(__dirname, '../client/qr-code-data.json');
 const polymonJsonPath = path.resolve(__dirname, '../polymon.json');
@@ -68,26 +67,19 @@ function getPolymonEnv() {
 }
 
 function cleanEverything() {
-  const confirmed =
-      confirm(`This action will reset the state of Polymon by deleting a lot of things. Are you sure you want to do this? [y/N] `, false);
+  return getPolymonEnv().then(polymon => {
+    const db = polymon.firebaseApp.database();
+    const polymonsRef = db.ref('/polymons');
+    const referencesRef = db.ref('/references');
+    const usersRef = db.ref('/users');
 
-  if (confirmed) {
-    return getPolymonEnv().then(polymon => {
-      const db = polymon.firebaseApp.database();
-      const polymonsRef = db.ref('/polymons');
-      const referencesRef = db.ref('/references');
-      const usersRef = db.ref('/users');
-
-      return Promise.all([
-        del([qrCodeDataPath]),
-        polymonsRef.remove(),
-        referencesRef.remove(),
-        usersRef.remove()
-      ]);
-    });
-  } else {
-    return Promise.reject(new Error('Clean canceled by user intervention.'));
-  }
+    return Promise.all([
+      del([qrCodeDataPath]),
+      polymonsRef.remove(),
+      referencesRef.remove(),
+      usersRef.remove()
+    ]);
+  });
 }
 
 module.exports = exports = {
