@@ -6,6 +6,7 @@ const confirm = require('positive');
 const __spawn = require('child_process').spawn;
 const __exec = require('child_process').exec;
 const buildDestination = './build';
+const unlock = require('./unlock-polydex.js');
 
 const spawn = (cmd, stdout) => {
   let res;
@@ -185,6 +186,11 @@ const quickStart = async _ => {
   await serve();
 };
 
+const unlockPolydex = async (uid, env='dev') => {
+  await generateFirebaseConfig(env);
+  await unlock.unlockPolydex(uid);
+};
+
 module.exports = {
   build: build,
   clean: clean,
@@ -194,5 +200,6 @@ module.exports = {
   generateData: generateData,
   install: install,
   quickStart: quickStart,
-  serve: serve
+  serve: serve,
+  unlockPolydex: unlockPolydex
 }

@@ -1,5 +1,6 @@
 const gulp = require('gulp');
 const readJson = require('then-read-json');
+const argv = require('yargs').argv;
 const tasks = require('./gulp-tasks/task-helpers.js');
 
 gulp.task('clean', async _ => tasks.clean());
@@ -32,5 +33,18 @@ gulp.task('deploy:hosting:prod:debug', async _ => tasks.deployHosting('prod', 'c
 gulp.task('deploy:functions', async _ => tasks.deployFunctionsDatabase());
 gulp.task('deploy:functions:dev', async _ => tasks.deployFunctionsDatabase('dev'));
 gulp.task('deploy:functions:prod', async _ => tasks.deployFunctionsDatabase('prod'));
+
+gulp.task('unlock-polydex', async _ => {
+  await tasks.unlockPolydex(argv.uid);
+  console.log('Finished \'unlock-polydex\'');
+});
+gulp.task('unlock-polydex:dev', async _ => {
+  await tasks.unlockPolydex(argv.uid, 'dev');
+  console.log('Finished \'unlock-polydex\'');
+});
+gulp.task('unlock-polydex:prod', async _ => {
+  await tasks.unlockPolydex(argv.uid, 'prod');
+  console.log('Finished \'unlock-polydex\'');
+});
 
 gulp.task ('default', async _ => tasks.quickStart());

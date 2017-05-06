@@ -86,7 +86,6 @@ module.exports = exports = {
   makeReference,
   getPolymonEnv,
   cleanEverything,
-
   qrCodeDataPath,
   polymonJsonPath,
   serviceAccountJsonPath,
