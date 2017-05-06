@@ -45,8 +45,6 @@ class Tournament extends DataObject {
       return false;
     }
 
-    return currentBattleId != null;
-
     const battle = new Battle(this.db, currentBattleId);
     const battleIsFinished = await battle.isFinished();
 
@@ -74,6 +72,7 @@ class Tournament extends DataObject {
           `${this.formalName} cannot resolve the current battle until it is finished.`);
     }
 
+    const battle = new Battle(this.db, tournament.currentBattleId);
     const winningUserId = await battle.getWinningUserId();
 
     await Promise.all([
@@ -125,16 +124,13 @@ class Tournament extends DataObject {
   async getPreviousRound() {
     const snapshot = await this.ref.child('rounds')
         .orderByChild('recordedAt')
-        .once('value')
+        .once('value');
 
-    const rounds = snapshot.val();
-
-    if (rounds && rounds.length > 0) {
-      return rounds.pop();
-    }
+    const rounds = [];
+    snapshot.forEach(round => rounds.push(round));
 
     return (rounds && rounds.length > 0)
-        ? rounds.pop()
+        ? rounds.pop().val()
         : null;
   }
 }

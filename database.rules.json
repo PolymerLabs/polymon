@@ -54,6 +54,7 @@
       }
     },
     "tournaments": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('admin').val() === true",
       "$tournament": {
         ".read": "true",
         "createdAt": {},
