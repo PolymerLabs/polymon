@@ -37,7 +37,7 @@ class Tournament extends DataObject {
     return tournament;
   }
 
-  async hasOngoingBattle() {
+  async hasUnfinishedBattle() {
     const tournament = await this.read();
     const currentBattleId = tournament.currentBattleId;
 
@@ -54,9 +54,9 @@ class Tournament extends DataObject {
   }
 
   async createBattle() {
-    const hasOngoingBattle = await this.hasOngoingBattle();
+    const hasUnfinishedBattle = await this.hasUnfinishedBattle();
 
-    if (hasOngoingBattle) {
+    if (hasUnfinishedBattle) {
       throw new Error(`${this.formalName} has an ongoing battle.`);
     }
 
@@ -67,18 +67,18 @@ class Tournament extends DataObject {
 
   async resolveCurrentBattle() {
     const tournament = await this.read();
-    const battle = new Battle(this.db, tournament.currentBattleId);
-    const battleFinished = await battle.isFinished();
+    const hasUnfinishedBattle = await this.hasUnfinishedBattle();
 
-    if (!battleFinished) {
-      throw new Error(`${battle.formalName} is not finished yet.`);
+    if (hasUnfinishedBattle) {
+      throw new Error(
+          `${this.formalName} cannot resolve the current battle until it is finished.`);
     }
 
     const winningUserId = await battle.getWinningUserId();
 
     await Promise.all([
       this.ref.child('rounds').push({
-        battleId: battle.id,
+        battleId: tournament.currentBattleId,
         winningUserId: winningUserId,
         playerOneUserId: tournament.playerOneUserId,
         playerTwoUserId: tournament.playerTwoUserId,
