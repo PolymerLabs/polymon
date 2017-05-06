@@ -5,8 +5,8 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",
-  "theme_color": "#1CA6FC",
-  "background_color": "#1CA6FC",
+  "theme_color": "#536DFE",
+  "background_color": "#536DFE",
   "icons": [{
     "src": "images/polymon_icon.png",
     "sizes": "192x192",
