@@ -8,7 +8,7 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-spinner.html">
 <dom-module id="polymon-qr-code-scanner">
-  <template>
+  <template strip-whitespace>
     <style>
       :host {
         @apply --layout-fit;
@@ -90,7 +90,7 @@
         position: relative;
       }
 
-      #upload-container polymon-button {
+      #upload-container > * {
         width: 100%;
       }
 
@@ -150,7 +150,10 @@
       </a>
       <div id="upload-container">
         <polymon-button>Upload a QR Code Photo</polymon-button>
-        <input id="input" type="file" capture="camera" accept="image/*">
+        <!-- NOTE(valdrin) the `capture` attribute causes Android to directly
+         open the camera instead of asking the user to choose between camera or
+         the photo library -->
+        <input id="input" type="file" accept="image/*">
       </div>
     </section>
   </template>
@@ -164,11 +167,6 @@
         returnTo: {
           type: String,
           notify: true
-        },
-
-        scanning: {
-          type: Boolean,
-          value: false
         },
 
         imagePreview: {
@@ -205,7 +203,7 @@
           readOnly: true,
           value: null,
           observer: '__codeChanged'
-        },
+        }
       },
 
       observers: [
@@ -223,12 +221,27 @@
             URL.revokeObjectURL(oldUploadedImageUrl);
           } catch (e) {}
         }
+        if (uploadedImageUrl) {
+          // Disable the camera while processing the image.
+          this.stopScanning();
+          this.__captureFromUploadedImage()
+            .catch(error => {
+              this.__showError(error);
+              // Restart scanning after 3 seconds to give time to read the
+              // notification. Re-use debouncer so it can be stopped after.
+              this.debounce('scan', this.scan, 3000);
+            })
+            .then(() => {
+              // Reset the fallback file input:
+              this.$.input.value = null;
+              // Unset the uploaded image URL if one exists:
+              this._setUploadedImageUrl(null);
+            });
+        }
       },
 
       __onInputChange: function() {
         let file = this.$.input.files[0];
-        let currentUpload = this.imageUpload || Promise.resolve();
-
         if (file != null) {
           this._setUploadedImageUrl(URL.createObjectURL(file));
         }
@@ -236,7 +249,6 @@
 
       get ownerHost() {
         let root = Polymer.dom(this).getOwnerRoot();
-
         return (root && root.host) || document;
       },
 
@@ -256,61 +268,41 @@
         this.unlisten(this.__ownerHost,
             'polymon-qr-code-scanner-activate', '__onActivateRequest');
         this.unlisten(this.__ownerHost,
-            'polymon-qr-code-scanner-deactivate', '__onDeactivateRequest')
+            'polymon-qr-code-scanner-deactivate', '__onDeactivateRequest');
         this.__ownerHost = null;
       },
 
       scan: function() {
-        let self = this;
         this.$.media.active = true;
-
-        (function doScan() {
-          if (!self.$.media.active) {
+        // Wait a second, then check if can scan.
+        this.debounce('scan', () => {
+          if (!this.$.media.active) {
             return;
           }
-
-          self.__scanForQrCode().then(data => {
-            let validData;
-
-            if (self.urlRe.test(data)) {
-              let [url, fragment] = data.match(self.originRe) || [];
-              validData = fragment;
-            } else if (self.polymonCodeRe.test(data)){
-              validData = data;
-            }
-
-            if (validData == null) {
-              console.log('Cannot use QR Code data:', data);
-              return;
-            }
-
-            console.log('Usable QR Code data:', validData);
-
-            let [type, code] = validData.split('.');
-
-            self._setCode({
-              type,
-              code,
-              continueTo: self.returnTo
-            });
-          }).catch(error => {
-            console.log('QR Code scan failed:', error);
-          }).then(() => {
-            setTimeout(doScan, 1000);
-          });
-        })();
+          // If we have a stream, capture, else we just wait for another second.
+          const capturePromise = this.stream ? this.__captureFromCamera() : Promise.resolve();
+          capturePromise
+            .catch(error => this.__showError(error))
+            .then(() => this.scan());
+        }, 1000);
       },
 
       stopScanning: function() {
         console.log('STOP SCANNING');
+
+        // Stop any debouncer that might change `active`.
+        this.cancelDebouncer('activeChanged');
+        this.cancelDebouncer('scan');
+
+        // Hide qr-code notification.
+        this.fire('polymon-hide-notification', {
+          notificationId: 'qr-code'
+        });
+
         // Stop the media stream:
         this.$.media.active = false;
         // Clear the video src, blacking it out:
         this.$.video.$.video.src = null;
-        // Reset the fallback file input:
-        this.$.input.value = null;
-        // Unset the uploaded image URL if one exists:
-        this._setUploadedImageUrl(null);
         // Unset the scanned code if one exists:
         this._setCode(null);
       },
@@ -318,6 +310,9 @@
       __codeChanged: function(code) {
         if (code != null) {
           this.$.media.active = false;
+          this.fire('polymon-hide-notification', {
+            notificationId: 'qr-code'
+          });
           this.fire('polymon-code', code);
           this.classList.add('has-code');
         } else {
@@ -340,8 +335,12 @@
       __activeChanged: function() {
         this.debounce('activeChanged', () => {
           if (this.active) {
+            this.listen(window, 'focus', '__windowFocusChanged');
+            this.listen(window, 'blur', '__windowFocusChanged');
             this.scan();
           } else {
+            this.unlisten(window, 'focus', '__windowFocusChanged');
+            this.unlisten(window, 'blur', '__windowFocusChanged');
             this.stopScanning();
           }
         }, 300);
@@ -361,7 +360,8 @@
           } catch (e) {
             reject(e);
           }
-        });
+        })
+          .then(data => this.__saveQRCode(data));
       },
 
       __captureFromUploadedImage: function() {
@@ -376,45 +376,23 @@
           image.y = 0;
           image.crossOrigin = "Anonymous";
 
-          if (this.__transform == null) {
-            this.__transform = new MeatScopeTransform();
-          } else {
-            // Rotate the transform each time to accomodate for Safari's
-            // dizzyingly awful tendency to rotate photos taken with the camera
-            // to "fix" user orientation. Eventually we will get it right (but
-            // it might take a few tries):
-            this.__transform.rotateRight();
-          }
-
           image.onload = event => {
             let captureRect = new MeatScopeCaptureRect(
                 image, 600, 0, 0, image.width, image.height);
 
             this.imagePreview
-                .draw(image, captureRect, this.__transform);
+                .draw(image, captureRect, new MeatScopeTransform());
 
             try {
               resolve(this.__process(this.imagePreview, captureRect));
-              this.__transform = null;
             } catch (e) {
               reject(e);
             }
           };
 
           image.src = this.uploadedImageUrl;
-        });
-      },
-
-      __scanForQrCode: function() {
-        return new Promise((resolve, reject) => {
-          if (this.camera != null) {
-            resolve(this.__captureFromCamera());
-          } else if (this.uploadedImageUrl != null) {
-            resolve(this.__captureFromUploadedImage());
-          } else {
-            reject(new Error('No valid image data source available.'));
-          }
-        });
+        })
+        .then(data => this.__saveQRCode(data));
       },
 
       __process: function(imagePreview, captureRect) {
@@ -441,6 +419,44 @@
         });
       },
 
+      /**
+       * Parses and saves `data` into `code`, throws an error if `data` is
+       * not valid.
+       */
+      __saveQRCode: function(data) {
+        let validData;
+        if (this.urlRe.test(data)) {
+          const [url, fragment] = data.match(this.originRe) || [];
+          validData = fragment;
+        } else if (this.polymonCodeRe.test(data)){
+          validData = data;
+        }
+        if (validData) {
+          const [type, code] = validData.split('.');
+          this._setCode({
+            type,
+            code,
+            continueTo: this.returnTo
+          });
+        } else {
+          throw new Error('Cannot use QR Code data');
+        }
+      },
+
+      __showError: function(error) {
+        this.fire('polymon-show-notification', {
+          notificationId: 'qr-code',
+          message: (error.message || error)
+        });
+      },
+
+      __windowFocusChanged: function(event) {
+        if (event.type === 'focus') {
+          this.scan();
+        } else {
+          this.stopScanning();
+        }
+      },
 
 
       __cameraChanged: function(camera) {

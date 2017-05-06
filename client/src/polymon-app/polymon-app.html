@@ -263,6 +263,11 @@
         notifications="{{notifications}}">
     </polymon-notification-overlay>
 
+    <polymon-notification-overlay
+        id="clientNotificationOverlay"
+        notifications="{{clientNotifications}}">
+    </polymon-notification-overlay>
+
     <polymon-music
         id="music"
         playing="{{musicPlaying}}"
@@ -301,12 +306,21 @@
 
         musicPlaying: {
           type: Boolean
+        },
+
+        clientNotifications: {
+          type: Array,
+          value: function() {
+            return [];
+          }
         }
       },
 
       listeners: {
         'polymon-code': '__onPolymonCode',
-        'polydex-entry-added': '__onPolydexEntryAdded'
+        'polydex-entry-added': '__onPolydexEntryAdded',
+        'polymon-show-notification': '__onShowNotification',
+        'polymon-hide-notification': '__onHideNotification'
       },
 
       observers: [
@@ -467,6 +481,36 @@
             window.ga('send', 'pageview', this.route.path);
           }
         });
+      },
+
+      __onShowNotification: function(event) {
+        const i = this.__getIndexOfClientNotification(event.detail.notificationId);
+        console.log('show notification', i);
+        event.detail.acknowledged = false;
+        if (i > -1) {
+          this.set(`clientNotifications.${i}`, event.detail);
+        } else {
+          this.push('clientNotifications', event.detail);
+        }
+      },
+
+      __onHideNotification: function(event) {
+        const i = this.__getIndexOfClientNotification(event.detail.notificationId);
+        console.log('hide notification', i);
+        if (i > -1) {
+          this.set(`clientNotifications.${i}.acknowledged`, true);
+        }
+      },
+
+      __getIndexOfClientNotification: function(notificationId) {
+        if (this.clientNotifications.length && notificationId) {
+          for (let i = 0; i < this.clientNotifications.length; i++) {
+            if (this.clientNotifications[i].notificationId === notificationId) {
+              return i;
+            }
+          }
+        }
+        return -1;
       }
     });
   </script>
