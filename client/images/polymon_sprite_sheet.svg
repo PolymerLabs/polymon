@@ -11,7 +11,7 @@
 	.st5{fill:url(#SVGID_3_);}
 	.st6{fill:url(#SVGID_4_);}
 	.st7{fill:url(#SVGID_5_);}
-	.st8{fill:url(#XMLID_4_);}
+	.st8{fill:#536DFE;}
 	.st9{fill:#FDC300;}
 	.st10{opacity:0.33;fill:#FF9D00;}
 	.st11{opacity:0.33;fill:#F4E07D;}
@@ -947,10 +947,6 @@
 	</g>
 </g>
 <g id="Layer_58">
-	<linearGradient id="XMLID_4_" gradientUnits="userSpaceOnUse" x1="736" y1="949.8406" x2="736" y2="905.5">
-		<stop  offset="0" style="stop-color:#F82154"/>
-		<stop  offset="1" style="stop-color:#FF6A6E"/>
-	</linearGradient>
 	<polygon id="XMLID_1_" class="st8" points="761.6,916.59 755.2,905.5 742.4,905.5 723.2,938.76 716.8,927.67 729.6,905.5 
 		716.8,905.5 704,927.67 710.4,938.76 716.8,949.84 729.6,949.84 748.8,916.59 755.2,927.67 742.4,949.84 755.2,949.84 
 		761.6,938.76 768,927.67 	"/>
