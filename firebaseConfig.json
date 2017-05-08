@@ -3,7 +3,7 @@
     "rules": "database.rules.json"
   },
   "hosting": {
-    "public": "build/client",
+    "public": "build",
     "ignore": [
       "qr-code-viewer.html"
     ],

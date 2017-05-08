@@ -8,6 +8,20 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-notification-overlay.html">
 <link rel="import" href="polymon-lazy-loader.html">
+<!-- Chagnes to lazy loading should be reflected here and in the data-fragments
+    of the app routes -->
+<link rel="lazy-import" href="polymon-polydex-query.html">
+<link rel="lazy-import" href="polymon-qr-code-scanner.html">
+<link rel="lazy-import" href="polymon-map.html">
+<link rel="lazy-import" href="polymon-start-screen.html">
+<link rel="lazy-import" href="polymon-caught-screen.html">
+<link rel="lazy-import" href="polymon-panel.html">
+<link rel="lazy-import" href="polymon-polydex.html">
+<link rel="lazy-import" href="polymon-new-battle-screen.html">
+<link rel="lazy-import" href="polymon-battle-screen.html">
+<link rel="lazy-import" href="polymon-coded-url-screen.html">
+<link rel="lazy-import" href="polymon-about-screen.html">
+<link rel="lazy-import" href="polymon-music.html">
 
 <dom-module id="polymon-app">
   <template>
@@ -85,7 +99,8 @@
 
     <polymon-lazy-loader
         route="{{route}}">
-
+      <!-- changes to data-fragments should be reflected here and in the lazy-import
+          block at the top of the page -->
       <app-route
           pattern="/code/:data"
           route="{{route}}"
@@ -230,12 +245,8 @@
       <polymon-new-battle-screen
           active="[[newBattleRouteActive]]"
           route="{{newBattleRoute}}"
-          team="[[team]]"
-          user="[[user]]"
-          user-data="{{userData}}">
+          user="[[user]]">
       </polymon-new-battle-screen>
-      <polymon-battle-tutorial>
-      </polymon-battle-tutorial>
     </polymon-panel>
 
     <polymon-battle-screen
@@ -302,6 +313,10 @@
 
         musicPlaying: {
           type: Boolean
+        },
+
+        queryParams: {
+          type: Object
         }
       },
 
