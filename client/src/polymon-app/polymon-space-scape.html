@@ -1,0 +1,72 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="polymon-space-scape">
+  <template>
+    <style>
+      :host {
+        @apply --layout-fit;
+        overflow: hidden;
+      }
+
+      #space {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 1920px;
+        height: 3240px;
+        background-image: url('../../images/polymon_space_scape.png');
+        transition: transform 3s;
+        transform: translate(-50%, -66.6666%);
+      }
+
+      :host(.outer) #space {
+        transform: translate(-50%, 0);
+      }
+
+      #logo {
+        position: absolute;
+        top: 0;
+        left: 50%;
+
+        width: 640px;
+        height: 384px;
+
+        background-image: url('../../images/logo_io.png');
+
+        transition: transform 1s, opacity 0.5s;
+        transition-delay: 2s;
+        transform: translate(-50%, 100px);
+        opacity: 1;
+      }
+
+      :host(.outer) #logo {
+        transition-delay: 0s;
+        transform: translate(-50%, 200px);
+        opacity: 0;
+      }
+    </style>
+    <div id="space"></div>
+    <div id="logo"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-space-scape',
+
+      properties: {
+        outer: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        'reflectToClass(outer, "outer")'
+      ],
+
+      reflectToClass: function(val, className) {
+        this.classList.toggle(className, val);
+      }
+    });
+  </script>
+</dom-module>

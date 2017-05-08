@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-team-query.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-space-scape.html">
 
 <dom-module id="polymon-tournament-spectator">
   <template>
@@ -30,6 +31,17 @@
         battle-status="{{spectatedTeamStatus}}">
     </polymon-team-query>
 
+    <polymon-space-scape outer="[[__stateIsActive(state)]]"></polymon-space-scape>
+
+    <!--
+    <template is="dom-repeat" items="[[spectatedTeamStatus]]" as="teamPosition">
+      <polymon-portrait
+          polymon="[[teamPosition.polymon]]"
+          caught="[[!teamPosition.movePerformed]]">
+      </polymon-portrait>
+    </template>
+    -->
+
 
 
   </template>
@@ -54,6 +66,12 @@
 
         rounds: {
           type: Array
+        },
+
+        state: {
+          type: String,
+          computed: '__computeState(tournament.state)',
+          observer: '__stateChanged'
         },
 
         spectatedTeamStatus: {
@@ -83,6 +101,28 @@
         playerStatusPath: {
           type: String,
           computed: '__computePlayerStatusPath(battlePath, spectatedUserId)'
+        }
+      },
+
+      __stateIsActive: function(state) {
+        return state === 'active';
+      },
+
+      __stateChanged: function(state, oldState) {
+        console.log('The state used to be', oldState);
+        console.log('The state is now', state);
+        if (oldState != null) {
+          this.classList.remove(oldState);
+        }
+
+        if (state != null) {
+          this.classList.add(state);
+        }
+      },
+
+      __computeState: function(state) {
+        if (state != null) {
+          return state;
         }
       },
 
