@@ -185,7 +185,7 @@
 
       :host(:not(.has-stream)) #controls #switch-camera,
       #controls #switch-camera[hidden] {
-        display: none !important;
+        display: none;
       }
     </style>
     <section id="camera">
@@ -546,8 +546,8 @@
         var hasWordBack = false;
 
         stream.getTracks().forEach(track => {
-          hasWordFront = hasWordFront || track.label.indexOf("front") > -1;
-          hasWordBack = hasWordBack || track.label.indexOf("back") > -1;
+          hasWordFront = hasWordFront || /front/i.test(track.label);
+          hasWordBack = hasWordBack || /environment|rear|back/i.test(track.label);
         });
 
         if (hasWordFront && !hasWordBack) {
