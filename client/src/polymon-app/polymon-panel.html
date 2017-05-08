@@ -13,19 +13,18 @@
       #container {
         position: absolute;
         height: 100%;
-        width: 300%;
+        width: 100%;
         top: 0;
         left: 0;
+        @apply --layout-horizontal;
+
+        overflow: visible;
 
         will-change: transform;
       }
 
-      #container {
-        @apply --layout-horizontal;
-      }
-
       #container ::content > * {
-        flex: 1 1 calc(100% / 3);
+        flex: 0 0 100%;
       }
     </style>
     <section id="container">
@@ -50,7 +49,7 @@
       ],
 
       __activeIndexChanged: function() {
-        this.$.container.style.transform = `translateX(-${this.activeIndex * 100 / 3}%)`
+        this.$.container.style.transform = `translateX(-${this.activeIndex * 100}%)`
       },
 
       __activeChanged: function() {
