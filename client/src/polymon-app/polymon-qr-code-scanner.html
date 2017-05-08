@@ -19,46 +19,44 @@
         background-color: #000;
         opacity: 0;
         pointer-events: none;
-        transform: translateY(10px);
-        transition: transform 0.3s, opacity 0.15s;
+        transition: opacity 0.15s;
         z-index: 3;
       }
 
       :host(.active) {
         opacity: 1;
         pointer-events: all;
-        transform: translateY(0);
       }
 
-      :host(.active) #fallback {
-        opacity: 1;
-        transform: translateY(-10px);
+      :host(:not(.has-stream):not(.has-code)) {
+        background-color: #1CE8B5; /* Teal A400 */
       }
 
-      meat-scope-video {
-        text-align: left;
+      polymon-button.alt {
+        --polymon-button-background: #FF6C00; /* Orange A700 */
       }
 
       #camera {
         @apply --layout-fit;
         pointer-events: none;
-        z-index: 2;
       }
 
-      #overlay {
+      #content {
         @apply --layout-fit;
-        @apply --layout-horizontal;
-        align-items: flex-end;
+        @apply --layout;
+        @apply --layout-vertical;
+        transition: transform 0.3s;
+        transform: translateY(10px);
+      }
+
+      :host(.active) #content {
+        transform: translateY(0px);
+      }
+
+      #main {
+        @apply --layout-flex;
+        position: relative;
         margin: 1em;
-        z-index: 4;
-      }
-
-      #cancel {
-        width: 100%;
-      }
-
-      a {
-        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
       }
 
       #fallback {
@@ -67,43 +65,49 @@
 
         align-items: center;
         justify-content: center;
-        z-index: 1;
+
+        color: #536DFE; /* Indigo A200 */
+        font-size: 1.5em;
+        font-family: var(--polymon-accent-font-family);
 
         opacity: 0;
-        transform: translateY(0);
+        transform: translateY(10px);
+      }
+
+      :host(:not(.has-stream):not(.has-code)) #fallback {
+        opacity: 1;
+        transform: translateY(0px);
+
         transition: transform 0.3s, opacity 0.15s;
         transition-delay: 1s;
       }
 
       #fallback .warning {
-        margin: 2em 2em 0;
+        margin: 0 1em;
         display: inline-block;
-        max-width: 640px;
-        font-size: 24px;
-        color: #F43865;
-        text-shadow: 0 1px 0 #a31733;
+        max-width: 40rem;
+        transition: none;
       }
 
-      #upload-container {
-        flex: 1;
-        margin-left: 1em;
-        position: relative;
-      }
-
-      #upload-container polymon-button {
-        width: 100%;
-      }
-
-      #input {
-        @apply --layout-fit;
-        z-index: 2;
-        opacity: 0;
-      }
-
-      :host(.has-code) #code-scanned-indicator {
-        opacity: 1;
-        transform: translateY(0px);
-        pointer-events: all;
+      #fallback .warning::before,
+      #fallback .warning::after {
+        display: block;
+        content: '';
+        margin: 1em 0px;
+        height: 0.25em;
+        background-image:
+          linear-gradient(90deg,
+            transparent 0px,
+            transparent 11%,
+            #536DFE 11%, /* Indigo A200 */
+            #536DFE 44%,
+            transparent 44%,
+            transparent 55%,
+            #536DFE 55%,
+            #536DFE 88%,
+            transparent 88%,
+            transparent 100%
+          );
       }
 
       #code-scanned-indicator {
@@ -116,13 +120,74 @@
 
         transition: opacity 0.3s, transform 0.3s;
         pointer-events: none;
-        z-index: 3;
-        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      :host(.has-code) #code-scanned-indicator {
+        opacity: 1;
+        transform: translateY(0px);
+        pointer-events: all;
+      }
+
+      #controls {
+        @apply --layout-flex-none;
+        @apply --layout-horizontal;
+        @apply --layout-end;
+        margin: 0px 1em 1em 1em;
+      }
+
+      #controls > * {
+        @apply --layout-flex;
+        @apply --layout;
+      }
+
+      #controls > * + * {
+        margin-left: 1em;
+      }
+
+      #controls > * > polymon-button {
+        @apply --layout-flex;
+      }
+
+      #controls a {
+        text-decoration: none;
+      }
+
+      #controls polymon-button {
+        @apply --layout-flex-auto;
+      }
+
+      #controls polymon-button.icon {
+        @apply --layout-flex-none;
+        --polymon-button-content-wrapper: {
+          @apply --layout;
+          @apply --layout-center-center;
+          padding: 0.6em;
+        };
+      }
+
+      #controls polymon-button.icon > img {
+        width: 1.5em;
+        height: 1.5em;
+      }
+
+      #controls #back {
+        @apply --layout-flex-none;
+      }
+
+      #controls #upload-container {
+        position: relative;
+      }
+
+      #controls #input {
+        @apply --layout-fit;
+        opacity: 0;
+      }
+
+      :host(:not(.has-stream)) #controls #switch-camera,
+      #controls #switch-camera[hidden] {
+        display: none;
       }
     </style>
-    <section id="fallback">
-      <span class="warning">Please enable your camera to scan for QR codes!</span>
-    </section>
     <section id="camera">
       <meat-scope-devices
           id="devices"
@@ -139,20 +204,28 @@
           stream="[[stream]]">
       </meat-scope-video>
     </section>
-    <section id="code-scanned-indicator">
-      <polymon-spinner></polymon-spinner>
-    </section>
-    <section id="overlay">
-      <a href="[[returnTo]]">
-        <polymon-button
-            id="cancel"
-            class="alt">Cancel</polymon-button>
-      </a>
-      <div id="upload-container">
-        <polymon-button>Upload a QR Code Photo</polymon-button>
-        <input id="input" type="file" capture="camera" accept="image/*">
+    <div id="content">
+      <div id="main">
+        <section id="fallback">
+          <span class="warning">Please enable your camera to scan for QR codes!</span>
+        </section>
+        <section id="code-scanned-indicator">
+          <polymon-spinner></polymon-spinner>
+        </section>
       </div>
-    </section>
+      <section id="controls">
+        <a id="back" href="[[returnTo]]">
+          <polymon-button class="alt">Back</polymon-button>
+        </a>
+        <div id="upload-container">
+          <polymon-button>Upload a Photo</polymon-button>
+          <input id="input" type="file" capture="camera" accept="image/*">
+        </div>
+        <polymon-button id="switch-camera" class="icon" on-click="__switchCamera" hidden$="[[!hasMultipleCameras]]">
+          <img src="[[__switchCameraIconSrc]]" alt="Switch camera">
+        </polymon-button>
+      </section>
+    </div>
   </template>
   <script>
     Polymer({
@@ -207,14 +280,20 @@
           observer: '__codeChanged'
         },
 
+        __switchCameraIconSrc: {
+          type: String,
+          value: "/images/ic_switch_camera_white_24px.svg",
+        },
+
         hasMultipleCameras: {
           type: Boolean
         }
       },
 
       observers: [
+        '__activeChanged(active)',
         '__cameraChanged(camera, hasMultipleCameras)',
-        '__activeChanged(active)'
+        '__streamChanged(stream)'
       ],
 
       listeners: {
@@ -445,17 +524,39 @@
         });
       },
 
-
-
       __cameraChanged: function(camera) {
         this.__updateVideoDisplay();
-        if (!camera) {
-          return;
+      },
+
+      __streamChanged: function(stream) {
+        this.classList.toggle('has-stream', !!stream);
+        this.__switchCameraIconSrc = this.__computeSwitchCameraIconSrc(stream);
+      },
+
+      // This is an observer that sets a property rather than the more proper
+      // computed property because it needs to have a default value even if
+      // `stream` is undefined, which doesn't trigger the computed property.
+      __computeSwitchCameraIconSrc: function(stream) {
+        var defaultSrc = "/images/ic_switch_camera_white_24px.svg";
+        if (!stream) {
+          return defaultSrc;
         }
-        if (!/environment|rear|back/i.test(camera.label) &&
-            this.$.devices.hasMultipleCameras) {
-          this.$.devices.switchToNextCamera();
+
+        var hasWordFront = false;
+        var hasWordBack = false;
+
+        stream.getTracks().forEach(track => {
+          hasWordFront = hasWordFront || /front/i.test(track.label);
+          hasWordBack = hasWordBack || /environment|rear|back/i.test(track.label);
+        });
+
+        if (hasWordFront && !hasWordBack) {
+          return "/images/ic_camera_front_white_24px.svg";
+        } else if (!hasWordFront && hasWordBack) {
+          return "/images/ic_camera_rear_white_24px.svg";
         }
+
+        return defaultSrc;
       },
 
       __updateVideoDisplay: function() {
@@ -464,7 +565,18 @@
         // displaying the element when we have the camera.
         // TODO remove this method when/if meat-scope-video fixes it.
         this.$.video.style.display = this.camera ? '' : 'none';
-      }
+      },
+
+      __switchCamera: function() {
+        // This is to work around a strange bug (?) where neglecting to stop all
+        // tracks of the previously live stream causes tracks of the next stream
+        // to be completely black and tiny.
+        if (this.stream) {
+          this.stream.getTracks().forEach(track => track.stop());
+        }
+
+        this.$.devices.switchToNextCamera();
+      },
     });
   </script>
 </dom-module>
