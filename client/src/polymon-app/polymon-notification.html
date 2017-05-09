@@ -2,10 +2,11 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-styles.html">
+<link rel="import" href="polymon-button.html">
 
 <dom-module id="polymon-notification">
   <template>
-    <style>
+    <style include="typography">
       :host {
         display: flex;
         flex-direction: row;
@@ -17,9 +18,9 @@
         box-sizing: border-box;
         width: 100%;
         padding: 1em;
-        color: rgba(0, 0, 0, 0.65);
-        background-color: rgba(255, 255, 255, 0.9);
-        font-family: var(--polymon-font-family);
+        color: #FFFFFF;
+        background-color: #536DFE; /* Indigo A200 */
+        font-family: var(--polymon-accent-font-family);
         z-index: 10;
 
         opacity: 0;
@@ -36,44 +37,17 @@
         pointer-events: all;
       }
 
-      :host:before {
-        content: '';
-        display: block;
-        flex: 0 0 auto;
-        line-height: 1em;
-        margin: 0.5em 1em 0.5em 0.5em;
-        background-image: url(/images/polymon_sprite_sheet.svg);
-        background-size: 1000%;
-        background-position: calc(-3/9 * 100%) calc(-3/9 * 100%);
-        width: 32px;
-        height: 32px;
-      }
-
-      :host(.error):before {
-        background-position: calc(-1/9 * 100%) calc(-3/9 * 100%);
-      }
-
       #content {
         flex: 1;
       }
 
       #button {
-        color: #fafafa;
-        background-color: #1ca6fc;
-        box-shadow: 0px 1px 0px #09537E;
-        border-radius: 4px;
-        line-height: 1em;
-        padding: 1em;
-        margin: 0.5em;
-      }
-
-      :host(.error) #button {
-        background-color: #EC4236;
-        box-shadow: 0px 1px 0px #8C0300;
+        flex: 0 0 auto;
+        margin-left: 0.5em;
       }
     </style>
     <span id="content">[[notification.message]]</span>
-    <div id="button">OK</div>
+    <polymon-button id="button" class="alt" on-tap="__onButtonTap">OK</polymon-button>
   </template>
   <script>
     Polymer({
@@ -92,10 +66,6 @@
           computed: '__computeType(notification.type)',
           observer: '__typeChanged'
         }
-      },
-
-      listeners: {
-        'button.tap': '__onButtonTap'
       },
 
       __computeType: function(type) {
