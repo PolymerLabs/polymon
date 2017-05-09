@@ -50,6 +50,20 @@
         }
       },
 
+      reflectToClass: function(val, className) {
+        this.classList.toggle(className, val);
+      },
+
+      equalsAny: function(l, ...r) {
+        for (var i = 0; i < r.length; i++) {
+          if (l === r[i]) {
+            return true;
+          }
+        }
+
+        return false;
+      },
+
       or: function() {
         for (var i = 0; i < arguments.length; ++i) {
           if (arguments[i]) {

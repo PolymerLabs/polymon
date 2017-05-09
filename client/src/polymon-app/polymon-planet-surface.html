@@ -1,0 +1,138 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<dom-module id="polymon-planet-surface">
+  <template>
+    <style>
+      :host {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 1920px;
+        height: 310px;
+        overflow: hidden;
+
+        transition: transform 1s;
+        transition-delay: 0s;
+        transform: translate(0px, 175%);
+      }
+
+      #fragments {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 10px;
+        left: 0;
+
+        transition: none;
+        transform-origin: 50% 3050px;
+
+        transform: rotate(0deg);
+      }
+
+      :host(.double-rotation) #fragments {
+        transition: transform 1s cubic-bezier(.63,.1,.44,.89);
+        transition-delay: 2s;
+        transform: rotate(-90deg);
+      }
+
+      :host(.single-rotation) #fragments {
+        transition: transform 2s cubic-bezier(.63,.1,.44,.89);
+        transition-delay: 3s;
+        transform: rotate(-45deg);
+      }
+
+      .planet-fragment {
+        position: absolute;
+        left: -576px;
+        width: 3072px;
+        height: 1080px;
+
+        left: 50%;
+        transform-origin: 50% 3050px;
+        transform: translate(-50%, 0);
+
+        background: url('../../images/polymon_planet_surface.png');
+      }
+
+      .planet-fragment.two {
+        transform: translate(-50%, 0) rotate(45deg);
+      }
+
+      .planet-fragment.three {
+        transform: translate(-50%, 0) rotate(90deg);
+      }
+
+      :host(.show) {
+        transition-delay: 2s;
+        transform: translate(0px, 0px);
+      }
+    </style>
+    <div id="fragments">
+      <div class="planet-fragment"></div>
+      <div class="planet-fragment two"></div>
+      <div class="planet-fragment three"></div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-planet-surface',
+
+      properties: {
+        team: {
+          type: Array
+        },
+
+        show: {
+          type: Boolean,
+          observer: '__showChanged'
+        },
+
+        rotationQueue: {
+          type: Object,
+          readOnly: true,
+          value: () => Promise.resolve()
+        }
+      },
+
+      rotate() {
+        return this.__doRotate('single-rotation');
+      },
+
+      doubleRotate() {
+        return this.__doRotate('double-rotation');
+      },
+
+      __doRotate(className) {
+        const rotationQueue = this.rotationQueue.then(() =>
+            new Promise((resolve) => {
+              this.classList.remove(className);
+
+              window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                  const onTransitionend = event => {
+                    this.$.fragments.removeEventListener('transitionend', onTransitionend);
+                    this.classList.remove(className);
+                    resolve();
+                  };
+
+                  this.$.fragments.addEventListener('transitionend', onTransitionend);
+                  this.classList.add(className);
+                });
+              });
+            }));
+
+        this._setRotationQueue(rotationQueue);
+
+        return this.rotationQueue;
+      },
+
+      __showChanged(show) {
+        if (show) {
+          this.classList.add('show');
+        } else {
+          this.classList.remove('show');
+        }
+      }
+    });
+  </script>
+</dom-module>

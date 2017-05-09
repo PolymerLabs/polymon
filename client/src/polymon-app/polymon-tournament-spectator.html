@@ -5,17 +5,41 @@
 <link rel="import" href="polymon-team-query.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-space-scape.html">
+<link rel="import" href="polymon-portrait.html">
+<link rel="import" href="polymon-planet-surface.html">
+<link rel="import" href="polymon-tournament-marquee.html">
 
 <dom-module id="polymon-tournament-spectator">
   <template>
     <style>
       :host {
+        @apply --layout-fit;
+      }
+
+      #team {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        width: 640px;
+        height: 200px;
+        bottom: 100px;
+        left: 50%;
+
+        transform: translate(-50%, 0);
+
+        --polymon-portrait-background: transparent;
       }
     </style>
     <firebase-document
         app-name="polymon"
         path="[[battlePath]]"
         data="{{battle}}">
+    </firebase-document>
+    <firebase-document
+        app-name="polymon"
+        path="[[playerStatusPath]]"
+        data="{{spectatedPlayerStatus}}">
     </firebase-document>
     <firebase-query
         app-name="polymon"
@@ -31,21 +55,49 @@
         battle-status="{{spectatedTeamStatus}}">
     </polymon-team-query>
 
-    <polymon-space-scape outer="[[__stateIsActive(state)]]"></polymon-space-scape>
+    <polymon-tournament-logo></polymon-tournament-logo>
 
-    <!--
-    <template is="dom-repeat" items="[[spectatedTeamStatus]]" as="teamPosition">
-      <polymon-portrait
-          polymon="[[teamPosition.polymon]]"
-          caught="[[!teamPosition.movePerformed]]">
-      </polymon-portrait>
-    </template>
-    -->
+    <polymon-space-scape outer="[[equalsAny(presentationState, 'battlefield', 'show-move')]]"></polymon-space-scape>
 
+    <polymon-planet-surface
+        id="planet"
+        team="[[spectatedTeamStatus]]"
+        show="[[equalsAny(presentationState, 'waiting', 'ready', 'countdown', 'victory')]]">
+    </polymon-planet-surface>
 
+    <polymon-asteroid-belt></polymon-asteroid-belt>
+
+    <polymon-tournament-marquee
+        id="marquee"
+        player="[[player]]"
+        show="[[equalsAny(presentationState, 'waiting', 'ready', 'countdown', 'victory')]]">
+    </polymon-tournament-marquee>
+
+    <div id="team">
+      <template is="dom-repeat" items="[[spectatedTeamStatus]]" as="teamPosition">
+        <polymon-portrait
+            polymon="[[teamPosition.polymon]]"
+            caught="[[!teamPosition.movePerformed]]">
+        </polymon-portrait>
+      </template>
+    </div>
 
   </template>
   <script>
+    const PresentationState = {
+      WAITING: 'waiting',
+      READY: 'ready',
+      COUNTDOWN: 'countdown',
+      BATTLEFIELD: 'battlefield',
+      SHOW_MOVE: 'show-move',
+      VICTORY: 'victory'
+    };
+
+    const TournamentState = {
+      WAITING: 'waiting',
+      ACTIVE: 'active'
+    };
+
     Polymer({
       is: 'polymon-tournament-spectator',
 
@@ -68,10 +120,23 @@
           type: Array
         },
 
-        state: {
+        spectatedPlayerStatus: {
+          type: Object,
+          observer: '__spectatedPlayerStatusChanged'
+        },
+
+        presentationState: {
           type: String,
-          computed: '__computeState(tournament.state)',
-          observer: '__stateChanged'
+          readOnly: true,
+          notify: true,
+          value: PresentationState.WAITING,
+          observer: '__presentationStateChanged'
+        },
+
+        tournamentState: {
+          type: String,
+          computed: '__computeTournamentState(tournament.state)',
+          observer: '__tournamentStateChanged'
         },
 
         spectatedTeamStatus: {
@@ -85,7 +150,7 @@
 
         spectatedUserId: {
           type: String,
-          computed: '__computeSpectatedUserId(player, tournament.playerOneUserId, tournament.playerTwoUserId)'
+          computed: '__computeSpectatedUserId(player, tournament.*)'
         },
 
         battlePath: {
@@ -104,56 +169,123 @@
         }
       },
 
-      __stateIsActive: function(state) {
-        return state === 'active';
+      __doIdleRotationWhileWaiting() {
+        const idleRotation = () => this.$.planet.rotate().then(() => {
+          if (this.presentationState === PresentationState.WAITING) {
+            idleRotation();
+          }
+        });
+
+        idleRotation();
+        this.$.marquee.ready = false;
       },
 
-      __stateChanged: function(state, oldState) {
-        console.log('The state used to be', oldState);
-        console.log('The state is now', state);
-        if (oldState != null) {
-          this.classList.remove(oldState);
-        }
+      __displayPlayerTeam() {
+        return this.$.planet.doubleRotate().then(() => {
+          this.$.marquee.ready = true;
+          return new Promise(resolve => setTimeout(resolve, 3000))
+        });
+      },
 
-        if (state != null) {
-          this.classList.add(state);
+      __performCountdownSequence() {
+        // Countdown numbers...
+        return new Promise(resolve => setTimeout(resolve, 5000));
+      },
+
+      __presentationStateChanged(state, oldState) {
+        switch (state) {
+          case PresentationState.WAITING:
+            this.__doIdleRotationWhileWaiting();
+            break;
+          case PresentationState.READY:
+            this.__displayPlayerTeam();
+            break;
+          case PresentationState.COUNTDOWN:
+            this.__performCountdownSequence().then(() => {
+              this._setPresentationState(PresentationState.BATTLEFIELD);
+            });
+            break;
+          case PresentationState.BATTLEFIELD:
+            break;
+          case PresentationState.SHOW_MOVE:
+            break;
+          case PresentationState.VICTORY:
+            break;
         }
       },
 
-      __computeState: function(state) {
+      __tournamentStateChanged(state, oldState) {
+        console.log('The tournament state used to be', oldState);
+        console.log('The tournament state is now', state);
+
+        switch (state) {
+          case TournamentState.ACTIVE:
+            if (oldState === 'waiting') {
+              this._setPresentationState(PresentationState.COUNTDOWN);
+            } else {
+              this._setPresentationState(PresentationState.BATTLEFIELD);
+            }
+            break;
+          case TournamentState.WAITING:
+            if (oldState === 'active') {
+              this._setPresentationState(PresentationState.VICTORY);
+            } else {
+              this._setPresentationState(PresentationState.WAITING);
+            }
+            break;
+          default:
+            console.error(`Unknown tournament state: ${state}`);
+            break;
+        }
+      },
+
+      __spectatedPlayerStatusChanged() {
+        if (this.spectatedPlayerStatus != null &&
+            this.tournamentState === TournamentState.WAITING) {
+          this._setPresentationState(PresentationState.READY);
+        }
+      },
+
+      __computeTournamentState(state) {
         if (state != null) {
           return state;
         }
       },
 
-      __computeSpectatedRounds: function() {
+      __computeSpectatedRounds() {
         if (this.rounds != null) {
           return this.rounds.map(round => round[this.spectatedUserId]);
         }
       },
 
-      __computeBattlePath: function(battleId) {
+      __computeBattlePath(battleId) {
         if (battleId != null) {
           return `/battles/${battleId}/status`;
         }
       },
 
-      __computeRoundsPath: function(battlePath) {
+      __computeRoundsPath(battlePath) {
         if (battlePath != null) {
           return `${battlePath}/rounds`;
         }
       },
 
-      __computePlayerStatusPath: function(battlePath, spectatedUserId) {
+      __computePlayerStatusPath(battlePath, spectatedUserId) {
         if (battlePath != null && spectatedUserId != null) {
           return `${battlePath}/players/${spectatedUserId}`;
         }
       },
 
-      __computeSpectatedUserId: function(player, playerOneUserId, playerTwoUserId) {
+      __computeSpectatedUserId(player) {
+        const tournament = this.tournament;
+
+        if (tournament == null) {
+          return null;
+        }
+
         return player === 'one'
-            ? playerOneUserId
-            : playerTwoUserId;
+            ? tournament.playerOneUserId
+            : tournament.playerTwoUserId;
       }
     });
   </script>
