@@ -10,6 +10,7 @@
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-detail.html">
 <link rel="import" href="polymon-polydex-query.html">
+<link rel="import" href="polymon-renderable-behavior.html">
 
 <dom-module id="polymon-polydex">
   <template>
@@ -24,6 +25,10 @@
 
         text-align: center;
         overflow: hidden;
+      }
+
+      [hidden] {
+        display: none !important;
       }
 
       a {
@@ -218,6 +223,7 @@
     </section>
 
     <polymon-detail
+        id="detail"
         active="[[showPolymonRouteActive]]"
         polymon-id="[[showPolymonData.polymonId]]"
         caught="[[__isCaught(showPolymonData.polymonId, caughtPolymons.length)]]">
@@ -228,7 +234,8 @@
       is: 'polymon-polydex',
 
       behaviors: [
-        PolymonElement
+        PolymonElement,
+        PolymonRenderableBehavior
       ],
 
       properties: {
@@ -269,6 +276,28 @@
 
       listeners: {
         'cancel-team-swap.tap': '__onCancelTeamSwapTap'
+      },
+
+      render: function(shouldBeVisible=false, config) {
+        if (this.__hidingTimeout) {
+          this.cancelAsync(this.__hidingTimeout)
+          this.__hidingTimeout = null;
+        }
+
+        if (shouldBeVisible) {
+          this.$.team.removeAttribute('hidden');
+          this.$.index.removeAttribute('hidden');
+          this.$.controls.removeAttribute('hidden');
+          this.$.detail.removeAttribute('hidden');
+
+        } else {
+          this._hidingTimeout = this.async(() => {
+            this.$.team.setAttribute('hidden', true);
+            this.$.index.setAttribute('hidden', true);
+            this.$.controls.setAttribute('hidden', true);
+            this.$.detail.setAttribute('hidden', true);
+          }, this.hideDelay);
+        }
       },
 
       __onPolymonAnchorClick: function(event) {

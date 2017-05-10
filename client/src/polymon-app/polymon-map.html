@@ -7,6 +7,8 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-map-overlay.html">
 <link rel="import" href="polymon-polydex-query.html">
+<link rel="import" href="polymon-renderable-behavior.html">
+
 <dom-module id="polymon-map">
   <template>
     <style>
@@ -16,6 +18,10 @@
         background-color: #EAEAEA; /* Grey background color from Maps. */
         transition: -webkit-filter 0.3s, opacity 0.3s;
         opacity: 0;
+      }
+
+      :host([hidden]) {
+        display: none;
       }
 
       :host(.active) {
@@ -125,7 +131,8 @@
       is: 'polymon-map',
 
       behaviors: [
-        PolymonElement
+        PolymonElement,
+        PolymonRenderableBehavior
       ],
 
       properties: {

@@ -1,0 +1,113 @@
+<link rel="import" href="../../bower_components/iron-selector/iron-multi-selectable.html">
+
+<script>
+  (() => {
+    /** @polymerBehavior */
+    const PolymonRenderControllerBehaviorImpl = {
+      properties: {
+        siteMap: {
+          type: Object
+        },
+
+        attrForSelected: {
+          type: String,
+          value: 'page-name'
+        },
+
+        renderPath: {
+          type: String,
+          observer: '_renderPathChanged'
+        },
+
+        multi: {
+          type: Boolean,
+          value: true
+        },
+
+        activateEvent: {
+          type: String,
+          value: 'ignore'
+        },
+
+        selectable: {
+          type: String,
+          value: '[page-name]'
+        },
+
+        selectedClass: {
+          type: String,
+          value: 'rendered'
+        }
+      },
+
+      listeners: {
+        'iron-select': '_renderElement',
+        'iron-deselect': '_renderElement',
+        'polymon-renderable-attached': '_renderElement'
+      },
+
+      renderChildren: function(path) {
+        console.log(path);
+        if (!this.siteMap) {
+          return null;
+        }
+
+        const pathParts = path.split('/');
+        let subMap = this.siteMap;
+
+        for(const pathPart of pathParts) {
+          let dirtySubmap = subMap._default || subMap[pathPart];
+
+          // ends in /, use previous level
+          if (pathPart === '' && !dirtySubmap) {
+            break;
+          }
+
+          subMap = dirtySubmap;
+
+          if (subMap === undefined) {
+            console.log(pathParts, pathPart);
+            return null;
+          }
+        }
+
+        const newIds = subMap._elements;
+        this.selectedValues = Array.from(newIds);
+        console.log(this.selectedValues, subMap, pathParts);
+        return this.selectedValues;
+      },
+
+      _renderElement: function(e) {
+        const element = e.detail.item;
+        console.log(this.selectedValues, this);
+        if (element == this || !element.getAttribute('page-name')) {
+          return;
+        }
+
+        const renderFn = element.render;
+        const pageName = element.getAttribute('page-name');
+        const shouldRender = this.selectedValues.indexOf(pageName) >= 0;
+        e.stopPropagation();
+
+        if (renderFn) {
+          console.log(shouldRender, element);
+          element.render(shouldRender, { path: this.renderPath });
+
+        } else if(Polymer.isInstance(element)) {
+          console.log(element);
+          console.error(`No render function for ${element.getAttribute('page-name')}`);
+        }
+      },
+
+      _renderPathChanged: function() {
+        this.renderChildren(this.renderPath);
+      }
+    };
+
+    /** @polymerBehavior */
+    PolymonRenderControllerBehavior = [
+      Polymer.IronMultiSelectableBehavior,
+      PolymonRenderControllerBehaviorImpl
+    ];
+  })();
+</script>

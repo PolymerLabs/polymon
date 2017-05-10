@@ -8,6 +8,7 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-notification-overlay.html">
 <link rel="import" href="polymon-lazy-loader.html">
+<link rel="import" href="polymon-render-controller.html">
 <!-- Chagnes to lazy loading should be reflected here and in the data-fragments
     of the app routes -->
 <link rel="lazy-import" href="polymon-space-background.html">
@@ -217,83 +218,97 @@
 
     </polymon-lazy-loader>
 
-    <polymon-qr-code-scanner
-        unresolved
-        id="scanner">
-    </polymon-qr-code-scanner>
+    <polymon-render-controller
+        site-map="[[siteMap]]"
+        render-path="[[route.path]]">
+      <polymon-qr-code-scanner
+          unresolved
+          page-name="scanner"
+          id="scanner">
+      </polymon-qr-code-scanner>
 
-    <polymon-space-background prevent-load="[[!logoLoaded]]"></polymon-space-background>
+      <polymon-space-background prevent-load="[[!logoLoaded]]"></polymon-space-background>
 
-    <polymon-map
-        unresolved
-        id="map"
-        active="[[mapRouteActive]]"
-        route="{{mapRoute}}"
-        user="[[user]]"
-        player-lat-lng="{{playerLatLng}}"
-        polymons="[[entirePolydex]]">
-    </polymon-map>
+      <polymon-map
+          unresolved
+          page-name="map"
+          id="map"
+          active="[[mapRouteActive]]"
+          route="{{mapRoute}}"
+          user="[[user]]"
+          player-lat-lng="{{playerLatLng}}"
+          polymons="[[entirePolydex]]">
+      </polymon-map>
 
-    <polymon-start-screen
-        unresolved
-        active="[[rootRouteActive]]"
-        hidden="[[mapRouteActive]]"
-        authenticated="[[authenticated]]"
-        music-enabled="[[musicPlaying]]"
-        on-request-login="attemptLogin"
-        on-request-logout="attemptLogout"
-        on-toggle-audio="toggleAudio"
-        logo-loaded="{{logoLoaded}}">
-    </polymon-start-screen>
+      <polymon-start-screen
+          unresolved
+          page-name="start"
+          active="[[rootRouteActive]]"
+          hidden="[[mapRouteActive]]"
+          authenticated="[[authenticated]]"
+          music-enabled="[[musicPlaying]]"
+          on-request-login="attemptLogin"
+          on-request-logout="attemptLogout"
+          on-toggle-audio="toggleAudio"
+          logo-loaded="{{logoLoaded}}">
+      </polymon-start-screen>
 
-    <!-- TODO(cdata): Consider moving this to the map screen? -->
-    <polymon-caught-screen
-        unresolved
-        active="[[caughtRouteActive]]"
-        data="[[caughtData]]"
-        continue-to="[[caughtQueryParams.continueTo]]">
-    </polymon-caught-screen>
+      <!-- TODO(cdata): Consider moving this to the map screen? -->
+      <polymon-caught-screen
+          unresolved
+          page-name="caught-screen"
+          active="[[caughtRouteActive]]"
+          data="[[caughtData]]"
+          continue-to="[[caughtQueryParams.continueTo]]">
+      </polymon-caught-screen>
 
-    <polymon-panel
-        unresolved
-        active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive, rootRouteActive)]]"
-        active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
-      <polymon-polydex
-          active="[[polydexRouteActive]]"
-          team="[[team]]"
-          route="{{polydexRoute}}"
-          caught-polymons="[[caughtPolymons]]"
-          entries="[[entirePolydex]]"
-          user="[[user]]">
-      </polymon-polydex>
-      <polymon-new-battle-screen
-          active="[[newBattleRouteActive]]"
-          route="{{newBattleRoute}}"
-          user="[[user]]">
-      </polymon-new-battle-screen>
-      <div></div>
-    </polymon-panel>
+      <polymon-panel
+          unresolved
+          page-name="panel"
+          render-path="[[route.path]]"
+          active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive, rootRouteActive)]]"
+          active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
+        <polymon-polydex
+            page-name="polydex"
+            active="[[polydexRouteActive]]"
+            team="[[team]]"
+            route="{{polydexRoute}}"
+            caught-polymons="[[caughtPolymons]]"
+            entries="[[entirePolydex]]"
+            user="[[user]]">
+        </polymon-polydex>
+        <polymon-new-battle-screen
+            page-name="newBattle"
+            active="[[newBattleRouteActive]]"
+            route="{{newBattleRoute}}"
+            user="[[user]]">
+        </polymon-new-battle-screen>
+        <div></div>
+      </polymon-panel>
 
-    <polymon-battle-screen
-        unresolved
-        active="[[engageBattleRouteActive]]"
-        user="[[user]]"
-        battle-id="[[engageBattleData.id]]"
-        user-data="{{userData}}">
-    </polymon-battle-screen>
+      <polymon-battle-screen
+          unresolved
+          page-name="battleScreen"
+          active="[[engageBattleRouteActive]]"
+          user="[[user]]"
+          battle-id="[[engageBattleData.id]]"
+          user-data="{{userData}}">
+      </polymon-battle-screen>
 
-    <polymon-coded-url-screen
-        route="{{route}}"
-        user="{{user}}"
-        data="[[codeRouteData.data]]"
-        active="[[codeRouteActive]]"
-        authenticated="[[authenticated]]"
-        auth-status-known="[[statusKnown]]">
-    </polymon-coded-url-screen>
+      <polymon-coded-url-screen
+          page-name="codedUrl"
+          route="{{route}}"
+          user="{{user}}"
+          data="[[codeRouteData.data]]"
+          active="[[codeRouteActive]]"
+          authenticated="[[authenticated]]"
+          auth-status-known="[[statusKnown]]">
+      </polymon-coded-url-screen>
 
-    <polymon-about-screen
-        active="[[aboutRouteActive]]">
-    </polymon-about-screen>
+      <polymon-about-screen
+          active="[[aboutRouteActive]]">
+      </polymon-about-screen>
+    </polymon-render-controller>
 
     <polymon-tournament-screen
         active="[[tournamentRouteActive]]"
@@ -348,6 +363,69 @@
 
         queryParams: {
           type: Object
+        },
+
+        siteMap: {
+          type: Object,
+          readOnly: true,
+          value: () => {
+            const map = {
+              '': {
+                _elements: [
+                  'map',
+                  'start'
+                ],
+                map: {
+                  _elements: [
+                    'map'
+                  ],
+                  scan: {
+                    _elements: [
+                      'scanner'
+                    ]
+                  }
+                },
+                polydex: {
+                  _elements: [
+                    'panel'
+                  ],
+                  _default: {
+                    _elements: [
+                      'panel'
+                    ]
+                  }
+                },
+                battle: {
+                  _elements: [],
+                  new: {
+                    _elements: [
+                      'panel'
+                    ],
+                    scan: {
+                      _elements: [
+                        'scanner'
+                      ]
+                    }
+                  },
+                  engage: {
+                    _elements: [],
+                    _default: {
+                      _elements: [
+                        'battleScreen'
+                      ]
+                    }
+                  }
+                },
+                about: {
+                  _elements: [
+                    'about'
+                  ]
+                }
+              }
+            }
+
+            return map;
+          }
         }
       },
 

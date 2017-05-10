@@ -9,6 +9,7 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-space-background.html">
+<link rel="import" href="polymon-renderable-behavior.html">
 <dom-module id="polymon-battle-field">
   <template>
     <style include="typography">
@@ -30,6 +31,10 @@
         --polymon-attack-color: #EA3364;
         --polymon-focus-color: #40DA1B;
         --polymon-counter-color: #32C1FF;
+      }
+
+      :host([hidden]) {
+        display: none !important;
       }
 
       polymon-space-background {
@@ -553,7 +558,8 @@
 
       behaviors: [
         PolymonElement,
-        Polymer.IronResizableBehavior
+        Polymer.IronResizableBehavior,
+        PolymonRenderableBehavior
       ],
 
       properties: {
@@ -601,7 +607,7 @@
       },
 
       observers: [
-        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting, loading)',
+        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting, loading, hidden)',
         '__submitMove(selectedAttribute, selectedPolydexId)'
       ],
 
@@ -639,7 +645,7 @@
 
       __updateControlsPosition: function() {
         this.deraf('update-controls-position', () => {
-          if (this.loading) {
+          if (this.loading || this.hidden) {
             // We are loading, so the controls should stay in their default
             // position (which is offscreen).
             return;

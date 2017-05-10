@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-renderable-behavior.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-qr-code-scanner-proxy.html">
@@ -23,6 +24,10 @@
 
         text-align: initial;
         overflow: hidden;
+      }
+
+      :host([hidden]) {
+        display: none !important;
       }
 
       #howto {
@@ -136,7 +141,10 @@
     Polymer({
       is: 'polymon-new-battle-screen',
 
-      behaviors: [PolymonElement],
+      behaviors: [
+        PolymonElement,
+        PolymonRenderableBehavior
+      ],
 
       __onStartTap: function() {
         if (this.user) {
