@@ -12,10 +12,6 @@
       :host {
         @apply --layout-fit;
 
-        background-color: #4b4970;
-        background-image:
-          linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
-
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s;
@@ -29,13 +25,28 @@
         @apply --layout-fit;
         right: -50%;
 
+        background-color: #4b4970;
+        background-image:
+          linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
+      }
+
+      #background > .image {
+        @apply --layout-fit;
+
         background-image: url(/images/space_bg@1x.jpg);
         background-size: cover;
         background-position: 50% 50%;
+
+        opacity: 0;
+        transition: opacity 1s;
+      }
+
+      #background > .image.visible {
+        opacity: 1;
       }
 
       @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
-        #background {
+        #background > .image {
           background-image: url(/images/space_bg@2x.jpg);
         }
       }
@@ -172,7 +183,7 @@
       }
     </style>
 
-    <div id="background"></div>
+    <div id="background"><div class="image"></div></div>
 
     <div id="container">
       <section id="marquee">
@@ -244,6 +255,21 @@
           type: Boolean,
           value: false
         }
+      },
+
+      created: function() {
+        // Load the same image as the background of #background and fade it in
+        // only after the load event.
+        const background = new Image();
+        background.src =
+            // This conditional should match the media query used to change the
+            // background-image of #background.
+            (window.innerWidth >= 700 || window.innerHeight >= 700 || window.devicePixelRatio >= 2)
+            ? "/images/space_bg@2x.jpg"
+            : "/images/space_bg@1x.jpg";
+        background.onload = () => {
+          this.$.background.querySelector('.image').classList.toggle('visible', true);
+        };
       },
 
       requestLogin: function() {
