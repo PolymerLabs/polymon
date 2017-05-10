@@ -25,9 +25,6 @@
         @apply --layout-fit;
         @apply --layout-vertical;
         justify-content: space-between;
-
-        --polymon-battle-bg-gradient:
-          linear-gradient(to bottom, #04072f, #293357 30%, #787e95 70%, #709aaa);
       }
 
       #background {
@@ -36,17 +33,27 @@
 
         background-color: #4b4970;
         background-image:
-          url(/images/space_bg@1x.jpg),
-          var(--polymon-battle-bg-gradient);
+          linear-gradient(to bottom, #04072f, #293357 30%, #787e95 70%, #709aaa);
+      }
+
+      #background > .image {
+        @apply --layout-fit;
+
+        background-image: url(/images/space_bg@1x.jpg);
         background-size: cover;
         background-position: 75% 30%;
+
+        opacity: 0;
+        transition: opacity 1s;
+      }
+
+      #background > .image.visible {
+        opacity: 1;
       }
 
       @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
-        #background {
-          background-image:
-            url(/images/space_bg@2x.jpg),
-            var(--polymon-battle-bg-gradient);
+        #background > .image {
+          background-image: url(/images/space_bg@2x.jpg);
         }
       }
 
@@ -440,7 +447,7 @@
       }
     </style>
 
-    <div id="background"></div>
+    <div id="background"><div class="image"></div></div>
 
     <section class="landscape">
       <div class="background">
@@ -585,6 +592,21 @@
 
       listeners: {
         'iron-resize': '__updateControlsPosition',
+      },
+
+      created: function() {
+        // Load the same image as the background of #background and fade it in
+        // only after the load event.
+        const background = new Image();
+        background.src =
+            // This conditional should match the media query used to change the
+            // background-image of #background.
+            (window.innerWidth >= 700 || window.innerHeight >= 700 || window.devicePixelRatio >= 2)
+            ? "/images/space_bg@2x.jpg"
+            : "/images/space_bg@1x.jpg";
+        background.onload = () => {
+          this.$.background.querySelector('.image').classList.toggle('visible', true);
+        };
       },
 
       resetControls: function() {
