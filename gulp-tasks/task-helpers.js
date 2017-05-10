@@ -88,7 +88,8 @@ const setEnv = async (env='dev') => {
 
   await Promise.all([
     exec(`ln -fs ./.${environment}.env.json ./.active.env.json`),
-    exec(`ln -fs ./.${environment}.service-account.json ./.active.service-account.json`)
+    exec(`ln -fs ./.${environment}.service-account.json ./.active.service-account.json`),
+    exec(`firebase use ${environment}`)
   ]);
 
   console.log('environment set!');
