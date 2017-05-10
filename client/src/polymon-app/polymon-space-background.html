@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="polymon-element.html">
+
+<dom-module id="polymon-space-background">
+  <template>
+    <style>
+      :host {
+        @apply --layout-fit;
+
+        background-color: #4b4970;
+        background-image:
+          linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
+      }
+
+      #image {
+        @apply --layout-fit;
+
+        background-image: url(/images/space_bg@1x.jpg);
+        background-size: cover;
+        background-position: var(--polymon-space-background-position, 50% 50%);
+
+        opacity: 0;
+        transition: opacity 1s;
+      }
+
+      @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
+        #image {
+          background-image: url(/images/space_bg@2x.jpg);
+        }
+      }
+
+      #image.visible {
+        opacity: 1;
+      }
+
+      #image.skip-transition {
+        transition: none;
+      }
+    </style>
+    <div id="image"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-space-background',
+
+      behaviors: [PolymonElement],
+
+      ready: function() {
+        // Skip the transition if the image loads before the next paint (i.e. if
+        // it's cached).
+        let skipTransition = true;
+        requestAnimationFrame(() => {
+          skipTransition = false;
+        });
+
+        // Load the same image as the background of #background and fade it in
+        // only after the load event.
+        const background = new Image();
+        background.src =
+            // This conditional should match the media query used to change the
+            // background-image of #background.
+            (window.innerWidth >= 700 || window.innerHeight >= 700 || window.devicePixelRatio >= 2)
+            ? "/images/space_bg@2x.jpg"
+            : "/images/space_bg@1x.jpg";
+        background.onload = () => {
+          const image = this.$.image;
+          image.classList.toggle('visible', true);
+          image.classList.toggle('skip-transition', skipTransition);
+        };
+      },
+    });
+  </script>
+</dom-module>
