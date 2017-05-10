@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="polymon-element.html">
 <dom-module id="polymon-planet-surface">
   <template>
     <style>
@@ -76,18 +77,21 @@
         top: 0;
         left: 25%;
         width: 50%;
-        height: 65%;
-
+        height: 60%;
       }
 
       #polymons > div {
         @apply --layout-fit;
         display: flex;
-        align-items: flex-start;
+        align-items: flex-end;
         justify-content: center;
         transform-origin: 50% 3300px;
         transform: rotate(45deg);
         transition: none;
+      }
+
+      #polymons > div#gamma {
+        transform: rotate(0);
       }
 
       #polymons > div.enter,
@@ -104,12 +108,52 @@
         transform: rotate(-45deg);
       }
 
-      #polymons #alpha {
-        background-color: red;
+      :host(.double-rotation) #polymons > div.enter {
+        transition-duration: 1s;
+        transition-delay: 2s;
+        transform: rotate(44deg);
       }
 
-      #polymons #beta {
-        background-color: blue;
+      :host(.double-rotation) #polymons > div.exit {
+        transition: transform 1s cubic-bezier(.63,.1,.44,.89);
+        transition-delay: 2s;
+        transform: rotate(-90deg);
+      }
+
+      #polymons.show-player-team > div#alpha,
+      #polymons.show-player-team > div#beta {
+        display: none;
+      }
+
+      #polymons > div#gamma polymon-portrait {
+        opacity: 0;
+        transform: translateY(-32px);
+        transition: transform 0.5s, opacity 0.5s;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(1) {
+        transition-delay: 0;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(2) {
+        transition-delay: 0.3s;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(3) {
+        transition-delay: 0.6s;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(4) {
+        transition-delay: 0.9s;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(5) {
+        transition-delay: 1.2s;
       }
     </style>
 
@@ -126,11 +170,12 @@
       <div class="planet-fragment three"></div>
     </div>
 
-    <div id="polymons">
+    <div id="polymons" class$="[[__computePolymonsClassname(showTeam)]]">
       <div id="alpha">
         <template is="dom-repeat" items="[[alphaPolymons]]" as="polymon">
           <polymon-portrait
               polymon="[[polymon]]"
+              size="200"
               caught>
           </polymon-portrait>
         </template>
@@ -139,15 +184,27 @@
         <template is="dom-repeat" items="[[betaPolymons]]" as="polymon">
           <polymon-portrait
               polymon="[[polymon]]"
+              size="200"
               caught>
           </polymon-portrait>
         </template>
       </div>
+      <div id="gamma">
+        <template is="dom-repeat" items="[[team]]" as="teamPosition">
+          <polymon-portrait
+              polymon="[[teamPosition.polymon]]"
+              size="200"
+              caught>
+          </polymon-portrait>
+        </template>
+      <div>
     </div>
   </template>
   <script>
     Polymer({
       is: 'polymon-planet-surface',
+
+      behaviors: [PolymonElement],
 
       properties: {
         polymons: {
@@ -161,6 +218,10 @@
         show: {
           type: Boolean,
           observer: '__showChanged'
+        },
+
+        showTeam: {
+          type: Boolean
         },
 
         rotationQueue: {
@@ -231,21 +292,6 @@
 
               window.requestAnimationFrame(() => {
                 window.requestAnimationFrame(() => {
-                  /*
-                  const onTransitionend = event => {
-                    this.$.fragments.removeEventListener('transitionend', onTransitionend);
-                    this.classList.remove(className);
-                    window.clearTimeout(timeout);
-                    resolve();
-                  };
-                  const timeout = window.setTimeout(() => {
-                    onTransitionend();
-                    resolve();
-                  }, 6000);
-
-                  this.$.fragments.addEventListener('transitionend', onTransitionend);
-                  */
-
                   Promise.all([
                     this.__rotatePolymons(),
                     this.awaitTransition(this.$.fragments, 6000)
@@ -310,20 +356,10 @@
         }
       },
 
-      awaitTransition(el, timeoutMs) {
-        return new Promise(resolve => {
-          const onTransitionend = event => {
-            window.clearTimeout(timeout);
-            el.removeEventListener('transitionend', onTransitionend);
-            resolve();
-          };
-
-          const timeout = window.setTimeout(() => {
-            onTransitionend();
-          }, timeoutMs);
-
-          el.addEventListener('transitionend', onTransitionend);
-        });
+      __computePolymonsClassname(hidePolymons) {
+        return hidePolymons
+            ? 'show-player-team'
+            : '';
       }
     });
   </script>

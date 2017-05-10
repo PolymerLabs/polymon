@@ -72,6 +72,31 @@
         }
 
         return false;
+      },
+
+      awaitTransition: function(el, timeoutMs) {
+        return this.awaitEvent(el, 'transitionend', timeoutMs);
+      },
+
+      awaitAnimation: function(el, timeoutMs) {
+        return this.awaitEvent(el, 'animationend', timeoutMs);
+      },
+
+      awaitEvent: function(el, eventName, timeoutMs) {
+        return new Promise(resolve => {
+          const onEvent = event => {
+            window.clearTimeout(timeout);
+            el.removeEventListener(eventName, onEvent);
+            resolve();
+          };
+
+          const timeout = window.setTimeout(() => {
+            console.error('Timeout while awaiting ' + eventName + ' of:', el);
+            onEvent();
+          }, timeoutMs);
+
+          el.addEventListener(eventName, onEvent);
+        });
       }
     };
 

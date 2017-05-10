@@ -11,7 +11,6 @@
         left: 50%;
         width: 1920px;
         height: 3032px;
-        background-image: url('../../images/polymon_space_scape.png');
         transition: transform 3s;
         transform: translate(-50%, -1952px);
       }
@@ -19,9 +18,16 @@
       :host(.outer) #space {
         transform: translate(-50%, 0);
       }
+
+      :host(.one) #space {
+        background-image: url('../../images/polymon_space_scape_one.png');
+      }
+
+      :host(.two) #space {
+        background-image: url('../../images/polymon_space_scape_two.png');
+      }
     </style>
     <div id="space"></div>
-    <!--<div id="logo"></div>-->
   </template>
   <script>
     Polymer({
@@ -33,6 +39,11 @@
         outer: {
           type: Boolean,
           value: false
+        },
+
+        player: {
+          type: String,
+          observer: '__playerChanged'
         }
       },
 
@@ -40,8 +51,18 @@
         'reflectToClass(outer, "outer")'
       ],
 
-      reflectToClass: function(val, className) {
+      reflectToClass(val, className) {
         this.classList.toggle(className, val);
+      },
+
+      __playerChanged(player, oldPlayer) {
+        if (oldPlayer != null) {
+          this.classList.remove(oldPlayer);
+        }
+
+        if (player != null) {
+          this.classList.add(player);
+        }
       }
     });
   </script>

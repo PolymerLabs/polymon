@@ -1,14 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
 
 <dom-module id="polymon-tournament-marquee">
   <template>
-    <style>
+    <style include="typography">
       :host {
         @apply --layout-fit;
         display: flex;
         align-items: center;
+        justify-content: flex-start;
         flex-direction: column;
         transition: transform 1.5s, opacity 0.5s;
         transition-delay: 0s;
@@ -21,6 +23,11 @@
         transition-delay: 2s;
         transform: translate(0, 0);
         opacity: 1;
+      }
+
+      #top {
+        width: 640px;
+        height: 480px;
       }
 
       #logo {
@@ -64,9 +71,19 @@
         height: 211px;
         background-image: url('../../images/player_two.png');
       }
+
+      #copy {
+        font-weight: bold;
+        font-size: 48px;
+        text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+        color: #fff;
+      }
     </style>
-    <div id="logo"></div>
-    <div id="player"></div>
+    <div id="top">
+      <div id="logo"></div>
+      <div id="player"></div>
+    </div>
+    <div id="copy">[[copy]]</div>
   </template>
   <script>
     Polymer({
@@ -86,6 +103,11 @@
 
         show: {
           type: Boolean
+        },
+
+        copy: {
+          type: String,
+          computed: '__computeCopy(ready)'
         }
       },
 
@@ -102,6 +124,12 @@
         if (player != null) {
           this.classList.add(player);
         }
+      },
+
+      __computeCopy(ready) {
+        return ready
+            ? 'READY!'
+            : 'Go head to head here!'
       }
     });
   </script>

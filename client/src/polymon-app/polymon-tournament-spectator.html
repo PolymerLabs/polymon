@@ -8,6 +8,8 @@
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-planet-surface.html">
 <link rel="import" href="polymon-tournament-marquee.html">
+<link rel="import" href="polymon-countdown.html">
+<link rel="import" href="polymon-space-island.html">
 
 <dom-module id="polymon-tournament-spectator">
   <template>
@@ -57,7 +59,10 @@
 
     <polymon-tournament-logo></polymon-tournament-logo>
 
-    <polymon-space-scape outer="[[equalsAny(presentationState, 'battlefield', 'show-move')]]"></polymon-space-scape>
+    <polymon-space-scape
+        player="[[player]]"
+        outer="[[equalsAny(presentationState, 'battlefield', 'show-move')]]">
+    </polymon-space-scape>
 
     <polymon-planet-surface
         id="planet"
@@ -73,14 +78,24 @@
         show="[[equalsAny(presentationState, 'waiting', 'ready', 'countdown', 'victory')]]">
     </polymon-tournament-marquee>
 
-    <div id="team">
-      <template is="dom-repeat" items="[[spectatedTeamStatus]]" as="teamPosition">
-        <polymon-portrait
-            polymon="[[teamPosition.polymon]]"
-            caught="[[!teamPosition.movePerformed]]">
-        </polymon-portrait>
-      </template>
-    </div>
+    <polymon-space-island
+        player="[[player]]"
+        show="[[equalsAny(presentationState, 'battlefield', 'show-move')]]"
+        team="[[spectatedTeamStatus]]">
+    </polymon-space-island>
+
+    <polymon-countdown
+        id="clock">
+    </polymon-countdown>
+
+    <!--<div id="team">-->
+      <!--<template is="dom-repeat" items="[[spectatedTeamStatus]]" as="teamPosition">-->
+        <!--<polymon-portrait-->
+            <!--polymon="[[teamPosition.polymon]]"-->
+            <!--caught="[[!teamPosition.movePerformed]]">-->
+        <!--</polymon-portrait>-->
+      <!--</template>-->
+    <!--</div>-->
 
   </template>
   <script>
@@ -177,19 +192,22 @@
         });
 
         idleRotation();
+
         this.$.marquee.ready = false;
+        this.$.planet.showTeam = false;
       },
 
       __displayPlayerTeam() {
         return this.$.planet.doubleRotate().then(() => {
+          this.$.planet.showTeam = true;
           this.$.marquee.ready = true;
-          return new Promise(resolve => setTimeout(resolve, 3000))
+          //return new Promise(resolve => setTimeout(resolve, 3000))
         });
       },
 
       __performCountdownSequence() {
-        // Countdown numbers...
-        return new Promise(resolve => setTimeout(resolve, 5000));
+        return new Promise(resolve => setTimeout(resolve, 8000))
+            .then(() => this.$.clock.count());
       },
 
       __presentationStateChanged(state, oldState) {
@@ -209,6 +227,7 @@
             });
             break;
           case PresentationState.BATTLEFIELD:
+
             break;
           case PresentationState.SHOW_MOVE:
             break;
