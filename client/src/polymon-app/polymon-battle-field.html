@@ -25,6 +25,9 @@
         @apply --layout-fit;
         @apply --layout-vertical;
         justify-content: space-between;
+
+        --polymon-battle-bg-gradient:
+          linear-gradient(to bottom, #04072f, #293357 30%, #787e95 70%, #709aaa);
       }
 
       :host(.zoom-to-opponent) #bottom {
@@ -72,19 +75,22 @@
 
       .landscape {
         @apply --layout-fit;
-        background-image: linear-gradient(0deg,
-            #e7f8ff 0%,
-            #e7f8ff 15%,
-            #c1e9fa 15%,
-            #c1e9fa 20%,
-            #a0ddf7 20%,
-            #a0ddf7 35%,
-            #6dcaf2 35%,
-            #6dcaf2 60%,
-            #3ebbf0 60%,
-            #3ebbf0 100%);
+        background-color: #4b4970;
+        background-image:
+          url(/images/battle_bg@1x.jpg),
+          var(--polymon-battle-bg-gradient);
+        background-size: cover;
+        background-position: 80% 50%;
 
         overflow: hidden;
+      }
+
+      @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
+        .landscape {
+          background-image:
+            url(/images/battle_bg@2x.jpg),
+            var(--polymon-battle-bg-gradient);
+        }
       }
 
       .landscape .foreground,
