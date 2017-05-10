@@ -15,9 +15,7 @@ const spawn = (cmd, args, stdout) => {
     res = resolve;
   });
 
-  let child;
-
-  child = __spawn(cmd, args.length ? args : undefined);
+  const child = __spawn(cmd, args.length ? args : undefined);
 
   if (stdout) {
     child.stdout.on('data', data => {
