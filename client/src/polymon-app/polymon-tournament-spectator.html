@@ -193,6 +193,9 @@
       },
 
       __presentationStateChanged(state, oldState) {
+        console.log(`Presentation state used to be ${oldState}.`);
+        console.log(`Presentation state is now ${state}.`);
+
         switch (state) {
           case PresentationState.WAITING:
             this.__doIdleRotationWhileWaiting();

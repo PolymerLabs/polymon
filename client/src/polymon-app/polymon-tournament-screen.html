@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-qr-code.html">
 <link rel="import" href="polymon-tournament-spectator.html">
@@ -10,10 +11,18 @@
   <template>
     <style>
       :host {
-        @apply --layout-fit;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1920px;
+        height: 1080px;
         display: flex;
         justify-content: center;
         align-items: center;
+
+        will-change: transform;
+
+        transform-origin: top left;
       }
     </style>
     <firebase-document
@@ -52,7 +61,10 @@
     Polymer({
       is: 'polymon-tournament-screen',
 
-      behaviors: [PolymonElement],
+      behaviors: [
+        PolymonElement,
+        Polymer.IronResizableBehavior
+      ],
 
       properties: {
         tournamentId: {
@@ -74,13 +86,42 @@
         }
       },
 
-      __computeTournamentDataPath: function(tournamentId) {
+
+      listeners: {
+        'iron-resize': '__onIronResize'
+      },
+
+      __onIronResize() {
+        const innerWidth = window.innerWidth;
+        const innerHeight = window.innerHeight;
+        const selfWidth = 1980;
+        const selfHeight = 1080;
+
+        if (innerWidth === selfWidth && innerHeight === selfHeight) {
+          this.style.transform = '';
+          return;
+        }
+
+        const windowAspect = innerWidth / innerHeight;
+        const selfAspect = selfWidth / selfHeight;
+        let scale;
+
+        if (windowAspect > selfAspect) {
+          scale = innerWidth / selfWidth;
+        } else {
+          scale = innerHeight / selfHeight;
+        }
+
+        this.style.transform = `scale(${scale})`;
+      },
+
+      __computeTournamentDataPath(tournamentId) {
         if (tournamentId != null) {
           return `/tournaments/${tournamentId}`;
         }
       },
 
-      __computeTournamentJoinUrl: function(tournamentId, secretValue) {
+      __computeTournamentJoinUrl(tournamentId, secretValue) {
         if (secretValue != null) {
           return `${window.location.origin}/code/tournament.${tournamentId}|${secretValue}`;
         }

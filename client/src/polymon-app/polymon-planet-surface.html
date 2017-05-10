@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <dom-module id="polymon-planet-surface">
   <template>
     <style>
@@ -8,19 +9,21 @@
         bottom: 0;
         left: 0;
         width: 1920px;
-        height: 310px;
+        height: 550px;
         overflow: hidden;
 
         transition: transform 1s;
         transition-delay: 0s;
         transform: translate(0px, 175%);
+
+        --polymon-portrait-background: transparent;
       }
 
       #fragments {
         position: absolute;
         width: 100%;
         height: 100%;
-        top: 10px;
+        top: 250px;
         left: 0;
 
         transition: none;
@@ -66,11 +69,80 @@
         transition-delay: 2s;
         transform: translate(0px, 0px);
       }
+
+      #polymons {
+        position: absolute;
+
+        top: 0;
+        left: 25%;
+        width: 50%;
+        height: 65%;
+
+      }
+
+      #polymons > div {
+        @apply --layout-fit;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        transform-origin: 50% 3300px;
+        transform: rotate(45deg);
+        transition: none;
+      }
+
+      #polymons > div.enter,
+      #polymons > div.exit {
+        transition: transform 2s cubic-bezier(.63,.1,.44,.89);
+        transition-delay: 3s;
+      }
+
+      #polymons > div.enter {
+        transform: rotate(0deg);
+      }
+
+      #polymons > div.exit {
+        transform: rotate(-45deg);
+      }
+
+      #polymons #alpha {
+        background-color: red;
+      }
+
+      #polymons #beta {
+        background-color: blue;
+      }
     </style>
+
+    <firebase-query
+        app-name="polymon"
+        path="/polymons"
+        data="{{polymons}}">
+    </firebase-query>
+
+
     <div id="fragments">
       <div class="planet-fragment"></div>
       <div class="planet-fragment two"></div>
       <div class="planet-fragment three"></div>
+    </div>
+
+    <div id="polymons">
+      <div id="alpha">
+        <template is="dom-repeat" items="[[alphaPolymons]]" as="polymon">
+          <polymon-portrait
+              polymon="[[polymon]]"
+              caught>
+          </polymon-portrait>
+        </template>
+      </div>
+      <div id="beta">
+        <template is="dom-repeat" items="[[betaPolymons]]" as="polymon">
+          <polymon-portrait
+              polymon="[[polymon]]"
+              caught>
+          </polymon-portrait>
+        </template>
+      </div>
     </div>
   </template>
   <script>
@@ -78,6 +150,10 @@
       is: 'polymon-planet-surface',
 
       properties: {
+        polymons: {
+          type: Array
+        },
+
         team: {
           type: Array
         },
@@ -91,7 +167,25 @@
           type: Object,
           readOnly: true,
           value: () => Promise.resolve()
+        },
+
+        currentPolymonGroup: {
+          type: String
+        },
+
+        alphaPolymons: {
+          type: Array
+        },
+
+        betaPolymons: {
+          type: Array
         }
+      },
+
+      get nextPolymonGroup() {
+        return (this.currentPolymonGroup && this.currentPolymonGroup === 'alpha')
+            ? 'beta'
+            : 'alpha';
       },
 
       rotate() {
@@ -102,20 +196,64 @@
         return this.__doRotate('double-rotation');
       },
 
+      __pickThreePolymon() {
+        const polymons = this.polymons || [];
+        const picked = {};
+        const three = [];
+
+        if (polymons.length > 2) {
+          while (three.length < 3) {
+            let nextIndex;
+
+            do {
+              nextIndex = Math.floor(Math.random() * polymons.length);
+            } while (picked[nextIndex]);
+
+            picked[nextIndex] = true;
+
+            const nextPolymon = polymons[nextIndex];
+
+            three.push(nextPolymon);
+          }
+        }
+
+        return three;
+      },
+
       __doRotate(className) {
         const rotationQueue = this.rotationQueue.then(() =>
             new Promise((resolve) => {
               this.classList.remove(className);
 
+              if (!this.isAttached) {
+                return window.requestAnimationFrame(resolve);
+              }
+
               window.requestAnimationFrame(() => {
                 window.requestAnimationFrame(() => {
+                  /*
                   const onTransitionend = event => {
                     this.$.fragments.removeEventListener('transitionend', onTransitionend);
                     this.classList.remove(className);
+                    window.clearTimeout(timeout);
                     resolve();
                   };
+                  const timeout = window.setTimeout(() => {
+                    onTransitionend();
+                    resolve();
+                  }, 6000);
 
                   this.$.fragments.addEventListener('transitionend', onTransitionend);
+                  */
+
+                  Promise.all([
+                    this.__rotatePolymons(),
+                    this.awaitTransition(this.$.fragments, 6000)
+                  ]).then(() => {
+                    this.classList.remove(className);
+                    resolve();
+                  });
+
                   this.classList.add(className);
                 });
               });
@@ -126,12 +264,66 @@
         return this.rotationQueue;
       },
 
+      __rotatePolymons() {
+        const currentPolymonGroup = this.currentPolymonGroup;
+        const nextPolymonGroup = this.nextPolymonGroup;
+
+        const currentElement = currentPolymonGroup
+            ? this.$[currentPolymonGroup]
+            : null;
+
+        const nextElement = this.$[nextPolymonGroup];
+
+        const currentElementTransitions = currentElement
+            ? this.awaitTransition(currentElement, 6000)
+            : Promise.resolve();
+        const nextElementTransitions = this.awaitTransition(nextElement, 6000);
+
+        const result = Promise.all([
+          currentElementTransitions,
+          nextElementTransitions
+        ]).then(() => {
+          if (currentElement != null) {
+            currentElement.classList.remove('exit');
+          }
+
+          this.currentPolymonGroup = nextPolymonGroup;
+        });
+
+        this[`${nextPolymonGroup}Polymons`] = this.__pickThreePolymon();
+
+        if (currentElement != null) {
+          currentElement.classList.add('exit');
+          currentElement.classList.remove('enter');
+        }
+
+        nextElement.classList.add('enter');
+
+        return result;
+      },
+
       __showChanged(show) {
         if (show) {
           this.classList.add('show');
         } else {
           this.classList.remove('show');
         }
+      },
+
+      awaitTransition(el, timeoutMs) {
+        return new Promise(resolve => {
+          const onTransitionend = event => {
+            window.clearTimeout(timeout);
+            el.removeEventListener('transitionend', onTransitionend);
+            resolve();
+          };
+
+          const timeout = window.setTimeout(() => {
+            onTransitionend();
+          }, timeoutMs);
+
+          el.addEventListener('transitionend', onTransitionend);
+        });
       }
     });
   </script>
