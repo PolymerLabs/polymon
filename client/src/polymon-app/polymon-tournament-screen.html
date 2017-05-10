@@ -23,6 +23,7 @@
         will-change: transform;
 
         transform-origin: top left;
+        overflow: hidden;
       }
     </style>
     <firebase-document
@@ -94,7 +95,7 @@
       __onIronResize() {
         const innerWidth = window.innerWidth;
         const innerHeight = window.innerHeight;
-        const selfWidth = 1980;
+        const selfWidth = 1920;
         const selfHeight = 1080;
 
         if (innerWidth === selfWidth && innerHeight === selfHeight) {
@@ -106,7 +107,7 @@
         const selfAspect = selfWidth / selfHeight;
         let scale;
 
-        if (windowAspect > selfAspect) {
+        if (windowAspect < selfAspect) {
           scale = innerWidth / selfWidth;
         } else {
           scale = innerHeight / selfHeight;

@@ -37,6 +37,28 @@ class Tournament extends DataObject {
     return tournament;
   }
 
+  async withdrawPlayer(userId) {
+    const tournament = this.read();
+    const battle = new Battle(this.db, tournament.currentBattleId);
+    const user = new User(this.db, userId);
+
+    if (tournament.state === TournamentState.ACTIVE) {
+      throw new Error(
+          `${this.formalName} battle is ongoing; players must complete the battle.`);
+    }
+
+    if (tournament.playerOneUserId === userId) {
+      await this.ref.child('playerOneUserId').remove();
+    } else if (tournament.playerTwoUserId === userId) {
+      await this.ref.child('playerTwoUserId').remove();
+    } else {
+      throw new Error(
+          `${user.formalName} is not currently in ${this.formalName} and cannot withdraw.`);
+    }
+
+    await battle.withdrawParticipatingUser(userId);
+  }
+
   async hasUnfinishedBattle() {
     const tournament = await this.read();
     const currentBattleId = tournament.currentBattleId;

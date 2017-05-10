@@ -89,11 +89,12 @@
             el.removeEventListener(eventName, onEvent);
             resolve();
           };
-
-          const timeout = window.setTimeout(() => {
-            console.error('Timeout while awaiting ' + eventName + ' of:', el);
-            onEvent();
-          }, timeoutMs);
+          const timeout = timeoutMs != null
+              ? window.setTimeout(() => {
+                  console.error('Timeout while awaiting ' + eventName + ' of:', el);
+                  onEvent();
+                }, timeoutMs)
+              : null;
 
           el.addEventListener(eventName, onEvent);
         });

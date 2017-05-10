@@ -17,6 +17,27 @@ class Battle extends DataObject {
     });
   }
 
+  async withdrawParticipatingUser(userId) {
+    const isStarted = await this.isStarted();
+
+    if (isStarted) {
+      throw new Error(
+          `Cannot withdraw from ${this.formalName} because it is already started.`);
+    }
+
+    const battle = this.read();
+    const user = new User(this.db, userId);
+
+    if (battle.initiatingUserId === userId) {
+      await this.ref.remove();
+    } else if (battle.defendingUserId !== userId) {
+      throw new Error(
+          `${user.formalName} cannot leave ${battle.formalName} (not participating).`);
+    }
+
+    await user.ref.child('player/activeBattleId').remove();
+  }
+
   async hasParticipatingUser(userId) {
     const user = new User(db, userId);
     const isInThisBattle = await user.activeBattleIs(this.id);

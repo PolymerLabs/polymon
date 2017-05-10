@@ -1,0 +1,102 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-portrait.html">
+
+<dom-module id="polymon-space-island">
+  <template>
+    <style>
+      :host {
+        position: absolute;
+        width: 1600px;
+        height: 1160px;
+
+        transform: translate(0, -120%);
+        transition: transform 2s;
+        transition-delay: 0s;
+      }
+
+      :host(.two) {
+        right: 0;
+      }
+
+      :host(.show) {
+        transform: translate(0, 25%);
+        transition-delay: 1s;
+      }
+
+      #island {
+        margin-top: 200px;
+        width: 1600px;
+        height: 960px;
+        background-image: url('../../images/space_island.png');
+      }
+
+      #team {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        left: 0;
+        top: 0;
+        width: 1600px;
+        height: 400px;
+      }
+
+      polymon-portrait {
+        transition: opacity 0.3s, transform 0.5s;
+      }
+
+      polymon-portrait:not(.caught) {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+    </style>
+    <div id="team">
+      <template is="dom-repeat" items="[[team]]" as="teamPosition">
+        <polymon-portrait
+            size="256"
+            polymon="[[teamPosition.polymon]]"
+            caught="[[!teamPosition.movePerformed]]">
+        </polymon-portrait>
+      </template>
+    </div>
+    <div id="island"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-space-island',
+
+      properties: {
+        player: {
+          type: String,
+          observer: '__playerChanged'
+        },
+
+        team: {
+          type: Array
+        },
+
+        show: {
+          type: Boolean,
+          observer: '__showChanged'
+        }
+      },
+
+      __showChanged: function(show) {
+        this.classList.toggle('show', !!show);
+      },
+
+      __playerChanged: function(player, oldPlayer) {
+        if (oldPlayer != null) {
+          this.classList.remove(oldPlayer);
+        }
+
+        if (player != null) {
+          this.classList.add(player);
+        }
+      }
+    });
+  </script>
+</dom-module>
+
