@@ -12,3 +12,4 @@ client/index.html
 build-compare
 build/*
 firebase.json
+client/polymer.json
