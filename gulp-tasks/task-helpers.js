@@ -7,21 +7,18 @@ const __spawn = require('child_process').spawn;
 const __exec = require('child_process').exec;
 const buildDestination = './build';
 
-const spawn = (cmd, args, stdout) => {
+const spawn = (cmd, args=[]) => {
   let res;
 
   const promisifed = new Promise((resolve) => {
     res = resolve;
   });
 
-  const child = __spawn(cmd, args.length ? args : undefined);
+  const child = __spawn(cmd, args);
 
-  if (stdout) {
-    child.stdout.on('data', data => {
-      console.log(data.toString());
-    });
-
-  }
+  child.stdout.on('data', data => {
+    console.log(data.toString());
+  });
 
   child.stderr.on('data', data => {
     console.error(data.toString());
@@ -155,7 +152,7 @@ const clean = async _ => {
 
 const serve = async (hostingFolder='client') => {
   await generateFirebaseConfig(hostingFolder);
-  await spawn('firebase', ['serve'], true);
+  await spawn('firebase', ['serve']);
 };
 
 const build = async (env='dev') => {
@@ -167,7 +164,7 @@ const build = async (env='dev') => {
   console.log('building polymon...');
   await exec('cp polymer.json client');
   process.chdir('client');
-  await spawn('polymer', ['build'], true);
+  await spawn('polymer', ['build']);
   process.chdir('..');
   console.log('polymon built, cleaning up...');
   await exec(`cp -R ./client/build/bundled/ ${buildDestination}`);
