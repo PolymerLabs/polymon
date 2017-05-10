@@ -12,22 +12,32 @@
       :host {
         @apply --layout-fit;
 
-        --polymon-start-bg-gradient:
+        background-color: #4b4970;
+        background-image:
           linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
 
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s;
-        background-color: #4b4970;
-        background-image:
-          url(/images/start_bg@1x.jpg),
-          var(--polymon-start-bg-gradient);
-        background-size: cover;
-        background-position: 50% 50%;
       }
 
       :host(:not(.hidden)) {
         opacity: 1;
+      }
+
+      #background {
+        @apply --layout-fit;
+        right: -50%;
+
+        background-image: url(/images/space_bg@1x.jpg);
+        background-size: cover;
+        background-position: 50% 50%;
+      }
+
+      @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
+        #background {
+          background-image: url(/images/space_bg@2x.jpg);
+        }
       }
 
       #container {
@@ -40,14 +50,6 @@
       :host(:not(.hidden)) #container {
         @apply --layout-fit;
         transform: translateY(0);
-      }
-
-      @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
-        :host {
-          background-image:
-            url(/images/start_bg@2x.jpg),
-            var(--polymon-start-bg-gradient);
-        }
       }
 
       @media (max-height: 525px) and (orientation: landscape) {
@@ -169,6 +171,8 @@
         height: 1.2em;
       }
     </style>
+
+    <div id="background"></div>
 
     <div id="container">
       <section id="marquee">

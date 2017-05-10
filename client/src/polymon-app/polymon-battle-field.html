@@ -30,6 +30,26 @@
           linear-gradient(to bottom, #04072f, #293357 30%, #787e95 70%, #709aaa);
       }
 
+      #background {
+        @apply --layout-fit;
+        left: -50%;
+
+        background-color: #4b4970;
+        background-image:
+          url(/images/space_bg@1x.jpg),
+          var(--polymon-battle-bg-gradient);
+        background-size: cover;
+        background-position: 75% 30%;
+      }
+
+      @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
+        #background {
+          background-image:
+            url(/images/space_bg@2x.jpg),
+            var(--polymon-battle-bg-gradient);
+        }
+      }
+
       :host(.zoom-to-opponent) #bottom {
         transition-delay: 0s;
         transform: translateY(500px) !important;
@@ -75,22 +95,7 @@
 
       .landscape {
         @apply --layout-fit;
-        background-color: #4b4970;
-        background-image:
-          url(/images/battle_bg@1x.jpg),
-          var(--polymon-battle-bg-gradient);
-        background-size: cover;
-        background-position: 80% 50%;
-
         overflow: hidden;
-      }
-
-      @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
-        .landscape {
-          background-image:
-            url(/images/battle_bg@2x.jpg),
-            var(--polymon-battle-bg-gradient);
-        }
       }
 
       .landscape .foreground,
@@ -434,6 +439,8 @@
         }
       }
     </style>
+
+    <div id="background"></div>
 
     <section class="landscape">
       <div class="background">
