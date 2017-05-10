@@ -25,7 +25,7 @@ gulp.task('serve:compiled', async _ => tasks.serve('build'));
 gulp.task('deploy:hosting', async _ => tasks.deployHosting());
 gulp.task('deploy:hosting:dev', async _ => tasks.deployHosting('dev'));
 gulp.task('deploy:hosting:prod', async _ => tasks.deployHosting('prod'));
-gulp.task('deploy:hosting:debug', async _ => tasks.deployHosting(null, 'client'));
+gulp.task('deploy:hosting:debug', async _ => tasks.deployHosting('dev', 'client'));
 gulp.task('deploy:hosting:dev:debug', async _ => tasks.deployHosting('dev', 'client'));
 gulp.task('deploy:hosting:prod:debug', async _ => tasks.deployHosting('prod', 'client'));
 
