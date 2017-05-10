@@ -1,7 +1,6 @@
 const promisify = require('promisify-node');
 const readJson = require('then-read-json');
 const fs = promisify('fs');
-const path = require('path');
 const argv = require('yargs').argv;
 const confirm = require('positive');
 const __spawn = require('child_process').spawn;
@@ -167,9 +166,9 @@ const build = async (env='dev') => {
 
   console.log('building polymon...');
   await exec('cp polymer.json client');
-  process.chdir(path.join(process.env.PWD, 'client'));
+  process.chdir('client');
   await spawn('polymer', ['build'], true);
-  process.chdir(process.env.PWD);
+  process.chdir('..');
   console.log('polymon built, cleaning up...');
   await exec(`cp -R ./client/build/bundled/ ${buildDestination}`);
   await exec('rm -rf ./client/build');
