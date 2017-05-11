@@ -28,6 +28,7 @@
         background-image: url(/images/space_bg@1x.jpg);
       }
 
+      /* This should match the media query in the code below. */
       @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
         #image.load {
           background-image: url(/images/space_bg@2x.jpg);
@@ -92,10 +93,8 @@
         // Load the same image as the background of #background and fade it in
         // only after the load event.
         const background = new Image();
-        background.src =
-            // This conditional should match the media query used to change the
-            // background-image of #background.
-            (window.innerWidth >= 700 || window.innerHeight >= 700 || window.devicePixelRatio >= 2)
+        // This should match the media query in the CSS above.
+        background.src = window.matchMedia("(min-resolution: 2dppx), (min-width: 700px), (min-height: 700px)").matches
             ? "/images/space_bg@2x.jpg"
             : "/images/space_bg@1x.jpg";
         background.onload = () => {
