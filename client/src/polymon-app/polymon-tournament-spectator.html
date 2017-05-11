@@ -10,6 +10,7 @@
 <link rel="import" href="polymon-tournament-marquee.html">
 <link rel="import" href="polymon-countdown.html">
 <link rel="import" href="polymon-space-island.html">
+<link rel="import" href="polymon-tournament-move-visualizer.html">
 
 <dom-module id="polymon-tournament-spectator">
   <template>
@@ -84,6 +85,12 @@
         team="[[spectatedTeamStatus]]"
         show="[[equalsAny(presentationState, 'battlefield', 'show-move')]]">
     </polymon-space-island>
+
+    <polymon-tournament-move-visualizer
+        id="visualizer"
+        player="[[player]]"
+        team-status="[[spectatedTeamStatus]]">
+    </polymon-tournament-move-visualizer>
 
     <polymon-countdown
         id="clock">
@@ -211,14 +218,28 @@
       __awaitNextMove() {
         const rounds = this.spectatedRounds || [];
 
-        return rounds.length < this.lastShownMove
+        console.log(this.lastShownMove, '<', rounds.length, '?');
+
+        return this.lastShownMove < rounds.length
             ? Promise.resolve()
             : this.awaitEvent(this, 'spectated-rounds-changed')
                 .then(() => this.__awaitNextMove());
       },
 
       __visualizeLatestMove() {
-        return Promise.resolve();
+        const rounds = this.spectatedRounds || [];
+        const latestMoveNumber = rounds.length;
+        const latestMove = rounds[latestMoveNumber - 1];
+
+        const result = latestMove
+            ? this.$.visualizer.play(latestMove)
+            : Promise.resolve();
+
+        console.log(this.lastShownMove, '=>', latestMoveNumber);
+
+        return result.then(() => {
+          this._setLastShownMove(latestMoveNumber);
+        });
       },
 
       __proclaimVictor() {
@@ -231,24 +252,29 @@
 
         switch (state) {
           case PresentationState.WAITING:
+            console.log('Waiting...');
             this.__doIdleRotationWhileWaiting();
             break;
           case PresentationState.READY:
+            console.log('Ready...');
             this.__displayPlayerTeam();
             break;
           case PresentationState.COUNTDOWN:
             this.__performCountdownSequence().then(() => {
+              console.log('Going to battlefield...');
               this._setPresentationState(PresentationState.BATTLEFIELD);
             });
             break;
           case PresentationState.BATTLEFIELD:
+            console.log('Awaiting next move...');
             this.__awaitNextMove().then(() => {
               this._setPresentationState(PresentationState.SHOW_MOVE);
             });
             break;
           case PresentationState.SHOW_MOVE:
+            console.log('Visualizing move...');
             this.__visualizeLatestMove().then(() => {
-              if (this.tournamementState === TournamentState.ACTIVE) {
+              if (this.tournamentState === TournamentState.ACTIVE) {
                 this._setPresentationState(PresentationState.BATTLEFIELD);
               } else {
                 this._setPresentationState(PresentationState.VICTORY);
@@ -277,7 +303,7 @@
             break;
           case TournamentState.WAITING:
             if (oldState === 'active') {
-              this._setPresentationState(PresentationState.VICTORY);
+              this._setPresentationState(PresentationState.BATTLEFIELD);
             } else {
               this._setPresentationState(PresentationState.WAITING);
             }

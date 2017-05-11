@@ -1,0 +1,272 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
+<dom-module id="polymon-tournament-move-visualizer">
+  <template>
+    <style include="typography">
+      @keyframes flash {
+        0% {
+          opacity: 0;
+        }
+
+        19.9% {
+          opacity: 0;
+        }
+
+        20% {
+          opacity: 0.75;
+        }
+
+        21.5% {
+          opacity: 0;
+        }
+
+        24.9% {
+          opacity: 0;
+        }
+
+        25% {
+          opacity: 1;
+        }
+
+        34% {
+          opacity: 0;
+        }
+
+        66.9% {
+          opacity: 0;
+        }
+
+        67% {
+          opacity: 1
+        }
+
+        72% {
+          opacity: 0;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes attackOne {
+        0% {
+          transform: translate(200px, 200px);
+        }
+
+        20% {
+          transform: translate(100px, 200px) scale(0.8);
+        }
+
+        20.1% {
+          transform: translate(1000px, 0px) scale(-1.2, 1.2);
+        }
+
+        24.9% {
+          transform: translate(1050px, -50px) scale(-1.2, 1.2);
+        }
+
+        25% {
+          transform: translate(150px, 200px) scale(0.8);
+        }
+
+        100% {
+          transform: translate(50px, 200px) scale(0.7);
+        }
+      }
+
+      @keyframes showStat {
+        0% {
+          transform: translate(-100px, -50px);
+          opacity: 0;
+        }
+
+        20% {
+          transform: translate(-100px, -50px);
+          opacity: 0;
+        }
+
+        20.1% {
+          transform: translate(-100px, -50px);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translate(-400px, -50px);
+          opacity: 1;
+        }
+      }
+
+      :host {
+        @apply --layout-fit;
+        transition: transform 0.3s ease-in-out;
+
+        --polymon-portrait-background: transparent;
+      }
+
+      :host(.one) {
+        transform: translate(-100%, 0);
+        background-color: #37FFFE;
+      }
+
+      :host(.two) {
+        transform: translate(100%, 0);
+        background-color: #607CFB;
+      }
+
+      :host(.playing) {
+        transform: translate(0, 0);
+      }
+
+      :host(:not(.playing)) * {
+        animation-name: none;
+      }
+
+      #scene * {
+        animation-timing-function: linear;
+        animation-delay: 1s;
+        animation-duration: 10s;
+        animation-iteration-count: 1;
+      }
+
+      video {
+        width: 100%;
+        height: 100%;
+      }
+
+      polymon-portrait {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translate(200px, 200px);
+      }
+
+      :host(.one) polymon-portrait {
+        animation-name: attackOne;
+      }
+
+      #screen {
+        @apply --layout-fit;
+        background-color: #fff;
+
+        opacity: 0;
+        animation-name: flash;
+      }
+
+      #stat {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 256px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transform: translate(-100px, -50px);
+        opacity: 0;
+
+        animation-name: showStat;
+      }
+    </style>
+    <video
+        id="video"
+        src="[[__computeVideoSrc(player)]]"
+        preload="auto"
+        muted>
+    </video>
+    <div id="scene">
+      <polymon-portrait
+          polymon="[[config.polymon]]"
+          size="640"
+          caught>
+      </polymon-portrait>
+      <span id="stat">[[config.move.attributeName]]</span>
+      <span id="value">[[config.statValue]]</span>
+      <div id="screen"></div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-tournament-move-visualizer',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        player: {
+          type: String,
+          observer: '__playerChanged'
+        },
+
+        teamStatus: {
+          type: Array
+        },
+
+        config: {
+          type: Object
+        }
+      },
+
+      play(move) {
+        return new Promise(resolve => {
+          requestAnimationFrame(() => {
+            console.log(move);
+            console.log(this.teamStatus);
+            const polymon = this.__getMovePolymon(move);
+            const statValue = polymon.stats[move.attributeName];
+
+            Polymer.dom(this.root).removeChild(this.$.scene);
+            Polymer.dom(this.root).appendChild(this.$.scene);
+
+            this.config = {
+              move,
+              polymon,
+              statValue
+            };
+
+            this.classList.add('playing');
+
+            resolve(this.awaitTransition(this, 4000).then(() => {
+              this.$.video.play();
+              return this.awaitEvent(this.$.video, 'pause').then(() => {
+                this.$.video.currentTime = 0;
+                this.classList.remove('playing');
+                console.log('DONE!');
+              });
+            }));
+          });
+        });
+      },
+
+      __getMovePolymon(move) {
+        const teamStatus = this.teamStatus;
+        let polymon = null;
+
+        for (let i = 0; i < teamStatus.length; ++i) {
+          const teamPosition = teamStatus[i];
+
+          if (teamPosition.polydexId === move.polydexId) {
+            polymon = teamPosition.polymon;
+          }
+        }
+
+        return polymon;
+      },
+
+      __computeVideoSrc(player) {
+        if (player != null) {
+          return this.resolveUrl(`../../video/battle_player_${player}.mp4`);
+        }
+      },
+
+      __playerChanged(player, oldPlayer) {
+        if (oldPlayer != null) {
+          this.classList.remove(oldPlayer);
+        }
+
+        if (player != null) {
+          this.classList.add(player);
+        }
+      }
+    });
+  </script>
+</dom-module>
