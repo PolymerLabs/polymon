@@ -211,7 +211,7 @@
         id="scanner">
     </polymon-qr-code-scanner>
 
-    <polymon-space-background></polymon-space-background>
+    <polymon-space-background prevent-load="[[!logoLoaded]]"></polymon-space-background>
 
     <polymon-map
         unresolved
@@ -231,7 +231,8 @@
         music-enabled="[[musicPlaying]]"
         on-request-login="attemptLogin"
         on-request-logout="attemptLogout"
-        on-toggle-audio="toggleAudio">
+        on-toggle-audio="toggleAudio"
+        logo-loaded="{{logoLoaded}}">
     </polymon-start-screen>
 
     <!-- TODO(cdata): Consider moving this to the map screen? -->

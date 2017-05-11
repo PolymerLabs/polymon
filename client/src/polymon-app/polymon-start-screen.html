@@ -155,7 +155,7 @@
 
     <div id="container">
       <section id="marquee">
-        <polymon-logo></polymon-logo>
+        <polymon-logo loaded="{{logoLoaded}}"></polymon-logo>
 
         <polymon-carousel
             active="[[active]]">
@@ -222,7 +222,12 @@
         musicEnabled: {
           type: Boolean,
           value: false
-        }
+        },
+
+        logoLoaded: {
+          value: false,
+          notify: true,
+        },
       },
 
       requestLogin: function() {

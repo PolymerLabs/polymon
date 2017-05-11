@@ -17,7 +17,6 @@
       #image {
         @apply --layout-fit;
 
-        background-image: url(/images/space_bg@1x.jpg);
         background-size: cover;
         background-position: var(--polymon-space-background-position, 50% 50%);
 
@@ -25,8 +24,12 @@
         transition: opacity 1s;
       }
 
+      #image.load {
+        background-image: url(/images/space_bg@1x.jpg);
+      }
+
       @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
-        #image {
+        #image.load {
           background-image: url(/images/space_bg@2x.jpg);
         }
       }
@@ -47,13 +50,44 @@
 
       behaviors: [PolymonElement],
 
+      properties: {
+        __loadStarted: {
+          type: Boolean,
+          value: false,
+        },
+
+        preventLoad: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: '__preventLoadChanged',
+        },
+      },
+
       ready: function() {
         // Skip the transition if the image loads before the next paint (i.e. if
         // it's cached).
-        let skipTransition = true;
+        this.__skipTransition = true;
         requestAnimationFrame(() => {
-          skipTransition = false;
+          this.__skipTransition = false;
         });
+      },
+
+      __preventLoadChanged: function() {
+        console.log("polymon-space-background.preventLoad", this.preventLoad);
+        if (!this.preventLoad) {
+          this.__load();
+        }
+      },
+
+      __load: function() {
+        if (this.__loadStarted) {
+          return;
+        }
+        this.__loadStarted = true;
+
+        const image = this.$.image;
+        image.classList.toggle('load', true);
 
         // Load the same image as the background of #background and fade it in
         // only after the load event.
@@ -65,9 +99,8 @@
             ? "/images/space_bg@2x.jpg"
             : "/images/space_bg@1x.jpg";
         background.onload = () => {
-          const image = this.$.image;
           image.classList.toggle('visible', true);
-          image.classList.toggle('skip-transition', skipTransition);
+          image.classList.toggle('skip-transition', this.__skipTransition);
         };
       },
     });
