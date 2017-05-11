@@ -26,7 +26,22 @@
   </template>
   <script>
     Polymer({
-      is: 'polymon-logo'
+      is: 'polymon-logo',
+
+      properties: {
+        loaded: {
+          value: false,
+          notify: true,
+        },
+      },
+
+      created: function() {
+        const logoImage = new Image();
+        logoImage.src = '/images/polymon_sprite_sheet.svg';
+        logoImage.onload = () => {
+          this.loaded = true;
+        };
+      },
     });
   </script>
 </dom-module>

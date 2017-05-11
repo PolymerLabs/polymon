@@ -11,15 +11,30 @@
     <style include="typography">
       :host {
         @apply --layout-fit;
-        @apply --layout-vertical;
+
         opacity: 0;
         pointer-events: none;
+        transition: opacity 0.3s;
+      }
+
+      :host(:not(.hidden)) {
+        opacity: 1;
+      }
+
+      #container {
+        @apply --layout-fit;
+        @apply --layout-vertical;
         transform: translateY(50px);
-        transition: opacity 0.3s, transform 0.5s cubic-bezier(.7,-0.29,.28,1.27);
+        transition: transform 0.5s cubic-bezier(.7,-0.29,.28,1.27);
+      }
+
+      :host(:not(.hidden)) #container {
+        @apply --layout-fit;
+        transform: translateY(0);
       }
 
       @media (max-height: 525px) and (orientation: landscape) {
-        :host {
+        #container {
           @apply --layout-horizontal;
           flex-wrap: wrap;
         }
@@ -27,11 +42,6 @@
         polymon-logo {
           flex-basis: 100%;
         }
-      }
-
-      :host(:not(.hidden)) {
-        opacity: 1;
-        transform: translateY(0);
       }
 
       polymon-carousel {
@@ -143,50 +153,52 @@
       }
     </style>
 
-    <section id="marquee">
-      <polymon-logo></polymon-logo>
+    <div id="container">
+      <section id="marquee">
+        <polymon-logo loaded="{{logoLoaded}}"></polymon-logo>
 
-      <polymon-carousel
-          active="[[active]]">
-      </polymon-carousel>
-    </section>
+        <polymon-carousel
+            active="[[active]]">
+        </polymon-carousel>
+      </section>
 
-    <section id="options">
-      <section id="for-user">
-        <div class="row">
-          <a href="/map">
-            <polymon-button>Catch Polymon</polymon-button>
-          </a>
-        </div>
-        <div class="row">
-          <a href="/polydex">
-            <polymon-button class="alt">Polydex</polymon-button>
-          </a>
-        </div>
-        <div class="row">
-          <a href="/about">
-            <polymon-button class="alt">About</polymon-button>
-          </a>
-          <a href="javascript:void(0)">
-            <polymon-button
-                on-tap="requestToggleAudio"
-                class="alt icon">
-              <img src="[[__computeAudioIcon(musicEnabled)]]" alt="Toggle audio">
-            </polymon-button>
-          </a>
-          <a href="javascript:void(0)">
-            <polymon-button on-tap="requestLogout" class="alt icon">
-              <img src="/images/logout_white_24px.svg" alt="Sign out">
-            </polymon-button>
-          </a>
-        </div>
+      <section id="options">
+        <section id="for-user">
+          <div class="row">
+            <a href="/map">
+              <polymon-button>Catch Polymon</polymon-button>
+            </a>
+          </div>
+          <div class="row">
+            <a href="/polydex">
+              <polymon-button class="alt">Polydex</polymon-button>
+            </a>
+          </div>
+          <div class="row">
+            <a href="/about">
+              <polymon-button class="alt">About</polymon-button>
+            </a>
+            <a href="javascript:void(0)">
+              <polymon-button
+                  on-tap="requestToggleAudio"
+                  class="alt icon">
+                <img src="[[__computeAudioIcon(musicEnabled)]]" alt="Toggle audio">
+              </polymon-button>
+            </a>
+            <a href="javascript:void(0)">
+              <polymon-button on-tap="requestLogout" class="alt icon">
+                <img src="/images/logout_white_24px.svg" alt="Sign out">
+              </polymon-button>
+            </a>
+          </div>
+        </section>
+        <section id="for-anon">
+          <div class="row">
+            <polymon-button on-tap="requestLogin">Login with Google</polymon-button>
+          </div>
+        </section>
       </section>
-      <section id="for-anon">
-        <div class="row">
-          <polymon-button on-tap="requestLogin">Login with Google</polymon-button>
-        </div>
-      </section>
-    </section>
+    </div>
   </template>
   <script>
     Polymer({
@@ -210,7 +222,12 @@
         musicEnabled: {
           type: Boolean,
           value: false
-        }
+        },
+
+        logoLoaded: {
+          value: false,
+          notify: true,
+        },
       },
 
       requestLogin: function() {

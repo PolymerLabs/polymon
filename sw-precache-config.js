@@ -6,6 +6,8 @@ module.exports = {
     '/bower_components/webrtc-polyfill/index.js',
     '/images/polymon_sprite_sheet.svg',
     '/images/polymon_icon.png',
+    '/images/space_bg@1x.jpg',
+    '/images/space_bg@2x.jpg',
     '/fonts/**/*'
   ],
   navigateFallback: '/index.html',

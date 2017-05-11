@@ -37,6 +37,7 @@
     "./src/polymon-app/polymon-coded-url-screen.html",
     "./src/polymon-app/polymon-music.html",
     "./src/polymon-app/polymon-about-screen.html",
+    "./src/polymon-app/polymon-space-background.html",
     "./bower_components/polymerfire/firebase-app.html"
   ],
   "sources": [

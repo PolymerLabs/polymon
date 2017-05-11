@@ -8,6 +8,7 @@
 <link rel="import" href="polymon-qr-code.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-portrait.html">
+<link rel="import" href="polymon-space-background.html">
 <dom-module id="polymon-battle-field">
   <template>
     <style>
@@ -25,6 +26,15 @@
         @apply --layout-fit;
         @apply --layout-vertical;
         justify-content: space-between;
+      }
+
+      polymon-space-background {
+        @apply --layout-fit;
+        left: -50%;
+        background-color: #4b4970;
+        background-image:
+          linear-gradient(to bottom, #04072f, #293357 30%, #787e95 70%, #709aaa);
+        --polymon-space-background-position: 75% 30%;
       }
 
       :host(.zoom-to-opponent) #bottom {
@@ -72,18 +82,6 @@
 
       .landscape {
         @apply --layout-fit;
-        background-image: linear-gradient(0deg,
-            #e7f8ff 0%,
-            #e7f8ff 15%,
-            #c1e9fa 15%,
-            #c1e9fa 20%,
-            #a0ddf7 20%,
-            #a0ddf7 35%,
-            #6dcaf2 35%,
-            #6dcaf2 60%,
-            #3ebbf0 60%,
-            #3ebbf0 100%);
-
         overflow: hidden;
       }
 
@@ -428,6 +426,8 @@
         }
       }
     </style>
+
+    <polymon-space-background></polymon-space-background>
 
     <section class="landscape">
       <div class="background">

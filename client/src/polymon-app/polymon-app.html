@@ -10,6 +10,7 @@
 <link rel="import" href="polymon-lazy-loader.html">
 <!-- Chagnes to lazy loading should be reflected here and in the data-fragments
     of the app routes -->
+<link rel="lazy-import" href="polymon-space-background.html">
 <link rel="lazy-import" href="polymon-polydex-query.html">
 <link rel="lazy-import" href="polymon-qr-code-scanner.html">
 <link rel="lazy-import" href="polymon-map.html">
@@ -45,6 +46,14 @@
 
       [unresolved] {
         opacity: 0;
+      }
+
+      polymon-space-background {
+        @apply --layout-fit;
+        right: -50%;
+        background-color: #4b4970;
+        background-image:
+          linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
       }
     </style>
 
@@ -117,7 +126,7 @@
           active="{{rootRouteActive}}"
           data-fragments='[
             "polymon-start-screen.html",
-            "polymon-map.html",
+            "polymon-space-background.html",
             "polymon-music.html"
           ]'>
       </app-route>
@@ -150,9 +159,9 @@
           tail="{{polydexRoute}}"
           active="{{polydexRouteActive}}"
           data-fragments='[
-            "polymon-map.html",
             "polymon-panel.html",
-            "polymon-polydex.html"
+            "polymon-polydex.html",
+            "polymon-space-background.html"
           ]'>
       </app-route>
 
@@ -162,10 +171,10 @@
           tail="{{newBattleRoute}}"
           active="{{newBattleRouteActive}}"
           data-fragments='[
-            "polymon-map.html",
             "polymon-panel.html",
             "polymon-qr-code-scanner.html",
-            "polymon-new-battle-screen.html"
+            "polymon-new-battle-screen.html",
+            "polymon-space-background.html"
           ]'>
       </app-route>
 
@@ -202,6 +211,8 @@
         id="scanner">
     </polymon-qr-code-scanner>
 
+    <polymon-space-background prevent-load="[[!logoLoaded]]"></polymon-space-background>
+
     <polymon-map
         unresolved
         id="map"
@@ -220,7 +231,8 @@
         music-enabled="[[musicPlaying]]"
         on-request-login="attemptLogin"
         on-request-logout="attemptLogout"
-        on-toggle-audio="toggleAudio">
+        on-toggle-audio="toggleAudio"
+        logo-loaded="{{logoLoaded}}">
     </polymon-start-screen>
 
     <!-- TODO(cdata): Consider moving this to the map screen? -->
