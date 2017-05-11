@@ -47,7 +47,6 @@
       },
 
       renderChildren: function(path) {
-        console.log(path);
         if (!this.siteMap) {
           return null;
         }
@@ -66,20 +65,17 @@
           subMap = dirtySubmap;
 
           if (subMap === undefined) {
-            console.log(pathParts, pathPart);
             return null;
           }
         }
 
         const newIds = subMap._elements;
         this.selectedValues = Array.from(newIds);
-        console.log(this.selectedValues, subMap, pathParts);
         return this.selectedValues;
       },
 
       _renderElement: function(e) {
         const element = e.detail.item;
-        console.log(this.selectedValues, this);
         if (element == this || !element.getAttribute('page-name')) {
           return;
         }
@@ -90,12 +86,9 @@
         e.stopPropagation();
 
         if (renderFn) {
-          console.log(shouldRender, element);
           element.render(shouldRender, { path: this.renderPath });
 
         } else if(Polymer.isInstance(element)) {
-          console.log(element);
-          console.error(`No render function for ${element.getAttribute('page-name')}`);
         }
       },
 

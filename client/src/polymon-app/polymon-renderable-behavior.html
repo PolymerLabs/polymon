@@ -42,7 +42,6 @@
        */
       render: function(shouldBeVisible, config) {
         if (this.__hidingTimeout) {
-          console.log('cancelling');
           this.cancelAsync(this.__hidingTimeout);
           this.__hidingTimeout = null;
         }
