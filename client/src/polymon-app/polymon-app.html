@@ -128,7 +128,8 @@
           data="{{codeRouteData}}"
           active="{{codeRouteActive}}"
           data-fragments='[
-            "polymon-coded-url-screen.html"
+            "polymon-coded-url-screen.html",
+            "polymon-space-background.html"
           ]'>
       </app-route>
 
@@ -259,7 +260,7 @@
       <!-- TODO(cdata): Consider moving this to the map screen? -->
       <polymon-caught-screen
           unresolved
-          page-name="caught-screen"
+          page-name="caughtScreen"
           active="[[caughtRouteActive]]"
           data="[[caughtData]]"
           continue-to="[[caughtQueryParams.continueTo]]">
@@ -429,6 +430,23 @@
                     'about',
                     'background'
                   ]
+                },
+                code: {
+                  _elements: [],
+                  _default: {
+                    _elements: [
+                      'codedUrl',
+                      'background'
+                    ]
+                  }
+                },
+                caught: {
+                  _elements: [],
+                  _default: {
+                    _elements: [
+                      'caughtScreen'
+                    ]
+                  }
                 }
               }
             }
