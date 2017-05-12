@@ -17,7 +17,10 @@ class Battle extends DataObject {
     });
   }
 
-  async withdrawParticipatingUser(userId) {
+  async withdrawParticipatingUser(userId, options) {
+    const cancelBattle = options
+        ? options.cancelBattle === true
+        : false;
     const isStarted = await this.isStarted();
 
     if (isStarted) {
@@ -25,14 +28,22 @@ class Battle extends DataObject {
           `Cannot withdraw from ${this.formalName} because it is already started.`);
     }
 
-    const battle = this.read();
+    const battle = await this.read();
     const user = new User(this.db, userId);
 
     if (battle.initiatingUserId === userId) {
-      await this.ref.remove();
+      if (cancelBattle) {
+        await this.ref.remove();
+      } else {
+        await Promise.all([
+          this.ref.child(`initiatingUserId`).remove(),
+          this.ref.child(`status/players/${userId}`).remove(),
+          this.ref.child(`state/${userId}`).remove()
+        ]);
+      }
     } else if (battle.defendingUserId !== userId) {
       throw new Error(
-          `${user.formalName} cannot leave ${battle.formalName} (not participating).`);
+          `${user.formalName} cannot leave ${this.formalName} (not participating).`);
     }
 
     await user.ref.child('player/activeBattleId').remove();

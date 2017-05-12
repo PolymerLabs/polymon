@@ -71,12 +71,54 @@
           transform: translate(150px, 200px) scale(0.8);
         }
 
-        100% {
+        80% {
           transform: translate(50px, 200px) scale(0.7);
+        }
+
+        82% {
+          transform: translate(-600px, 200px) scale(0.7);
+        }
+
+        100% {
+          transform: translate(-600px, 200px) scale(0.7);
         }
       }
 
-      @keyframes showStat {
+      @keyframes attackTwo {
+        0% {
+          transform: translate(-200px, -400px);
+        }
+
+        20% {
+          transform: translate(-100px, -400px) scale(0.8);
+        }
+
+        20.1% {
+          transform: translate(-1000px, -200px) scale(-1.2, 1.2);
+        }
+
+        24.9% {
+          transform: translate(-1050px, -150px) scale(-1.2, 1.2);
+        }
+
+        25% {
+          transform: translate(-150px, -200px) scale(0.8);
+        }
+
+        80% {
+          transform: translate(-50px, -200px) scale(0.7);
+        }
+
+        82% {
+          transform: translate(600px, -200px) scale(0.7);
+        }
+
+        100% {
+          transform: translate(600px, -200px) scale(0.7);
+        }
+      }
+
+      @keyframes showStatOne {
         0% {
           transform: translate(-100px, -50px);
           opacity: 0;
@@ -92,11 +134,171 @@
           opacity: 1;
         }
 
-        100% {
+        80% {
           transform: translate(-400px, -50px);
           opacity: 1;
         }
+
+        82% {
+          transform: translate(-2500px, -50px);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translate(-2320px, -50px);
+          opacity: 1;
+        }
       }
+
+      @keyframes showStatTwo {
+        0% {
+          transform: translate(100px, 50px);
+          opacity: 0;
+        }
+
+        20% {
+          transform: translate(100px, 50px);
+          opacity: 0;
+        }
+
+        20.1% {
+          transform: translate(100px, 50px);
+          opacity: 1;
+        }
+
+        80% {
+          transform: translate(400px, 50px);
+          opacity: 1;
+        }
+
+        82% {
+          transform: translate(2500px, 50px);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translate(2320px, 50px);
+          opacity: 1;
+        }
+      }
+
+      @keyframes revealValue {
+        0% {
+          transform: translateX(1920px);
+        }
+
+        25% {
+          transform: translateX(1920px);
+        }
+
+        25.5% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes revealTotal1 {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        38% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        40% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @keyframes revealTotal2 {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        38% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        40% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        42% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @keyframes revealTotal3 {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        40% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        44% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @keyframes revealTotal4 {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        44% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+
 
       :host {
         @apply --layout-fit;
@@ -137,13 +339,20 @@
 
       polymon-portrait {
         position: absolute;
-        top: 0;
-        left: 0;
-        transform: translate(200px, 200px);
       }
 
       :host(.one) polymon-portrait {
+        top: 0;
+        left: 0;
+        transform: translate(200px, 200px);
         animation-name: attackOne;
+      }
+
+      :host(.two) polymon-portrait {
+        right: 0;
+        bottom: 0;
+        transform: translate(-200px, -400px);
+        animation-name: attackTwo;
       }
 
       #screen {
@@ -156,16 +365,80 @@
 
       #stat {
         position: absolute;
-        right: 0;
-        bottom: 0;
+        display: flex;
+        align-items: center;
         color: rgba(255, 255, 255, 0.75);
         font-size: 256px;
+        line-height: 132px;
         font-weight: bold;
         text-transform: uppercase;
-        transform: translate(-100px, -50px);
+        text-shadow: 0px 0px 20px #fff;
         opacity: 0;
+      }
 
-        animation-name: showStat;
+      :host(.one) #stat {
+        flex-direction: column-reverse;
+        right: 0;
+        bottom: 0;
+        transform: translate(-100px, -50px);
+        animation-name: showStatOne;
+      }
+
+      :host(.two) #stat {
+        flex-direction: column;
+        left: 0;
+        top: 0;
+        transform: translate(100px, 50px);
+        animation-name: showStatTwo;
+      }
+
+      #stat > .bonus {
+        font-size: 100px;
+      }
+
+      #value {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 500px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-shadow: 0px 0px 20px #fff;
+        animation-name: revealValue;
+      }
+
+      :host(.one) #value {
+        top: 200px;
+        right: 600px;
+      }
+
+      :host(.two) #value {
+        bottom: 700px;
+        left: 300px;
+      }
+
+      #value > span {
+        position: absolute;
+        opacity: 0;
+      }
+
+      #value > span:nth-of-type(1) {
+        animation-name: revealTotal1;
+      }
+
+      #value > span:nth-of-type(2) {
+        animation-name: revealTotal2;
+      }
+
+      #value > span:nth-of-type(3) {
+        animation-name: revealTotal3;
+      }
+
+      #value > span:nth-of-type(4) {
+        animation-name: revealTotal4;
+      }
+
+      [hidden] {
+        display: none;
       }
     </style>
     <video
@@ -180,8 +453,15 @@
           size="640"
           caught>
       </polymon-portrait>
-      <span id="stat">[[config.move.attributeName]]</span>
-      <span id="value">[[config.statValue]]</span>
+      <span id="stat">
+        <span>[[config.move.attributeName]]</span>
+        <span hidden="[[!config.move.gotBonus]]" class="bonus">BONUS +3</span>
+      </span>
+      <span id="value">
+        <template is="dom-repeat" items="[[config.scoreSequence]]" as="score">
+          <span>[[score]]</span>
+        </template>
+      </span>
       <div id="screen"></div>
     </div>
   </template>
@@ -211,8 +491,10 @@
           requestAnimationFrame(() => {
             console.log(move);
             console.log(this.teamStatus);
+
             const polymon = this.__getMovePolymon(move);
             const statValue = polymon.stats[move.attributeName];
+            const scoreSequence = this.__getScoreSequence(move, statValue);
 
             Polymer.dom(this.root).removeChild(this.$.scene);
             Polymer.dom(this.root).appendChild(this.$.scene);
@@ -220,7 +502,8 @@
             this.config = {
               move,
               polymon,
-              statValue
+              statValue,
+              scoreSequence
             };
 
             this.classList.add('playing');
@@ -235,6 +518,31 @@
             }));
           });
         });
+      },
+
+      __getScoreSequence(move, attributeValue) {
+        const scoreSequence = [attributeValue];
+
+        if (move.gotBonus) {
+          for (let i = 0; i < 3; ++i) {
+            scoreSequence.push(attributeValue + i + 1);
+          }
+        }
+
+        if (move.randomModifier) {
+          let modifier;
+
+          if (move.gotBonus) {
+            modifier = scoreSequence[scoreSequence.length - 1] +
+                move.randomModifier;
+          } else {
+            modifier = attributeValue + move.randomModifier;
+          }
+
+          scoreSequence.push(modifier);
+        }
+
+        return scoreSequence;
       },
 
       __getMovePolymon(move) {
@@ -254,7 +562,7 @@
 
       __computeVideoSrc(player) {
         if (player != null) {
-          return this.resolveUrl(`../../video/battle_player_${player}.mp4`);
+          return this.resolveUrl(`../../video/battle_player_${player}.webm`);
         }
       },
 

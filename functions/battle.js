@@ -535,7 +535,7 @@ function recordHeartbeat(db, userId, battleId) {
 }
 
 
-function withdrawFromBattle(db, userId, battleId) {
+async function withdrawFromBattle(db, userId, battleId) {
 
   console.log(`User ${userId} attempting withdrawal from Battle ${battleId}`);
 
@@ -548,7 +548,7 @@ function withdrawFromBattle(db, userId, battleId) {
 
     return tournament.withdrawPlayer(userId);
   } else {
-    return battle.withdrawParticipatingUser(userId);
+    return battle.withdrawParticipatingUser(userId, { cancelBattle: true });
   }
 }
 

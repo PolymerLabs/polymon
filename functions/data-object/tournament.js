@@ -1,5 +1,6 @@
 const DataObject = require('../data-object');
 const Battle = require('./battle');
+const User = require('./user');
 
 class Tournament extends DataObject {
   static get state() {
@@ -38,11 +39,11 @@ class Tournament extends DataObject {
   }
 
   async withdrawPlayer(userId) {
-    const tournament = this.read();
+    const tournament = await this.read();
     const battle = new Battle(this.db, tournament.currentBattleId);
     const user = new User(this.db, userId);
 
-    if (tournament.state === TournamentState.ACTIVE) {
+    if (tournament.state === Tournament.state.ACTIVE) {
       throw new Error(
           `${this.formalName} battle is ongoing; players must complete the battle.`);
     }
