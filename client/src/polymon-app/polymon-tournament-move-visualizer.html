@@ -33,15 +33,15 @@
           opacity: 0;
         }
 
-        66.9% {
+        59.9% {
           opacity: 0;
         }
 
-        67% {
+        60% {
           opacity: 1
         }
 
-        72% {
+        65% {
           opacity: 0;
         }
 
@@ -182,7 +182,7 @@
         }
       }
 
-      @keyframes revealValue {
+      @keyframes revealValueOne {
         0% {
           transform: translateX(1920px);
         }
@@ -195,8 +195,42 @@
           transform: translateX(0);
         }
 
-        100% {
+        80% {
           transform: translateX(0);
+        }
+
+        82% {
+          transform: translateX(-2500px);
+        }
+
+        100% {
+          transform: translateX(-2500px);
+        }
+      }
+
+      @keyframes revealValueTwo {
+        0% {
+          transform: translateX(1920px);
+        }
+
+        25% {
+          transform: translateX(1920px);
+        }
+
+        25.5% {
+          transform: translateX(0);
+        }
+
+        80% {
+          transform: translateX(0);
+        }
+
+        82% {
+          transform: translateX(2500px);
+        }
+
+        100% {
+          transform: translateX(2500px);
         }
       }
 
@@ -298,6 +332,124 @@
         }
       }
 
+      @keyframes revealTotal5 {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        60% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        62% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes revealTotalModified1 {
+        0% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        60% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        62% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(-10%) scale(1.25);
+          opacity: 0;
+        }
+      }
+
+      @keyframes revealTotalModified2 {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        60% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        62% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+
+      @keyframes revealFateOne {
+        0% {
+          transform: translateX(2220px);
+        }
+
+        52% {
+          transform: translateX(2220px);
+        }
+
+        53% {
+          transform: translateX(960px);
+        }
+
+        81% {
+          transform: translateX(860px);
+        }
+
+        82% {
+          transform: translateX(-800px);
+        }
+
+        100% {
+          transform: translateX(-800px);
+        }
+      }
+
+      @keyframes revealFateTwo {
+        0% {
+          transform: translateX(-2220px);
+        }
+
+        52% {
+          transform: translateX(-2220px);
+        }
+
+        53% {
+          transform: translateX(-960px);
+        }
+
+        81% {
+          transform: translateX(-860px);
+        }
+
+        82% {
+          transform: translateX(800px);
+        }
+
+        100% {
+          transform: translateX(800px);
+        }
+      }
 
 
       :host {
@@ -305,6 +457,7 @@
         transition: transform 0.3s ease-in-out;
 
         --polymon-portrait-background: transparent;
+        overflow: hidden;
       }
 
       :host(.one) {
@@ -403,17 +556,18 @@
         font-weight: bold;
         text-transform: uppercase;
         text-shadow: 0px 0px 20px #fff;
-        animation-name: revealValue;
       }
 
       :host(.one) #value {
         top: 200px;
         right: 600px;
+        animation-name: revealValueOne;
       }
 
       :host(.two) #value {
-        bottom: 700px;
+        bottom: 800px;
         left: 300px;
+        animation-name: revealValueTwo;
       }
 
       #value > span {
@@ -437,8 +591,42 @@
         animation-name: revealTotal4;
       }
 
+      #value.bonus > span:nth-of-type(5) {
+        animation-name: revealTotal5;
+      }
+
+      #value:not(.bonus).modified > span:nth-of-type(1) {
+        animation-name: revealTotalModified1;
+      }
+
+      #value:not(.bonus).modified > span:nth-of-type(2) {
+        animation-name: revealTotalModified2;
+      }
+
       [hidden] {
         display: none;
+      }
+
+      #fate {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 200px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-shadow: 0px 0px 20px #fff;
+        transform: translateX(2220px);
+      }
+
+      :host(.one) #fate {
+        top: 0;
+        left: 0;
+        animation-name: revealFateOne;
+      }
+
+      :host(.two) #fate {
+        bottom: 0;
+        right: 0;
+        animation-name: revealFateTwo;
       }
     </style>
     <video
@@ -457,10 +645,13 @@
         <span>[[config.move.attributeName]]</span>
         <span hidden="[[!config.move.gotBonus]]" class="bonus">BONUS +3</span>
       </span>
-      <span id="value">
+      <span id="value" class$="[[__computeValueClass(config)]]">
         <template is="dom-repeat" items="[[config.scoreSequence]]" as="score">
           <span>[[score]]</span>
         </template>
+      </span>
+      <span id="fate">
+        <span>FATE</span> <span>[[config.fateSymbol]][[config.move.randomModifier]]</span>
       </span>
       <div id="screen"></div>
     </div>
@@ -495,6 +686,11 @@
             const polymon = this.__getMovePolymon(move);
             const statValue = polymon.stats[move.attributeName];
             const scoreSequence = this.__getScoreSequence(move, statValue);
+            const fateSymbol = move.randomModifier > 0
+                ? '+'
+                : move.randomModifier < 0
+                    ? '-'
+                    : '';
 
             Polymer.dom(this.root).removeChild(this.$.scene);
             Polymer.dom(this.root).appendChild(this.$.scene);
@@ -503,6 +699,7 @@
               move,
               polymon,
               statValue,
+              fateSymbol,
               scoreSequence
             };
 
@@ -574,6 +771,20 @@
         if (player != null) {
           this.classList.add(player);
         }
+      },
+
+      __computeValueClass(config) {
+        const classes = [];
+
+        if (config.move.gotBonus) {
+          classes.push('bonus');
+        }
+
+        if (config.move.randomModifier) {
+          classes.push('modified');
+        }
+
+        return classes.join(' ');
       }
     });
   </script>
