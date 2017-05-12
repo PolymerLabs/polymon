@@ -175,7 +175,7 @@
 
         visiblePages: {
           type: Array,
-          value: () => ['initiate']
+          value: () => []
         }
       },
 
@@ -273,10 +273,9 @@
       },
 
       __initiatingBattleChanged: function() {
-        if (!this.initiatingBattle && !this.waiting) {
-          // needed if refresh on this page
-          // visiblePages might update before the controller is upgraded
-          this.$.initiate.render(false);
+        if (this.initiatingBattle) {
+          this.visiblePages = ['initiate']
+        } else {
           this.visiblePages = ['field'];
         }
       },
