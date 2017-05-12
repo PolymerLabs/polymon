@@ -98,7 +98,8 @@
         },
 
         ready: {
-          type: Boolean
+          type: Boolean,
+          value: false
         },
 
         show: {
@@ -107,7 +108,12 @@
 
         copy: {
           type: String,
-          computed: '__computeCopy(ready)'
+          computed: '__computeCopy(ready, victory)'
+        },
+
+        victory: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -126,10 +132,12 @@
         }
       },
 
-      __computeCopy(ready) {
-        return ready
-            ? 'READY!'
-            : 'Go head to head here!'
+      __computeCopy(ready, victory) {
+        return victory
+            ? 'WINS!'
+            : ready
+                ? 'READY!'
+                : 'Go head to head here!'
       }
     });
   </script>

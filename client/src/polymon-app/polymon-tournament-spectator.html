@@ -58,6 +58,14 @@
         battle-status="{{spectatedTeamStatus}}">
     </polymon-team-query>
 
+    <polymon-team-query
+        user-id="[[latestTournamentRound.winningUserId]]"
+        battle-id="[[latestTournamentRound.battleId]]"
+        battle-rounds="[]"
+        battle-status="{{winnerTeamStatus}}">
+    </polymon-team-query>
+
+
     <polymon-tournament-logo>
     </polymon-tournament-logo>
 
@@ -68,7 +76,7 @@
 
     <polymon-planet-surface
         id="planet"
-        team="[[spectatedTeamStatus]]"
+        team="[[__computePresentedTeamStatus(presentationState, spectatedTeamStatus, winnerTeamStatus)]]"
         show="[[equalsAny(presentationState, 'waiting', 'ready', 'countdown', 'victory')]]">
     </polymon-planet-surface>
 
@@ -76,12 +84,12 @@
 
     <polymon-tournament-marquee
         id="marquee"
-        player="[[player]]"
+        player="[[presentedPlayer]]"
         show="[[equalsAny(presentationState, 'waiting', 'ready', 'countdown', 'victory')]]">
     </polymon-tournament-marquee>
 
     <polymon-space-island
-        player="[[player]]"
+        player="[[presentedPlayer]]"
         team="[[spectatedTeamStatus]]"
         show="[[equalsAny(presentationState, 'battlefield', 'show-move')]]">
     </polymon-space-island>
@@ -140,6 +148,16 @@
           type: Array
         },
 
+        presentedPlayer: {
+          type: String,
+          computed: '__computePresentedPlayer(player, presentationState, latestTournamentRound)'
+        },
+
+        latestTournamentRound: {
+          type: Object,
+          computed: '__computeLatestTournamentRound(tournament.rounds.*)'
+        },
+
         spectatedPlayerStatus: {
           type: Object,
           observer: '__spectatedPlayerStatusChanged'
@@ -163,6 +181,10 @@
           type: Array
         },
 
+        opposingTeamStatus: {
+          type: Array
+        },
+
         spectatedRounds: {
           type: Array,
           notify: true,
@@ -172,6 +194,11 @@
         spectatedUserId: {
           type: String,
           computed: '__computeSpectatedUserId(player, tournament.*)'
+        },
+
+        opposingUserId: {
+          type: String,
+          computed: '__computeOpposingUserId(player, tournament.*)'
         },
 
         battlePath: {
@@ -200,6 +227,7 @@
         idleRotation();
 
         this.$.marquee.ready = false;
+        this.$.marquee.victory = false;
         this.$.planet.showTeam = false;
       },
 
@@ -207,12 +235,13 @@
         return this.$.planet.doubleRotate().then(() => {
           this.$.planet.showTeam = true;
           this.$.marquee.ready = true;
+          this.$.marquee.victory = false;
         });
       },
 
       __performCountdownSequence() {
         return new Promise(resolve => setTimeout(resolve, 8000))
-            .then(() => this.$.clock.count());
+          .then(() => this.$.clock.count());
       },
 
       __awaitNextMove() {
@@ -243,7 +272,13 @@
       },
 
       __proclaimVictor() {
-        return Promise.resolve();
+        return new Promise(resolve => setTimeout(resolve, 2000))
+          .then(() => this.$.planet.doubleRotate().then(() => {
+            this.$.planet.showTeam = true;
+            this.$.marquee.victory = true;
+            this.$.marquee.ready = true;
+            return new Promise(resolve => setTimeout(resolve, 10000));
+          }));
       },
 
       __presentationStateChanged(state, oldState) {
@@ -361,6 +396,47 @@
         return player === 'one'
             ? tournament.playerOneUserId
             : tournament.playerTwoUserId;
+      },
+
+      __computeOpposingUserId(player) {
+        const tournament = this.tournament;
+
+        if (tournament == null) {
+          return null;
+        }
+
+        return player === 'two'
+            ? tournament.playerOneUserId
+            : tournament.playerTwoUserId;
+      },
+
+      __computeLatestTournamentRound() {
+        const tournament = this.tournament;
+        const rounds = (tournament && tournament.rounds)
+            ? Object.values(tournament.rounds)
+            : [];
+
+        return rounds
+            .sort((l, r) => l.recordedAt > r.recordedAt)
+            .pop();
+      },
+
+      __computePresentedPlayer(spectatedPlayer, presentationState, latestTournamentRound) {
+        if (latestTournamentRound == null ||
+            presentationState !== PresentationState.VICTORY) {
+          return spectatedPlayer;
+        }
+
+        // TODO: Handle ties!
+        return latestTournamentRound.winningUserId === latestTournamentRound.playerOneUserId
+            ? 'one'
+            : 'two';
+      },
+
+      __computePresentedTeamStatus(presentationState, spectatedTeamStatus, winnerTeamStatus) {
+        return presentationState === PresentationState.VICTORY
+            ? winnerTeamStatus
+            : spectatedTeamStatus;
       }
     });
   </script>
