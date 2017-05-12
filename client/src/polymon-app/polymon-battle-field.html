@@ -11,7 +11,7 @@
 <link rel="import" href="polymon-space-background.html">
 <dom-module id="polymon-battle-field">
   <template>
-    <style>
+    <style include="typography">
       @keyframes float {
         0% {
           transform: translateY(0);
@@ -26,6 +26,10 @@
         @apply --layout-fit;
         @apply --layout-vertical;
         justify-content: space-between;
+
+        --polymon-attack-color: #EA3364;
+        --polymon-focus-color: #40DA1B;
+        --polymon-counter-color: #32C1FF;
       }
 
       polymon-space-background {
@@ -189,11 +193,14 @@
         border-radius: 12px;
         height: 80px;
         font-size: 28px;
-        padding: 24px;
 
         transition: transform 0.3s, opacity 0.3s;
         transform: translateY(-10px);
         opacity: 0.85;
+
+        --polymon-button-content-wrapper: {
+          padding: 24px;
+        };
       }
 
       #ui {
@@ -213,7 +220,7 @@
       }
 
       #controls {
-        background-color: rgba(255, 255, 255, 0.6);
+        background-color: rgba(255, 255, 255, 0.75);
       }
 
       #status,
@@ -227,8 +234,16 @@
       }
 
       .health {
-        color: #EA443D;
-        text-shadow: 0px 1px 0px #C81E20;
+        color: #FFFFFF;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .health .value {
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .health .value:before {
@@ -240,28 +255,28 @@
         background-size: 2000%;
         background-position: calc(-7/19 * 100%) calc(-6/19 * 100%);
         vertical-align: middle;
-        margin-right: 8px;
+        margin-right: 4px;
       }
 
       #status .health {
         text-align: right;
       }
 
-      .subtitle {
+      .health .subtitle {
         display: block;
-        text-shadow: none;
         font-size: 10px;
         line-height: 10px;
+        text-transform: uppercase;
+        text-align: center;
       }
 
       #status .waiting-text {
         font-size: 16px;
         line-height: 16px;
-        color: #2BA8DE;
-        text-shadow: 0px 1px 0px #166E93;
+        color: #FFF;
+        test-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
         visibility: hidden;
       }
-
 
       #attributes,
       #polymons {
@@ -294,7 +309,6 @@
         margin: 0;
         padding: 8px;
         font-size: 16px;
-        color: #5A4942;
       }
 
       .attribute {
@@ -315,15 +329,15 @@
 
       .attribute.attack {
         visibility: visible;
-        background-color: #E22D54;
+        background-color: var(--polymon-attack-color);
       }
       .attribute.focus {
         visibility: visible;
-        background-color: #76CB53;
+        background-color: var(--polymon-focus-color);
       }
       .attribute.counter {
         visibility: visible;
-        background-color: #3EBBF0;
+        background-color: var(--polymon-counter-color);
       }
 
       #bottom .attribute {
@@ -367,7 +381,7 @@
 
       #opponent-stats .attributes {
         @apply --layout-vertical;
-        background-color: rgba(255, 255, 255, 0.6);
+        background-color: rgba(255, 255, 255, 0.8);
         border-radius: 8px;
         padding: 8px;
         margin: 0px 4px;
@@ -380,19 +394,20 @@
         @apply --layout-horizontal;
         @apply --layout-center;
         @apply --layout-justified;
+        font-family: var(--polymon-accent-font-family);
         margin-bottom: 4px;
       }
 
       #opponent-stats .attributes > span.attack {
-        color: #e22d54;
+        color: var(--polymon-attack-color);
       }
 
       #opponent-stats .attributes > span.focus {
-        color: #76cb53;
+        color: var(--polymon-focus-color);
       }
 
       #opponent-stats .attributes > span.counter {
-        color: #3ebbf0;
+        color: var(--polymon-counter-color);
       }
 
       #opponent-stats .attributes > span:last-child {
@@ -403,16 +418,15 @@
         opacity: 0;
       }
 
-
       @media (max-width: 350px) {
         #opponent-stats {
-          background-color: rgba(255, 255, 255, 0.6);
+          background-color: rgba(255, 255, 255, 0.8);
+          @apply --layout-start-justified;
         }
 
         #opponent-stats .attributes {
           margin: 0px;
           background-color: transparent;
-          flex: 1;
         }
       }
 
@@ -425,6 +439,24 @@
           transform: translateY(140px) scale(1);
         }
       }
+
+      #attack, #focus, #counter {
+        --polymon-button-content-wrapper: {
+          padding: 12px;
+        };
+      }
+
+      #attack.iron-selected {
+        background-color: var(--polymon-attack-color);
+      }
+
+      #focus.iron-selected {
+        background-color: var(--polymon-focus-color);
+      }
+
+      #counter.iron-selected {
+        background-color: var(--polymon-counter-color);
+      }
     </style>
 
     <polymon-space-background></polymon-space-background>
@@ -432,7 +464,7 @@
     <section class="landscape">
       <div class="background">
         <div class="opposing island">
-          <polymon-button class="info-button" on-tap="__onInfoButtonTap">opponent stats</polymon-button>
+          <polymon-button class="info-button" on-tap="__onInfoButtonTap">Opponent stats</polymon-button>
           <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
             <polymon-portrait
                 polymon="[[teamPosition.polymon]]"
@@ -456,7 +488,10 @@
     <section id="ui">
       <div id="top">
         <section id="opponent-status">
-          <span class="health"><span class="subtitle">Opponent health</span><span class="value">[[opponentState.health]]</span></span>
+          <span class="health">
+            <span class="subtitle">Opponent health</span>
+            <span class="value">[[opponentState.health]]</span>
+          </span>
         </section>
         <section id="opponent-stats">
           <template is="dom-repeat" items="[[opposingTeamStatus]]" as="teamPosition">
@@ -468,7 +503,7 @@
           </template>
         </section>
         <section id="opponent-stat-controls">
-          <polymon-button class="alt" on-tap="__onInfoReturnButtonTap">back</polymon-button>
+          <polymon-button class="alt" on-tap="__onInfoReturnButtonTap">Back</polymon-button>
         </section>
       </div>
       <div id="bottom">
@@ -483,7 +518,7 @@
                 selectable="polymon-button"
                 attr-for-selected="id"
                 selected="{{selectedAttribute}}">
-              <h2>1. Choose a move</h2>
+              <h2>1 / Choose your move</h2>
               <polymon-button id="attack" toggles>Attack</polymon-button>
               <polymon-button id="focus" toggles>Focus</polymon-button>
               <polymon-button id="counter" toggles>Counter</polymon-button>
@@ -493,7 +528,7 @@
                 selectable="polymon-portrait"
                 attr-for-selected="id"
                 selected="{{selectedPolydexId}}">
-              <h2>2. Choose a Polymon</h2>
+              <h2>2 / Choose your Polymon</h2>
               <template
                   is="dom-repeat"
                   items="[[userTeamStatus]]"
