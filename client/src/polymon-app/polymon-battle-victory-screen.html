@@ -6,7 +6,7 @@
 
 <dom-module id="polymon-battle-victory-screen">
   <template>
-    <style include="active-fade-up">
+    <style include="typography active-fade-up">
       :host {
         @apply --layout-fit;
         @apply --layout-vertical;
@@ -25,7 +25,7 @@
       #results {
         flex: 0 1 auto;
         padding: 16px;
-        border-radius: 6px;
+        border-radius: 4px;
         background-color: rgba(255, 255, 255, 0.75);
         text-align: center;
         @apply --layout-vertical;
@@ -38,10 +38,10 @@
       }
 
       .victory, .defeat, .draw {
-        color: rgba(80, 200, 255, 0.9);
+        font-family: var(--polymon-accent-font-family);
+        color: #536DFE; /* Indigo A200 */
         text-transform: uppercase;
         font-weight: bold;
-        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
         display: none;
         margin: 0 0 16px 0;
       }
