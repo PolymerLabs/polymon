@@ -55,9 +55,7 @@
         if (shouldBeVisible) {
           this.hidden = false;
           this._isHiddenDirty = false;
-
         } else {
-
           this.__hidingTimeout = this.async(() => {
             this.hidden = true;
             this._isHiddenDirty = false;

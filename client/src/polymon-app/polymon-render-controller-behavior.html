@@ -87,8 +87,8 @@
 
         if (renderFn) {
           element.render(shouldRender, { path: this.renderPath });
-
         } else if(Polymer.isInstance(element)) {
+          console.error(`No render function for ${element.getAttribute('page-name')}`);
         }
       },
 
