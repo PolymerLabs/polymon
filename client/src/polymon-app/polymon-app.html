@@ -227,7 +227,10 @@
           id="scanner">
       </polymon-qr-code-scanner>
 
-      <polymon-space-background prevent-load="[[!logoLoaded]]"></polymon-space-background>
+      <polymon-space-background
+          prevent-load="[[!logoLoaded]]"
+          page-name="background">
+      </polymon-space-background>
 
       <polymon-map
           unresolved
@@ -373,7 +376,8 @@
               '': {
                 _elements: [
                   'map',
-                  'start'
+                  'start',
+                  'background'
                 ],
                 map: {
                   _elements: [
@@ -387,11 +391,13 @@
                 },
                 polydex: {
                   _elements: [
-                    'panel'
+                    'panel',
+                    'background'
                   ],
                   _default: {
                     _elements: [
-                      'panel'
+                      'panel',
+                      'background'
                     ]
                   }
                 },
@@ -399,7 +405,8 @@
                   _elements: [],
                   new: {
                     _elements: [
-                      'panel'
+                      'panel',
+                      'background'
                     ],
                     scan: {
                       _elements: [
@@ -411,14 +418,16 @@
                     _elements: [],
                     _default: {
                       _elements: [
-                        'battleScreen'
+                        'battleScreen',
+                        'background'
                       ]
                     }
                   }
                 },
                 about: {
                   _elements: [
-                    'about'
+                    'about',
+                    'background'
                   ]
                 }
               }

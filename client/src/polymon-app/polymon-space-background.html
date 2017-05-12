@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-renderable-behavior.html">
 
 <link rel="import" href="polymon-element.html">
 
@@ -12,6 +13,10 @@
         background-color: #4b4970;
         background-image:
           linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
+      }
+
+      :host([hidden]) {
+        display: none !important;
       }
 
       #image {
@@ -49,7 +54,10 @@
     Polymer({
       is: 'polymon-space-background',
 
-      behaviors: [PolymonElement],
+      behaviors: [
+        PolymonElement,
+        PolymonRenderableBehavior
+      ],
 
       properties: {
         __loadStarted: {
