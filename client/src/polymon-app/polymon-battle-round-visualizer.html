@@ -256,14 +256,15 @@
 
       @-webkit-keyframes total {
         0% {
-          transform: translateX(-10000px);
+          opacity: 0;
         }
 
-        30% {
-          transform: translateX(-10000px);
+        30.4% {
+          opacity: 0;
         }
 
         30.5% {
+          opacity: 1;
           transform: translateX(0);
         }
 
@@ -546,10 +547,11 @@
 
       @-webkit-keyframes fateBottom {
         0% {
-          transform: translate(200%, 25%);
+          opacity: 0;
         }
 
         40% {
+          opacity: 1;
           transform: translate(200%, 25%);
         }
 
@@ -564,10 +566,11 @@
 
       @-webkit-keyframes fateTop {
         0% {
-          transform: translate(-150%, -25%);
+          opacity: 0;
         }
 
         40% {
+          opacity: 1;
           transform: translate(-150%, -25%);
         }
 
@@ -667,9 +670,6 @@
           opacity: 1;
         }
       }
-
-
-
 
       /**
        * NOTE(cdata): The (many) keyframe animations that follow assume a common
@@ -926,14 +926,15 @@
 
       @keyframes total {
         0% {
-          transform: translateX(-10000px);
+          opacity: 0;
         }
 
-        30% {
-          transform: translateX(-10000px);
+        30.4% {
+          opacity: 0;
         }
 
         30.5% {
+          opacity: 1;
           transform: translateX(0);
         }
 
@@ -1216,10 +1217,11 @@
 
       @keyframes fateBottom {
         0% {
-          transform: translate(200%, 25%);
+          opacity: 0;
         }
 
         40% {
+          opacity: 1;
           transform: translate(200%, 25%);
         }
 
@@ -1234,10 +1236,11 @@
 
       @keyframes fateTop {
         0% {
-          transform: translate(-150%, -25%);
+          opacity: 0;
         }
 
         40% {
+          opacity: 1;
           transform: translate(-150%, -25%);
         }
 
@@ -2005,7 +2008,7 @@
                   return;
                 }
 
-                this.active = false;
+                // this.active = false;
                 this.$.scene.removeEventListener('animationend', onAnimationend);
                 this.$.scene.removeEventListener('webkitanimationend', onAnimationend);
                 resolve();
