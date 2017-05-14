@@ -6,9 +6,10 @@
     <firebase-query
         id="polydexQuery"
         app-name="polymon"
-        path="[[__computeTeamPath(userId)]]"
+        path="[[teamPath]]"
         order-by-child="polymonId"
-        data="{{teamData}}">
+        data="{{teamData}}"
+        log>
     </firebase-query>
   </template>
   <script>
@@ -18,6 +19,11 @@
       behaviors: [PolymonElement],
 
       properties: {
+        teamPath: {
+          type: String,
+          computed: '__computeTeamPath(userId)'
+        },
+
         userId: {
           type: String
         },
@@ -60,7 +66,11 @@
       },
 
       __computeTeamPath: function(userId) {
-        return `/users/${userId}/team`;
+        if (userId != null) {
+          return `/users/${userId}/team`;
+        }
+
+        return this.teamPath;
       },
 
       __updatePolymons: function() {
@@ -103,6 +113,19 @@
             polydexId: teamItem.polydexId,
             movePerformed
           };
+        });
+
+        // Cheap hack?
+        this.debounce('ensure-battle-status', () => {
+          if (this.battleStatus && this.battleStatus.length === 0 && this.battleId != null) {
+            let userId = this.userId;
+            this.userId = '';
+            this.debounce('reset-user-id', () => {
+              if (userId) {
+                this.userId = userId;
+              }
+            });
+          }
         });
 
         console.log(`Battle status for User ${this.userId}:`, battleStatus);

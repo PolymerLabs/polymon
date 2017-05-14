@@ -332,6 +332,38 @@
         }
       }
 
+      @keyframes revealTotalModified4 {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        42% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        44% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        60% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        62% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+
+        100% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+      }
+
       @keyframes revealTotal5 {
         0% {
           transform: translateY(0);
@@ -401,55 +433,239 @@
 
       @keyframes revealFateOne {
         0% {
+          opacity: 1;
           transform: translateX(2220px);
         }
 
-        52% {
+        48% {
+          opacity: 1;
           transform: translateX(2220px);
         }
 
-        53% {
+        49% {
+          opacity: 1;
           transform: translateX(960px);
         }
 
-        81% {
-          transform: translateX(860px);
+        59% {
+          opacity: 1;
+          transform: translate(930px);
         }
 
-        82% {
-          transform: translateX(-800px);
+        59.5% {
+          opacity: 0;
+          transform: translateX(920px);
         }
 
         100% {
-          transform: translateX(-800px);
+          opacity: 0;
+          transform: translateX(920px);
         }
       }
 
       @keyframes revealFateTwo {
         0% {
+          opacity: 1;
           transform: translateX(-2220px);
         }
 
-        52% {
+        48% {
+          opacity: 1;
           transform: translateX(-2220px);
         }
 
-        53% {
+        49% {
+          opacity: 1;
           transform: translateX(-960px);
         }
 
-        81% {
-          transform: translateX(-860px);
+        59% {
+          opacity: 1;
+          transform: translate(-930px);
         }
 
-        82% {
-          transform: translateX(800px);
+        59.5% {
+          opacity: 0;
+          transform: translateX(-920px);
         }
 
         100% {
-          transform: translateX(800px);
+          opacity: 0;
+          transform: translateX(-920px);
         }
       }
+
+      @keyframes strobe {
+        0% {
+          opacity: 1;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes slideDamageRight {
+        0% {
+          transform: translate(-100%, -50%);
+        }
+
+        68% {
+          transform: translate(-100%, -50%);
+        }
+
+        70% {
+          transform: translate(0, -50%);
+        }
+
+        85% {
+          transform: translate(0, -50%);
+        }
+
+        87% {
+          transform: translate(100%, -50%);
+        }
+
+        100% {
+          transform: translate(100%, -50%);
+        }
+      }
+
+      @keyframes slideDamageTargetRight {
+        0% {
+          opacity: 0;
+          transform: translateX(-10%);
+        }
+
+        68% {
+          opacity: 0;
+          transform: translateX(-10%);
+        }
+
+        70% {
+          opacity: 1;
+          transform: translateX(3.5%);
+        }
+
+        75% {
+          opacity: 1;
+          transform: translateX(0%);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateX(0%);
+        }
+      }
+
+      @keyframes slideDamageAmountRight {
+        0% {
+          opacity: 0;
+          transform: translateX(-10%);
+        }
+
+        70% {
+          opacity: 0;
+          transform: translateX(-10%);
+        }
+
+        72% {
+          opacity: 1;
+          transform: translateX(3.5%);
+        }
+
+        77% {
+          opacity: 1;
+          transform: translateX(0%);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes slideDamageLeft {
+        0% {
+          transform: translate(100%, -50%);
+        }
+
+        68% {
+          transform: translate(100%, -50%);
+        }
+
+        70% {
+          transform: translate(0, -50%);
+        }
+
+        85% {
+          transform: translate(0, -50%);
+        }
+
+        87% {
+          transform: translate(-100%, -50%);
+        }
+
+        100% {
+          transform: translate(-100%, -50%);
+        }
+      }
+
+
+      @keyframes slideDamageTargetLeft {
+        0% {
+          opacity: 0;
+          transform: translateX(10%);
+        }
+
+        68% {
+          opacity: 0;
+          transform: translateX(10%);
+        }
+
+        70% {
+          opacity: 1;
+          transform: translateX(-3.5%);
+        }
+
+        75% {
+          opacity: 1;
+          transform: translateX(0%);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateX(0%);
+        }
+      }
+
+      @keyframes slideDamageAmountLeft {
+        0% {
+          opacity: 0;
+          transform: translateX(10%);
+        }
+
+        70% {
+          opacity: 0;
+          transform: translateX(10%);
+        }
+
+        72% {
+          opacity: 1;
+          transform: translateX(-3.5%);
+        }
+
+        77% {
+          opacity: 1;
+          transform: translateX(0%);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
 
 
       :host {
@@ -483,6 +699,7 @@
         animation-delay: 1s;
         animation-duration: 10s;
         animation-iteration-count: 1;
+        animation-fill-mode: forwards;
       }
 
       video {
@@ -559,7 +776,7 @@
       }
 
       :host(.one) #value {
-        top: 200px;
+        top: 250px;
         right: 600px;
         animation-name: revealValueOne;
       }
@@ -591,9 +808,14 @@
         animation-name: revealTotal4;
       }
 
+      #value.modified > span:nth-of-type(4) {
+        animation-name: revealTotalModified4;
+      }
+
       #value.bonus > span:nth-of-type(5) {
         animation-name: revealTotal5;
       }
+
 
       #value:not(.bonus).modified > span:nth-of-type(1) {
         animation-name: revealTotalModified1;
@@ -628,6 +850,90 @@
         right: 0;
         animation-name: revealFateTwo;
       }
+
+      #damage {
+        position: absolute;
+        box-sizing: border-box;
+        width: 100%;
+        top: 50%;
+        color: rgba(0, 0, 0, 0.7);
+        text-transform: uppercase;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-weight: bold;
+        padding: 3em;
+        text-shadow: 0 0 20px rgba(0, 0, 0, 0.75);
+
+        transform: translate(-100%, -50%);
+      }
+
+      #damage, #damange * {
+        animation-timing-function: initial;
+      }
+
+      :host(.one) #damage.visible {
+        animation-name: slideDamageLeft;
+      }
+
+      :host(.two) #damage.visible {
+        animation-name: slideDamageRight;
+      }
+
+      #damage:not(.visible) > * {
+        animation-name: none;
+      }
+
+      #damage > :first-child {
+        font-size: 96px;
+        line-height: 128px;
+        z-index: 1;
+        opacity: 0;
+      }
+
+      :host(.one) #damage > :first-child {
+        animation-name: slideDamageTargetLeft;
+      }
+
+      :host(.two) #damage > :first-child {
+        animation-name: slideDamageTargetRight;
+      }
+
+      #damage > :last-child {
+        font-size: 256px;
+        line-height: 224px;
+        z-index: 1;
+      }
+
+      :host(.one) #damage > :left-child {
+        animation-name: slideDamageAmountLeft;
+      }
+
+      :host(.two) #damage > :left-child {
+        animation-name: slideDamageAmountRight;
+      }
+
+      #damage:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-color: #ff6c00;
+      }
+
+      #damage:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        opacity: 0;
+        background-color: rgba(255, 255, 255, 0.25);
+        animation: strobe 0.75s infinite linear;
+      }
     </style>
     <video
         id="video"
@@ -652,6 +958,10 @@
       </span>
       <span id="fate">
         <span>FATE</span> <span>[[config.fateSymbol]][[config.move.randomModifier]]</span>
+      </span>
+      <span id="damage" class$="[[__computeDamageClass(config)]]">
+        <span>PLAYER [[player]] TAKES</span>
+        <span>[[config.move.damageDelta]] DAMAGE</span>
       </span>
       <div id="screen"></div>
     </div>
@@ -678,6 +988,10 @@
       },
 
       play(move) {
+        if (this.teamStatus == null || this.teamStatus.length === 0) {
+          return Promise.resolve();
+        }
+
         return new Promise(resolve => {
           requestAnimationFrame(() => {
             console.log(move);
@@ -688,10 +1002,9 @@
             const scoreSequence = this.__getScoreSequence(move, statValue);
             const fateSymbol = move.randomModifier > 0
                 ? '+'
-                : move.randomModifier < 0
-                    ? '-'
-                    : '';
+                : '';
 
+            // move.damageDelta...
             Polymer.dom(this.root).removeChild(this.$.scene);
             Polymer.dom(this.root).appendChild(this.$.scene);
 
@@ -707,7 +1020,7 @@
 
             resolve(this.awaitTransition(this, 4000).then(() => {
               this.$.video.play();
-              return this.awaitEvent(this.$.video, 'pause').then(() => {
+              return this.awaitEvent(this.$.video, 'pause', 12000).then(() => {
                 this.$.video.currentTime = 0;
                 this.classList.remove('playing');
                 console.log('DONE!');
@@ -780,11 +1093,19 @@
           classes.push('bonus');
         }
 
-        if (config.move.randomModifier) {
+        if (config.move.randomModifier !== 0) {
           classes.push('modified');
         }
 
         return classes.join(' ');
+      },
+
+      __computeDamageClass(config) {
+        const damage = config.move.damageDelta;
+
+        return damage > 0
+            ? 'visible'
+            : '';
       }
     });
   </script>

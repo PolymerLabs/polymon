@@ -137,6 +137,8 @@ class Battle extends DataObject {
         ? 'initiating'
         : 'defending'
 
+    await user.setActiveBattle(this.id);
+
     await Promise.all([
       ref.child(`${userRole}UserId`).set(user.id),
       ref.child(`state/${user.id}`).set({
@@ -147,7 +149,6 @@ class Battle extends DataObject {
         waiting: true,
         health: 15
       }),
-      user.setActiveBattle(this.id)
     ]);
 
     console.log(`${user.formalName} has joined ${this.formalName}.`);

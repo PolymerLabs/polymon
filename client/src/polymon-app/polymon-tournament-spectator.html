@@ -66,13 +66,15 @@
     </polymon-team-query>
 
 
-    <polymon-tournament-logo>
-    </polymon-tournament-logo>
-
     <polymon-space-scape
         player="[[player]]"
         outer="[[equalsAny(presentationState, 'battlefield', 'show-move')]]">
     </polymon-space-scape>
+
+    <!--<polymon-space-debris-->
+        <!--id="debris"-->
+        <!--near="[[equalsAny(presentationState, 'waiting', 'ready', 'coundown', 'victory')]]">-->
+    <!--</polymon-space-debris>-->
 
     <polymon-planet-surface
         id="planet"
@@ -158,6 +160,16 @@
           computed: '__computeLatestTournamentRound(tournament.rounds.*)'
         },
 
+        latestWinningUserId: {
+          type: String,
+          computed: '__computeLatestWinningUserId(latestTournamentRound)'
+        },
+
+        latestBattleId: {
+          type: String,
+          computed: '__computeLatestBattleId(latestTournamentRound)'
+        },
+
         spectatedPlayerStatus: {
           type: Object,
           observer: '__spectatedPlayerStatusChanged'
@@ -240,7 +252,7 @@
       },
 
       __performCountdownSequence() {
-        return new Promise(resolve => setTimeout(resolve, 8000))
+        return new Promise(resolve => setTimeout(resolve, 5000))
           .then(() => this.$.clock.count());
       },
 
@@ -264,7 +276,7 @@
             ? this.$.visualizer.play(latestMove)
             : Promise.resolve();
 
-        console.log(this.lastShownMove, '=>', latestMoveNumber);
+        console.log(this.lastShownMove, '=>', latestMoveNumber, latestMove);
 
         return result.then(() => {
           this._setLastShownMove(latestMoveNumber);
@@ -273,12 +285,12 @@
 
       __proclaimVictor() {
         return new Promise(resolve => setTimeout(resolve, 2000))
-          .then(() => this.$.planet.doubleRotate().then(() => {
+          .then(() => {
             this.$.planet.showTeam = true;
             this.$.marquee.victory = true;
             this.$.marquee.ready = true;
-            return new Promise(resolve => setTimeout(resolve, 10000));
-          }));
+            return new Promise(resolve => setTimeout(resolve, 15000));
+          });
       },
 
       __presentationStateChanged(state, oldState) {
@@ -418,7 +430,7 @@
 
         return rounds
             .sort((l, r) => l.recordedAt > r.recordedAt)
-            .pop();
+            .pop() || null;
       },
 
       __computePresentedPlayer(spectatedPlayer, presentationState, latestTournamentRound) {
@@ -437,6 +449,18 @@
         return presentationState === PresentationState.VICTORY
             ? winnerTeamStatus
             : spectatedTeamStatus;
+      },
+
+      __computeLatestWinningUserId(latestTournamentRound) {
+        if (latestTournamentRound != null) {
+          return latestTournamentRound.winningUserId;
+        }
+      },
+
+      __computeLatestBattleId(latestTournamentRound) {
+        if (latestTournamentRound != null) {
+          return latestTournamentRound.battleId;
+        }
       }
     });
   </script>
