@@ -11,6 +11,7 @@
 <link rel="import" href="polymon-countdown.html">
 <link rel="import" href="polymon-space-island.html">
 <link rel="import" href="polymon-tournament-move-visualizer.html">
+<link rel="import" href="polymon-space-debris.html">
 
 <dom-module id="polymon-tournament-spectator">
   <template>
@@ -71,10 +72,10 @@
         outer="[[equalsAny(presentationState, 'battlefield', 'show-move')]]">
     </polymon-space-scape>
 
-    <!--<polymon-space-debris-->
-        <!--id="debris"-->
-        <!--near="[[equalsAny(presentationState, 'waiting', 'ready', 'coundown', 'victory')]]">-->
-    <!--</polymon-space-debris>-->
+    <polymon-space-debris
+        player="[[player]]"
+        outer="[[equalsAny(presentationState, 'battlefield', 'show-move')]]">
+    </polymon-space-debris>
 
     <polymon-planet-surface
         id="planet"
