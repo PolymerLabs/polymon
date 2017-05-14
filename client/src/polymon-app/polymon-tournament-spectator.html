@@ -286,6 +286,7 @@
       __proclaimVictor() {
         return new Promise(resolve => setTimeout(resolve, 2000))
           .then(() => {
+            this._setLastShownMove(0);
             this.$.planet.showTeam = true;
             this.$.marquee.victory = true;
             this.$.marquee.ready = true;
