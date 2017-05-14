@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <title>Polymon</title>
     <meta charset="utf-8">
@@ -20,9 +20,30 @@
     <meta name="msapplication-TileColor" content="#536DFE">
     <meta name="msapplication-TileImage" content="/images/polymon_icon.png">
 
+    <meta name="theme-color" content="#536DFE">
+
     <style>
+      html {
+        height: 100%;
+      }
+
       body {
-        background-color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background-color: #ccc;
+        background-image:
+          linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
+        color: #31E7B6;
+        font-family: 'Noto Sans', 'Roboto', system-ui, sans-serif;
+      }
+
+      polymon-app > h1 {
+        font-size: 24px;
+        text-shadow: 0 2px 0 #C9C9C9;
+        text-align: center;
+        text-transform: uppercase;
       }
     </style>
     <script>
@@ -64,7 +85,9 @@
         storage-bucket="{{firebase.storageBucket}}">
     </firebase-app>
 
-    <polymon-app id="app"></polymon-app>
+    <polymon-app id="app">
+      <h1>Polymon</h1>
+    </polymon-app>
 
     <script>
       (function() {
