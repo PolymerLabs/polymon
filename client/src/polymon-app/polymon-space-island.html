@@ -2,10 +2,11 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-portrait.html">
+<link rel="import" href="polymon-styles.html">
 
 <dom-module id="polymon-space-island">
   <template>
-    <style>
+    <style include="typography">
       :host {
         position: absolute;
         width: 1600px;
@@ -51,6 +52,44 @@
         opacity: 0;
         transform: translateY(-50px);
       }
+
+      #health {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        top: 450px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #fff;
+        text-shadow: 0px 5px 0px rgba(0, 0, 0, 0.5);
+        font-weight: bold;
+      }
+
+      #health > :first-child {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        font-size: 180px;
+      }
+
+      #health > :first-child:before {
+        content: '';
+        display: inline-block;
+        margin-right: 32px;
+        background-image: url('../../images/polymon_sprite_sheet.svg');
+        background-size: 2000%;
+        background-position: calc(-7/19 * 100%) calc(-6/19 * 100%);
+        width: 256px;
+        height: 256px;
+        line-height: 256px;
+      }
+
+      #health > :last-child {
+        font-size: 48px;
+      }
     </style>
     <div id="team">
       <template is="dom-repeat" items="[[team]]" as="teamPosition">
@@ -62,6 +101,10 @@
       </template>
     </div>
     <div id="island"></div>
+    <div id="health">
+      <span>[[health]]</span>
+      <span>HEALTH REMAINING</span>
+    </div>
   </template>
   <script>
     Polymer({

@@ -816,7 +816,6 @@
         animation-name: revealTotal5;
       }
 
-
       #value:not(.bonus).modified > span:nth-of-type(1) {
         animation-name: revealTotalModified1;
       }
@@ -1039,7 +1038,7 @@
           }
         }
 
-        if (move.randomModifier) {
+        if (move.randomModifier != null) {
           let modifier;
 
           if (move.gotBonus) {
@@ -1093,9 +1092,7 @@
           classes.push('bonus');
         }
 
-        if (config.move.randomModifier !== 0) {
-          classes.push('modified');
-        }
+        classes.push('modified');
 
         return classes.join(' ');
       },
