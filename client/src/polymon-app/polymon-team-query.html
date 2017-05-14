@@ -6,9 +6,10 @@
     <firebase-query
         id="polydexQuery"
         app-name="polymon"
-        path="[[__computeTeamPath(userId)]]"
+        path="[[teamPath]]"
         order-by-child="polymonId"
-        data="{{teamData}}">
+        data="{{teamData}}"
+        log>
     </firebase-query>
   </template>
   <script>
@@ -18,6 +19,11 @@
       behaviors: [PolymonElement],
 
       properties: {
+        teamPath: {
+          type: String,
+          computed: '__computeTeamPath(userId)'
+        },
+
         userId: {
           type: String
         },
@@ -48,7 +54,7 @@
 
       observers: [
         '__updatePolymons(teamData.*)',
-        '__updateBattleStatus(polymons, battleRounds.length)'
+        '__updateBattleStatus(userId, polymons, battleRounds.length)'
       ],
 
       hostAttributes: {
@@ -60,7 +66,11 @@
       },
 
       __computeTeamPath: function(userId) {
-        return `/users/${userId}/team`;
+        if (userId != null) {
+          return `/users/${userId}/team`;
+        }
+
+        return this.teamPath;
       },
 
       __updatePolymons: function() {
@@ -80,34 +90,41 @@
       },
 
       __updateBattleStatus: function() {
-        if (!this.userId || !this.polymons || !this.battleRounds) {
-          this._setBattleStatus([]);
-          return;
-        }
-
-        let uncheckedMoves = this.battleRounds.map(battleRound =>
-            battleRound[this.userId]);
-        let battleStatus = this.teamData.map((teamItem, index) => {
-          let movePerformed = false;
-
-          for (let i = 0; i < uncheckedMoves.length; ++i) {
-            if (uncheckedMoves[i].polydexId === teamItem.polydexId) {
-              movePerformed = true;
-              uncheckedMoves.splice(i, 1);
-              break;
-            }
+        this.deraf('update-battle-status', () => {
+          if (!this.userId || !this.polymons || !this.battleRounds) {
+            this._setBattleStatus([]);
+            return;
           }
 
-          return {
-            polymon: this.polymons[index],
-            polydexId: teamItem.polydexId,
-            movePerformed
-          };
+          if (this.polymons.length === 0) {
+            return;
+          }
+
+          let uncheckedMoves = this.battleRounds.map(battleRound =>
+              battleRound[this.userId]);
+          let battleStatus = this.teamData.map((teamItem, index) => {
+            let movePerformed = false;
+
+            for (let i = 0; i < uncheckedMoves.length; ++i) {
+              if (uncheckedMoves[i].polydexId === teamItem.polydexId) {
+                movePerformed = true;
+                uncheckedMoves.splice(i, 1);
+                break;
+              }
+            }
+
+            return {
+              polymon: this.polymons[index],
+              polydexId: teamItem.polydexId,
+              movePerformed
+            };
+          });
+
+          console.log(`Battle status for User ${this.userId}:`, battleStatus);
+
+          this._setBattleStatus(battleStatus);
         });
 
-        console.log(`Battle status for User ${this.userId}:`, battleStatus);
-
-        this._setBattleStatus(battleStatus);
       }
     });
   </script>

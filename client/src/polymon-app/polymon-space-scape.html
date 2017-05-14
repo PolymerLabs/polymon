@@ -1,0 +1,69 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-element.html">
+
+<dom-module id="polymon-space-scape">
+  <template>
+    <style>
+      #space {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 1920px;
+        height: 3032px;
+        transition: transform 3s;
+        transform: translate(-50%, -1952px);
+      }
+
+      :host(.outer) #space {
+        transform: translate(-50%, 0);
+      }
+
+      :host(.one) #space {
+        background-image: url('../../images/polymon_space_scape_one.png');
+      }
+
+      :host(.two) #space {
+        background-image: url('../../images/polymon_space_scape_two.png');
+      }
+    </style>
+    <div id="space"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-space-scape',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        outer: {
+          type: Boolean,
+          value: false
+        },
+
+        player: {
+          type: String,
+          observer: '__playerChanged'
+        }
+      },
+
+      observers: [
+        'reflectToClass(outer, "outer")'
+      ],
+
+      reflectToClass(val, className) {
+        this.classList.toggle(className, val);
+      },
+
+      __playerChanged(player, oldPlayer) {
+        if (oldPlayer != null) {
+          this.classList.remove(oldPlayer);
+        }
+
+        if (player != null) {
+          this.classList.add(player);
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,92 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-styles.html">
+
+<dom-module id="polymon-countdown">
+  <template>
+    <style include="typography">
+      @keyframes crawl {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        20% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        80% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.5);
+        }
+      }
+
+      :host {
+        @apply --layout-fit;
+      }
+
+      .number {
+        display: flex;
+        position: absolute;
+
+        align-items: center;
+        justify-content: center;
+
+        opacity: 0;
+        width: 50%;
+        height: 50%;
+        top: 50%;
+        left: 50%;
+        transform-origin: center center;
+        transform: translate(-50%, -50%) scale(0.75);
+        font-size: 512px;
+        color: #fff;
+      }
+
+      :host(.counting) .number {
+        animation: crawl 1.25s linear;
+      }
+
+      .number.two {
+        animation-delay: 1s;
+      }
+
+      .number.one {
+        animation-delay: 2s;
+      }
+    </style>
+    <div id="numbers">
+      <div class="number three">3</div>
+      <div class="number two">2</div>
+      <div id="lastNumber" class="number one">1</div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-countdown',
+
+      behaviors: [PolymonElement],
+
+      count() {
+        const numbers = this.$.numbers;
+        Polymer.dom(this.root).removeChild(numbers);
+
+        requestAnimationFrame(() => {
+          this.classList.add('counting');
+          Polymer.dom(this.root).appendChild(numbers);
+        });
+
+        return this.awaitAnimation(this.$.lastNumber, 5000).then(() => {
+          this.classList.remove('counting');
+        });;
+      }
+    });
+  </script>
+</dom-module>

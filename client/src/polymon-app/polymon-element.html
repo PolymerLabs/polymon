@@ -50,6 +50,20 @@
         }
       },
 
+      reflectToClass: function(val, className) {
+        this.classList.toggle(className, val);
+      },
+
+      equalsAny: function(l, ...r) {
+        for (var i = 0; i < r.length; i++) {
+          if (l === r[i]) {
+            return true;
+          }
+        }
+
+        return false;
+      },
+
       or: function() {
         for (var i = 0; i < arguments.length; ++i) {
           if (arguments[i]) {
@@ -58,6 +72,32 @@
         }
 
         return false;
+      },
+
+      awaitTransition: function(el, timeoutMs) {
+        return this.awaitEvent(el, 'transitionend', timeoutMs);
+      },
+
+      awaitAnimation: function(el, timeoutMs) {
+        return this.awaitEvent(el, 'animationend', timeoutMs);
+      },
+
+      awaitEvent: function(el, eventName, timeoutMs) {
+        return new Promise(resolve => {
+          const onEvent = event => {
+            window.clearTimeout(timeout);
+            el.removeEventListener(eventName, onEvent);
+            resolve();
+          };
+          const timeout = timeoutMs != null
+              ? window.setTimeout(() => {
+                  console.error('Timeout while awaiting ' + eventName + ' of:', el);
+                  onEvent();
+                }, timeoutMs)
+              : null;
+
+          el.addEventListener(eventName, onEvent);
+        });
       }
     };
 

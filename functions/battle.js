@@ -6,6 +6,8 @@ const {
   userErrorNotifier
 } = require('./common');
 
+const Battle = require('./data-object/battle.js');
+const Tournament = require('./data-object/tournament.js');
 
 
 function randomModifier() {
@@ -533,13 +535,21 @@ function recordHeartbeat(db, userId, battleId) {
 }
 
 
-function withdrawFromBattle(db, userId, battleId) {
+async function withdrawFromBattle(db, userId, battleId) {
 
   console.log(`User ${userId} attempting withdrawal from Battle ${battleId}`);
 
-  return ensureBattleNotStarted(db, battleId)
-      .then(() => db.ref(`/battles/${battleId}`).remove())
-      .then(() => db.ref(`/users/${userId}/player/activeBattleId`).remove())
+  const battle = new Battle(db, battleId);
+  const isPartOfATournament = await battle.isPartOfATournament();
+
+  if (isPartOfATournament) {
+    const tournamentId = await battle.getTournamentId();
+    const tournament = new Tournament(db, tournamentId);
+
+    return tournament.withdrawPlayer(userId);
+  } else {
+    return battle.withdrawParticipatingUser(userId, { cancelBattle: true });
+  }
 }
 
 

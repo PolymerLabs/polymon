@@ -39,6 +39,9 @@
             }
           }
         },
+        "tournamentQueue": {
+          ".write": "$userId === auth.uid"
+        },
         "catchQueue": {
           ".write": "$userId === auth.uid"
         },
@@ -47,6 +50,31 @@
         },
         "teamQueue": {
           ".write": "$userId === auth.uid"
+        }
+      }
+    },
+    "tournaments": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('admin').val() === true",
+      "$tournament": {
+        ".read": "true",
+        "createdAt": {},
+        "secret": {},
+        "currentBattleId": {},
+
+        "championUserId": {},
+        "playerOneUserId": {},
+        "playerTwoUserId": {},
+
+        "rounds": {
+          "$round": {
+            "battleId": {},
+
+            "playerOneUserId": {},
+            "playerTwoUserId": {},
+            "winnerUserId": {},
+
+            "recordedAt": {}
+          }
         }
       }
     },
@@ -62,6 +90,8 @@
 
         "currentRound": {},
         "maxRounds": {},
+
+        "tournamentId": {},
 
         "state": {
           "$userId": {
@@ -84,7 +114,7 @@
         },
 
         "status": {
-          ".read": "auth.uid === data.parent().child('initiatingUserId').val() || auth.uid === data.parent().child('defendingUserId').val()",
+          ".read": "auth != null",
 
           "players": {
             "$userId": {

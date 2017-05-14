@@ -85,6 +85,11 @@
       behaviors: [PolymonElement],
 
       properties: {
+        tournamentId: {
+          type: String,
+          observer: '__tournamentIdChanged'
+        },
+
         battleId: {
           type: String,
           observer: '__battleIdChanged'
@@ -112,7 +117,6 @@
         return this.battleCode;
       },
 
-
       __attemptBattleCancel: function() {
         firebase.app('polymon').database()
             .ref(`/users/${this.user.uid}/battleQueue`).push({
@@ -129,6 +133,9 @@
             this.fire('location-changed', {}, {node: window});
           }
         });
+      },
+
+      __tournamentIdChanged: function() {
       }
     });
   </script>

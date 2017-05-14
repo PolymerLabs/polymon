@@ -1,0 +1,366 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="polymon-element.html">
+<dom-module id="polymon-planet-surface">
+  <template>
+    <style>
+      :host {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 1920px;
+        height: 550px;
+        overflow: hidden;
+
+        transition: transform 1s;
+        transition-delay: 0s;
+        transform: translate(0px, 175%);
+
+        --polymon-portrait-background: transparent;
+      }
+
+      #fragments {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 250px;
+        left: 0;
+
+        transition: none;
+        transform-origin: 50% 3050px;
+
+        transform: rotate(0deg);
+      }
+
+      :host(.double-rotation) #fragments {
+        transition: transform 1s cubic-bezier(.63,.1,.44,.89);
+        transition-delay: 2s;
+        transform: rotate(-90deg);
+      }
+
+      :host(.single-rotation) #fragments {
+        transition: transform 2s cubic-bezier(.63,.1,.44,.89);
+        transition-delay: 3s;
+        transform: rotate(-45deg);
+      }
+
+      .planet-fragment {
+        position: absolute;
+        left: -576px;
+        width: 3072px;
+        height: 1080px;
+
+        left: 50%;
+        transform-origin: 50% 3050px;
+        transform: translate(-50%, 0);
+
+        background: url('../../images/polymon_planet_surface.png');
+      }
+
+      .planet-fragment.two {
+        transform: translate(-50%, 0) rotate(45deg);
+      }
+
+      .planet-fragment.three {
+        transform: translate(-50%, 0) rotate(90deg);
+      }
+
+      :host(.show) {
+        transition-delay: 2s;
+        transform: translate(0px, 0px);
+      }
+
+      #polymons {
+        position: absolute;
+
+        top: 0;
+        left: 25%;
+        width: 50%;
+        height: 60%;
+      }
+
+      #polymons > div {
+        @apply --layout-fit;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        transform-origin: 50% 3300px;
+        transform: rotate(45deg);
+        transition: none;
+      }
+
+      #polymons > div#gamma {
+        transform: rotate(0);
+      }
+
+      #polymons > div.enter,
+      #polymons > div.exit {
+        transition: transform 2s cubic-bezier(.63,.1,.44,.89);
+        transition-delay: 3s;
+      }
+
+      #polymons > div.enter {
+        transform: rotate(0deg);
+      }
+
+      #polymons > div.exit {
+        transform: rotate(-45deg);
+      }
+
+      :host(.double-rotation) #polymons > div.enter {
+        transition-duration: 1s;
+        transition-delay: 2s;
+        transform: rotate(44deg);
+      }
+
+      :host(.double-rotation) #polymons > div.exit {
+        transition: transform 1s cubic-bezier(.63,.1,.44,.89);
+        transition-delay: 2s;
+        transform: rotate(-90deg);
+      }
+
+      #polymons.show-player-team > div#alpha,
+      #polymons.show-player-team > div#beta {
+        display: none;
+      }
+
+      #polymons > div#gamma polymon-portrait {
+        opacity: 0;
+        transform: translateY(-32px);
+        transition: transform 0.5s, opacity 0.5s;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(1) {
+        transition-delay: 0;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(2) {
+        transition-delay: 0.3s;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(3) {
+        transition-delay: 0.6s;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(4) {
+        transition-delay: 0.9s;
+      }
+
+      #polymons.show-player-team > div#gamma polymon-portrait:nth-of-type(5) {
+        transition-delay: 1.2s;
+      }
+    </style>
+
+    <firebase-query
+        app-name="polymon"
+        path="/polymons"
+        data="{{polymons}}">
+    </firebase-query>
+
+
+    <div id="fragments">
+      <div class="planet-fragment"></div>
+      <div class="planet-fragment two"></div>
+      <div class="planet-fragment three"></div>
+    </div>
+
+    <div id="polymons" class$="[[__computePolymonsClassname(showTeam)]]">
+      <div id="alpha">
+        <template is="dom-repeat" items="[[alphaPolymons]]" as="polymon">
+          <polymon-portrait
+              polymon="[[polymon]]"
+              size="200"
+              caught>
+          </polymon-portrait>
+        </template>
+      </div>
+      <div id="beta">
+        <template is="dom-repeat" items="[[betaPolymons]]" as="polymon">
+          <polymon-portrait
+              polymon="[[polymon]]"
+              size="200"
+              caught>
+          </polymon-portrait>
+        </template>
+      </div>
+      <div id="gamma">
+        <template is="dom-repeat" items="[[team]]" as="teamPosition">
+          <polymon-portrait
+              polymon="[[teamPosition.polymon]]"
+              size="200"
+              caught>
+          </polymon-portrait>
+        </template>
+      <div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-planet-surface',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        polymons: {
+          type: Array
+        },
+
+        team: {
+          type: Array
+        },
+
+        show: {
+          type: Boolean,
+          observer: '__showChanged'
+        },
+
+        showTeam: {
+          type: Boolean
+        },
+
+        rotationQueue: {
+          type: Object,
+          readOnly: true,
+          value: () => Promise.resolve()
+        },
+
+        currentPolymonGroup: {
+          type: String
+        },
+
+        alphaPolymons: {
+          type: Array
+        },
+
+        betaPolymons: {
+          type: Array
+        }
+      },
+
+      get nextPolymonGroup() {
+        return (this.currentPolymonGroup && this.currentPolymonGroup === 'alpha')
+            ? 'beta'
+            : 'alpha';
+      },
+
+      rotate() {
+        return this.__doRotate('single-rotation');
+      },
+
+      doubleRotate() {
+        return this.__doRotate('double-rotation');
+      },
+
+      __pickThreePolymon() {
+        const polymons = this.polymons || [];
+        const picked = {};
+        const three = [];
+
+        if (polymons.length > 2) {
+          while (three.length < 3) {
+            let nextIndex;
+
+            do {
+              nextIndex = Math.floor(Math.random() * polymons.length);
+            } while (picked[nextIndex]);
+
+            picked[nextIndex] = true;
+
+            const nextPolymon = polymons[nextIndex];
+
+            three.push(nextPolymon);
+          }
+        }
+
+        return three;
+      },
+
+      __doRotate(className) {
+        const rotationQueue = this.rotationQueue.then(() =>
+            new Promise((resolve) => {
+              this.classList.remove(className);
+
+              if (!this.isAttached) {
+                return window.requestAnimationFrame(resolve);
+              }
+
+              window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                  Promise.all([
+                    this.__rotatePolymons(),
+                    this.awaitTransition(this.$.fragments, 6000)
+                  ]).then(() => {
+                    this.classList.remove(className);
+                    resolve();
+                  });
+
+                  this.classList.add(className);
+                });
+              });
+            }));
+
+        this._setRotationQueue(rotationQueue);
+
+        return this.rotationQueue;
+      },
+
+      __rotatePolymons() {
+        const currentPolymonGroup = this.currentPolymonGroup;
+        const nextPolymonGroup = this.nextPolymonGroup;
+
+        const currentElement = currentPolymonGroup
+            ? this.$[currentPolymonGroup]
+            : null;
+
+        const nextElement = this.$[nextPolymonGroup];
+
+        const currentElementTransitions = currentElement
+            ? this.awaitTransition(currentElement, 6000)
+            : Promise.resolve();
+        const nextElementTransitions = this.awaitTransition(nextElement, 6000);
+
+        const result = Promise.all([
+          currentElementTransitions,
+          nextElementTransitions
+        ]).then(() => {
+          if (currentElement != null) {
+            currentElement.classList.remove('exit');
+          }
+
+          this.currentPolymonGroup = nextPolymonGroup;
+        });
+
+        this[`${nextPolymonGroup}Polymons`] = this.__pickThreePolymon();
+
+        if (currentElement != null) {
+          currentElement.classList.add('exit');
+          currentElement.classList.remove('enter');
+        }
+
+        nextElement.classList.add('enter');
+
+        return result;
+      },
+
+      __showChanged(show) {
+        if (show) {
+          this.classList.add('show');
+        } else {
+          this.classList.remove('show');
+        }
+      },
+
+      __computePolymonsClassname(hidePolymons) {
+        return hidePolymons
+            ? 'show-player-team'
+            : '';
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,469 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-team-query.html">
+<link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-space-scape.html">
+<link rel="import" href="polymon-portrait.html">
+<link rel="import" href="polymon-planet-surface.html">
+<link rel="import" href="polymon-tournament-marquee.html">
+<link rel="import" href="polymon-countdown.html">
+<link rel="import" href="polymon-space-island.html">
+<link rel="import" href="polymon-tournament-move-visualizer.html">
+
+<dom-module id="polymon-tournament-spectator">
+  <template>
+    <style>
+      :host {
+        @apply --layout-fit;
+
+        --polymon-portrait-background: transparent;
+      }
+
+      #team {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        width: 640px;
+        height: 200px;
+        bottom: 100px;
+        left: 50%;
+
+        transform: translate(-50%, 0);
+      }
+    </style>
+    <firebase-document
+        app-name="polymon"
+        path="[[battlePath]]"
+        data="{{battle}}">
+    </firebase-document>
+    <firebase-document
+        app-name="polymon"
+        path="[[playerStatusPath]]"
+        data="{{spectatedPlayerStatus}}">
+    </firebase-document>
+    <firebase-query
+        app-name="polymon"
+        path="[[roundsPath]]"
+        data="{{rounds}}"
+        order-by-child="index">
+    </firebase-query>
+
+    <polymon-team-query
+        user-id="[[spectatedUserId]]"
+        battle-id="[[tournament.currentBattleId]]"
+        battle-rounds="[[rounds]]"
+        battle-status="{{spectatedTeamStatus}}">
+    </polymon-team-query>
+
+    <polymon-team-query
+        user-id="[[latestTournamentRound.winningUserId]]"
+        battle-id="[[latestTournamentRound.battleId]]"
+        battle-rounds="[]"
+        battle-status="{{winnerTeamStatus}}">
+    </polymon-team-query>
+
+
+    <polymon-space-scape
+        player="[[player]]"
+        outer="[[equalsAny(presentationState, 'battlefield', 'show-move')]]">
+    </polymon-space-scape>
+
+    <!--<polymon-space-debris-->
+        <!--id="debris"-->
+        <!--near="[[equalsAny(presentationState, 'waiting', 'ready', 'coundown', 'victory')]]">-->
+    <!--</polymon-space-debris>-->
+
+    <polymon-planet-surface
+        id="planet"
+        team="[[__computePresentedTeamStatus(presentationState, spectatedTeamStatus, winnerTeamStatus)]]"
+        show="[[equalsAny(presentationState, 'waiting', 'ready', 'countdown', 'victory')]]">
+    </polymon-planet-surface>
+
+    <polymon-asteroid-belt></polymon-asteroid-belt>
+
+    <polymon-tournament-marquee
+        id="marquee"
+        player="[[presentedPlayer]]"
+        show="[[equalsAny(presentationState, 'waiting', 'ready', 'countdown', 'victory')]]">
+    </polymon-tournament-marquee>
+
+    <polymon-space-island
+        player="[[presentedPlayer]]"
+        team="[[spectatedTeamStatus]]"
+        health="[[spectatedPlayerStatus.health]]"
+        show="[[equalsAny(presentationState, 'battlefield', 'show-move')]]">
+    </polymon-space-island>
+
+    <polymon-tournament-move-visualizer
+        id="visualizer"
+        player="[[player]]"
+        team-status="[[spectatedTeamStatus]]">
+    </polymon-tournament-move-visualizer>
+
+    <polymon-countdown
+        id="clock">
+    </polymon-countdown>
+
+  </template>
+  <script>
+    const PresentationState = {
+      WAITING: 'waiting',
+      READY: 'ready',
+      COUNTDOWN: 'countdown',
+      BATTLEFIELD: 'battlefield',
+      SHOW_MOVE: 'show-move',
+      VICTORY: 'victory'
+    };
+
+    const TournamentState = {
+      WAITING: 'waiting',
+      ACTIVE: 'active'
+    };
+
+    Polymer({
+      is: 'polymon-tournament-spectator',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        lastShownMove: {
+          type: Number,
+          readOnly: true,
+          value: 0
+        },
+
+        tournament: {
+          type: Object
+        },
+
+        player: {
+          type: String
+        },
+
+        battle: {
+          type: Object
+        },
+
+        rounds: {
+          type: Array
+        },
+
+        presentedPlayer: {
+          type: String,
+          computed: '__computePresentedPlayer(player, presentationState, latestTournamentRound)'
+        },
+
+        latestTournamentRound: {
+          type: Object,
+          computed: '__computeLatestTournamentRound(tournament.rounds.*)'
+        },
+
+        latestWinningUserId: {
+          type: String,
+          computed: '__computeLatestWinningUserId(latestTournamentRound)'
+        },
+
+        latestBattleId: {
+          type: String,
+          computed: '__computeLatestBattleId(latestTournamentRound)'
+        },
+
+        spectatedPlayerStatus: {
+          type: Object,
+          observer: '__spectatedPlayerStatusChanged'
+        },
+
+        presentationState: {
+          type: String,
+          readOnly: true,
+          notify: true,
+          value: PresentationState.WAITING,
+          observer: '__presentationStateChanged'
+        },
+
+        tournamentState: {
+          type: String,
+          computed: '__computeTournamentState(tournament.state)',
+          observer: '__tournamentStateChanged'
+        },
+
+        spectatedTeamStatus: {
+          type: Array
+        },
+
+        opposingTeamStatus: {
+          type: Array
+        },
+
+        spectatedRounds: {
+          type: Array,
+          notify: true,
+          computed: '__computeSpectatedRounds(rounds.*, spectatedUserId)'
+        },
+
+        spectatedUserId: {
+          type: String,
+          computed: '__computeSpectatedUserId(player, tournament.*)'
+        },
+
+        opposingUserId: {
+          type: String,
+          computed: '__computeOpposingUserId(player, tournament.*)'
+        },
+
+        battlePath: {
+          type: String,
+          computed: '__computeBattlePath(tournament.currentBattleId)'
+        },
+
+        roundsPath: {
+          type: String,
+          computed: '__computeRoundsPath(battlePath)'
+        },
+
+        playerStatusPath: {
+          type: String,
+          computed: '__computePlayerStatusPath(battlePath, spectatedUserId)'
+        }
+      },
+
+      __doIdleRotationWhileWaiting() {
+        const idleRotation = () => this.$.planet.rotate().then(() => {
+          if (this.presentationState === PresentationState.WAITING) {
+            idleRotation();
+          }
+        });
+
+        idleRotation();
+
+        this.$.marquee.ready = false;
+        this.$.marquee.victory = false;
+        this.$.planet.showTeam = false;
+      },
+
+      __displayPlayerTeam() {
+        return this.$.planet.doubleRotate().then(() => {
+          this.$.planet.showTeam = true;
+          this.$.marquee.ready = true;
+          this.$.marquee.victory = false;
+        });
+      },
+
+      __performCountdownSequence() {
+        return new Promise(resolve => setTimeout(resolve, 5000))
+          .then(() => this.$.clock.count());
+      },
+
+      __awaitNextMove() {
+        const rounds = this.spectatedRounds || [];
+
+        console.log(this.lastShownMove, '<', rounds.length, '?');
+
+        return this.lastShownMove < rounds.length
+            ? Promise.resolve()
+            : this.awaitEvent(this, 'spectated-rounds-changed')
+                .then(() => this.__awaitNextMove());
+      },
+
+      __visualizeLatestMove() {
+        const rounds = this.spectatedRounds || [];
+        const latestMoveNumber = rounds.length;
+        const latestMove = rounds[latestMoveNumber - 1];
+
+        const result = latestMove
+            ? this.$.visualizer.play(latestMove)
+            : Promise.resolve();
+
+        console.log(this.lastShownMove, '=>', latestMoveNumber, latestMove);
+
+        return result.then(() => {
+          this._setLastShownMove(latestMoveNumber);
+        });
+      },
+
+      __proclaimVictor() {
+        return new Promise(resolve => setTimeout(resolve, 2000))
+          .then(() => {
+            this._setLastShownMove(0);
+            this.$.planet.showTeam = true;
+            this.$.marquee.victory = true;
+            this.$.marquee.ready = true;
+            return new Promise(resolve => setTimeout(resolve, 15000));
+          });
+      },
+
+      __presentationStateChanged(state, oldState) {
+        console.log(`Presentation state used to be ${oldState}.`);
+        console.log(`Presentation state is now ${state}.`);
+
+        switch (state) {
+          case PresentationState.WAITING:
+            console.log('Waiting...');
+            this.__doIdleRotationWhileWaiting();
+            break;
+          case PresentationState.READY:
+            console.log('Ready...');
+            this.__displayPlayerTeam();
+            break;
+          case PresentationState.COUNTDOWN:
+            this.__performCountdownSequence().then(() => {
+              console.log('Going to battlefield...');
+              this._setPresentationState(PresentationState.BATTLEFIELD);
+            });
+            break;
+          case PresentationState.BATTLEFIELD:
+            console.log('Awaiting next move...');
+            this.__awaitNextMove().then(() => {
+              this._setPresentationState(PresentationState.SHOW_MOVE);
+            });
+            break;
+          case PresentationState.SHOW_MOVE:
+            console.log('Visualizing move...');
+            this.__visualizeLatestMove().then(() => {
+              if (this.tournamentState === TournamentState.ACTIVE) {
+                this._setPresentationState(PresentationState.BATTLEFIELD);
+              } else {
+                this._setPresentationState(PresentationState.VICTORY);
+              }
+            });
+            break;
+          case PresentationState.VICTORY:
+            this.__proclaimVictor().then(() => {
+              this._setPresentationState(PresentationState.WAITING);
+            });
+            break;
+        }
+      },
+
+      __tournamentStateChanged(state, oldState) {
+        console.log('The tournament state used to be', oldState);
+        console.log('The tournament state is now', state);
+
+        switch (state) {
+          case TournamentState.ACTIVE:
+            if (oldState === 'waiting') {
+              this._setPresentationState(PresentationState.COUNTDOWN);
+            } else {
+              this._setPresentationState(PresentationState.BATTLEFIELD);
+            }
+            break;
+          case TournamentState.WAITING:
+            if (oldState === 'active') {
+              this._setPresentationState(PresentationState.BATTLEFIELD);
+            } else {
+              this._setPresentationState(PresentationState.WAITING);
+            }
+            break;
+          default:
+            console.error(`Unknown tournament state: ${state}`);
+            break;
+        }
+      },
+
+      __spectatedPlayerStatusChanged() {
+        if (this.spectatedPlayerStatus != null &&
+            this.tournamentState === TournamentState.WAITING) {
+          this._setPresentationState(PresentationState.READY);
+        }
+      },
+
+      __computeTournamentState(state) {
+        if (state != null) {
+          return state;
+        }
+      },
+
+      __computeSpectatedRounds() {
+        if (this.rounds != null) {
+          return this.rounds.map(round => round[this.spectatedUserId]);
+        }
+      },
+
+      __computeBattlePath(battleId) {
+        if (battleId != null) {
+          return `/battles/${battleId}/status`;
+        }
+      },
+
+      __computeRoundsPath(battlePath) {
+        if (battlePath != null) {
+          return `${battlePath}/rounds`;
+        }
+      },
+
+      __computePlayerStatusPath(battlePath, spectatedUserId) {
+        if (battlePath != null && spectatedUserId != null) {
+          return `${battlePath}/players/${spectatedUserId}`;
+        }
+      },
+
+      __computeSpectatedUserId(player) {
+        const tournament = this.tournament;
+
+        if (tournament == null) {
+          return null;
+        }
+
+        return player === 'one'
+            ? tournament.playerOneUserId
+            : tournament.playerTwoUserId;
+      },
+
+      __computeOpposingUserId(player) {
+        const tournament = this.tournament;
+
+        if (tournament == null) {
+          return null;
+        }
+
+        return player === 'two'
+            ? tournament.playerOneUserId
+            : tournament.playerTwoUserId;
+      },
+
+      __computeLatestTournamentRound() {
+        const tournament = this.tournament;
+        const rounds = (tournament && tournament.rounds)
+            ? Object.values(tournament.rounds)
+            : [];
+
+        return rounds
+            .sort((l, r) => l.recordedAt > r.recordedAt)
+            .pop() || null;
+      },
+
+      __computePresentedPlayer(spectatedPlayer, presentationState, latestTournamentRound) {
+        if (latestTournamentRound == null ||
+            presentationState !== PresentationState.VICTORY) {
+          return spectatedPlayer;
+        }
+
+        // TODO: Handle ties!
+        return latestTournamentRound.winningUserId === latestTournamentRound.playerOneUserId
+            ? 'one'
+            : 'two';
+      },
+
+      __computePresentedTeamStatus(presentationState, spectatedTeamStatus, winnerTeamStatus) {
+        return presentationState === PresentationState.VICTORY
+            ? winnerTeamStatus
+            : spectatedTeamStatus;
+      },
+
+      __computeLatestWinningUserId(latestTournamentRound) {
+        if (latestTournamentRound != null) {
+          return latestTournamentRound.winningUserId;
+        }
+      },
+
+      __computeLatestBattleId(latestTournamentRound) {
+        if (latestTournamentRound != null) {
+          return latestTournamentRound.battleId;
+        }
+      }
+    });
+  </script>
+</dom-module>
