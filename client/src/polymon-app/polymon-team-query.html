@@ -96,6 +96,10 @@
             return;
           }
 
+          if (this.polymons.length === 0) {
+            return;
+          }
+
           let uncheckedMoves = this.battleRounds.map(battleRound =>
               battleRound[this.userId]);
           let battleStatus = this.teamData.map((teamItem, index) => {
