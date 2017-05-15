@@ -551,10 +551,10 @@
         // controls what to render based on the path
         switch (pathParts.shift()) {
           case '':
-            elementsToRender = ['map', 'start', 'background'];
+            elementsToRender = ['start', 'background'];
             switch (pathParts.shift()) {
               case 'about':
-                elementsToRender = ['about', 'background'];
+                elementsToRender = ['about'];
                 break;
 
               case 'code':
@@ -577,7 +577,6 @@
               case 'polydex':
                 elementsToRender = ['panel', 'background'];
                 panelElementsToRender = ['polydex'];
-                this.$.panel.selectedValues = panelElementsToRender;
                 break;
 
               case 'battle':
@@ -589,14 +588,11 @@
                       case 'scan':
                         elementsToRender = ['scanner'];
                         break;
-
-                      case undefined:
-                        this.$.panel.selectedValues = panelElementsToRender;
                     }
                     break;
 
                   case 'engage':
-                    elementsToRender = ['battleScreen', 'background'];
+                    elementsToRender = ['battleScreen'];
                     break;
                 }
                 break;
@@ -604,6 +600,7 @@
             break;
         }
 
+        this.$.panel.selectedValues = panelElementsToRender;
         this.$.multiPages.selectedValues = elementsToRender;
       }
     });
