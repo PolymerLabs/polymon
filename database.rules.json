@@ -91,8 +91,6 @@
         "currentRound": {},
         "maxRounds": {},
 
-        "tournamentId": {},
-
         "state": {
           "$userId": {
             ".validate": "$userId === data.parent().parent().child('initiatingUserId').val() || $userId === data.parent().parent().child('defendingUserId').val()",
@@ -124,6 +122,7 @@
             }
           },
 
+          "tournamentId": {},
           "engaged": {},
 
           "rounds": {

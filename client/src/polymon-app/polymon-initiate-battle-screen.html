@@ -48,6 +48,15 @@
         border-radius: 8px;
       }
 
+      :host(.tournament) #battle-code,
+      :host(:not(.tournament)) #tournament {
+        display: none;
+      }
+
+      #tournament {
+        text-align: center;
+      }
+
       polymon-button {
         flex: 0;
         width: 100%;
@@ -65,7 +74,7 @@
       }
     </style>
 
-    <section>
+    <section id="battle-code">
       <h1>Battle Code</h1>
       <polymon-qr-code
           size="7"
@@ -73,6 +82,10 @@
           data="[[battleCode]]">
       </polymon-qr-code>
       <h2>Scan to Join</h2>
+    </section>
+    <section id="tournament">
+      <h1>Please Wait</h1>
+      <h2>The battle will begin when your opponent connects</h2>
     </section>
 
     <polymon-button id="cancel" class="alt">Cancel</polymon-button>
@@ -136,6 +149,11 @@
       },
 
       __tournamentIdChanged: function() {
+        if (this.tournamentId != null) {
+          this.classList.add('tournament');
+        } else {
+          this.classList.remove('tournament');
+        }
       }
     });
   </script>

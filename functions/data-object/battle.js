@@ -10,8 +10,8 @@ class Battle extends DataObject {
     // cannot use super in async functions.
     return DataObject.create.call(this, db, {
       createdAt: Date.now(),
-      tournamentId: tournamentId,
       status: {
+        tournamentId: tournamentId,
         engaged: false
       }
     });
@@ -58,8 +58,9 @@ class Battle extends DataObject {
 
   async isPartOfATournament() {
     const battle = await this.read();
+    const status = battle.status;
 
-    return battle.tournamentId != null;
+    return (status && status.tournamentId) != null;
   }
 
   async isFinished() {
@@ -100,8 +101,9 @@ class Battle extends DataObject {
 
   async getTournamentId() {
     const battle = await this.read();
+    const status = battle.status;
 
-    return battle.tournamentId;
+    return status && status.tournamentId;
   }
 
   async getWinningUserId() {
