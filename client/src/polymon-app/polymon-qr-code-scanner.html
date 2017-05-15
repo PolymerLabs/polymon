@@ -290,6 +290,11 @@
           type: Array
         },
 
+        __initialCameraSelected: {
+          type: Boolean,
+          value: false,
+        },
+
         hasMultipleCameras: {
           type: Boolean,
           computed: '__computeHasMultipleCameras(__cameras)',
@@ -582,25 +587,21 @@
         this.$.video.style.display = this.camera ? '' : 'none';
       },
 
-      __selectInitialCamera: (function() {
-        let initialCameraChosen = false;
+      __selectInitialCamera: function(__cameras) {
+        if (this.__initialCameraSelected) return;
 
-        return function(__cameras) {
-          if (initialCameraChosen) return;
+        if (!__cameras || __cameras.length === 0) return;
 
-          if (!__cameras || __cameras.length === 0) return;
+        const backFacingCamera = __cameras.find(camera => {
+          return this.__isBackFacingCameraLabel(camera.label);
+        });
+        this.$.devices.selectDevice(backFacingCamera || __cameras[0]);
 
-          const backFacingCamera = __cameras.find(camera => {
-            return this.__isBackFacingCameraLabel(camera.label);
-          });
-          this.$.devices.selectDevice(backFacingCamera || __cameras[0]);
-
-          initialCameraChosen = true;
-        };
-      })(),
+        this.__initialCameraSelected = true;
+      },
 
       __computeHasMultipleCameras: function(__cameras) {
-        return __cameras.length > 1;
+        return !!__cameras && __cameras.length > 1;
       },
 
       __switchCamera: function() {
