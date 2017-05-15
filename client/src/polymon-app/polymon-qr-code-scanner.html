@@ -1,9 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-video.html">
-<link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-devices.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-user-media.html">
 <link rel="import" href="../../bower_components/meat-scope-elements/meat-scope-film-strip.html">
+<link rel="import" href="../../bower_components/app-media/app-media-devices.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-spinner.html">
@@ -189,11 +189,12 @@
       }
     </style>
     <section id="camera">
-      <meat-scope-devices
+      <app-media-devices
           id="devices"
-          selected-camera="{{camera}}"
-          has-multiple-cameras="{{hasMultipleCameras}}">
-      </meat-scope-devices>
+          kind="videoinput"
+          devices="{{__cameras}}"
+          selected-device="{{camera}}">
+      </app-media-devices>
       <meat-scope-user-media
           id="media"
           device="[[camera]]"
@@ -285,15 +286,26 @@
           value: "/images/ic_switch_camera_white_24px.svg",
         },
 
+        __cameras: {
+          type: Array
+        },
+
+        __initialCameraSelected: {
+          type: Boolean,
+          value: false,
+        },
+
         hasMultipleCameras: {
-          type: Boolean
+          type: Boolean,
+          computed: '__computeHasMultipleCameras(__cameras)',
         }
       },
 
       observers: [
         '__activeChanged(active)',
         '__cameraChanged(camera, hasMultipleCameras)',
-        '__streamChanged(stream)'
+        '__streamChanged(stream)',
+        '__selectInitialCamera(__cameras)'
       ],
 
       listeners: {
@@ -533,6 +545,14 @@
         this.__switchCameraIconSrc = this.__computeSwitchCameraIconSrc(stream);
       },
 
+      __isFrontFacingCameraLabel: function(label) {
+        return /front/i.test(label);
+      },
+
+      __isBackFacingCameraLabel: function(label) {
+        return /environment|rear|back/i.test(label);
+      },
+
       // This is an observer that sets a property rather than the more proper
       // computed property because it needs to have a default value even if
       // `stream` is undefined, which doesn't trigger the computed property.
@@ -546,8 +566,8 @@
         var hasWordBack = false;
 
         stream.getTracks().forEach(track => {
-          hasWordFront = hasWordFront || /front/i.test(track.label);
-          hasWordBack = hasWordBack || /environment|rear|back/i.test(track.label);
+          hasWordFront = hasWordFront || this.__isFrontFacingCameraLabel(track.label);
+          hasWordBack = hasWordBack || this.__isBackFacingCameraLabel(track.label);
         });
 
         if (hasWordFront && !hasWordBack) {
@@ -567,6 +587,23 @@
         this.$.video.style.display = this.camera ? '' : 'none';
       },
 
+      __selectInitialCamera: function(__cameras) {
+        if (this.__initialCameraSelected) return;
+
+        if (!__cameras || __cameras.length === 0) return;
+
+        const backFacingCamera = __cameras.find(camera => {
+          return this.__isBackFacingCameraLabel(camera.label);
+        });
+        this.$.devices.selectDevice(backFacingCamera || __cameras[0]);
+
+        this.__initialCameraSelected = true;
+      },
+
+      __computeHasMultipleCameras: function(__cameras) {
+        return !!__cameras && __cameras.length > 1;
+      },
+
       __switchCamera: function() {
         // This is to work around a strange bug (?) where neglecting to stop all
         // tracks of the previously live stream causes tracks of the next stream
@@ -575,7 +612,7 @@
           this.stream.getTracks().forEach(track => track.stop());
         }
 
-        this.$.devices.switchToNextCamera();
+        this.$.devices.selectNextDevice();
       },
     });
   </script>
