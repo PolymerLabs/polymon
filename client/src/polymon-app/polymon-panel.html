@@ -41,37 +41,6 @@
         activeIndex: {
           type: Number,
           observer: '__activeIndexChanged'
-        },
-
-        siteMap: {
-          type: Object,
-          value: () => {
-            const map = {
-              '': {
-                _elements: [],
-                polydex: {
-                  _elements: [
-                    'polydex'
-                  ],
-                  _default: {
-                    _elements: [
-                      'polydex'
-                    ]
-                  }
-                },
-                battle: {
-                  _elements: [],
-                  new: {
-                    _elements: [
-                      'newBattle'
-                    ]
-                  }
-                }
-              }
-            }
-
-            return map;
-          }
         }
       },
 
