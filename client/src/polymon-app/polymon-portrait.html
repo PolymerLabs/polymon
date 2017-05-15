@@ -17,21 +17,6 @@
         background-repeat: no-repeat;
         transform-origin: 0 0;
       }
-
-      #video {
-        width: 100%;
-        height: 100%;
-        transform: scale(1.3);
-        pointer-events: none;
-      }
-
-      :host(:not(.animated)) #video {
-        display: none;
-      }
-
-      :host(.animated) #image {
-        background-image: none !important;
-      }
     </style>
     <div id="image">
       <content></content>
@@ -73,6 +58,7 @@
           let polymon = this.polymon;
           let index = polymon && polymon.spriteIndex;
           let size = this.size;
+          const animated = this.animated && polymon && polymon.animated;
 
           if (index == null) {
             index = -1;
@@ -83,36 +69,22 @@
           this.style.borderRadius = `${size / 2}px`;
 
           if (this.caught) {
-            this.$.image.style.backgroundSize = '100%';
+            const extension = animated ? 'gif' : 'png';
+
+            this.classList.toggle('animated', animated);
+
             this.$.image.style.backgroundPosition = 'top left';
-            this.$.image.style.backgroundImage = `url(/images/polymon_monster_${index}.png)`;
+            this.$.image.style.backgroundSize = '100%';
+            this.$.image.style.backgroundImage = `url(/images/polymon_monster_${index}.${extension})`;
           } else {
             let top = Math.floor(index / 20) * -size;
             let left = (index % 20) * -size;
 
+            this.classList.remove('animated');
+
             this.$.image.style.backgroundSize = `${size * 20}px ${size * 20}px`;
             this.$.image.style.backgroundPosition = `${left}px ${top}px`;
             this.$.image.style.backgroundImage = '';
-          }
-
-          if (polymon && polymon.animated && this.animated && index === 28) {
-            if (this.__video == null) {
-              const video = document.createElement('video');
-              video.id = 'video';
-              video.autoplay = true;
-              video.loop = true;
-              video.muted = true;
-
-              const image = Polymer.dom(this.$.image);
-              image.insertBefore(video, image.firstElementChild);
-
-              this.__video = video;
-            }
-
-            this.classList.add('animated');
-            this.__video.src = this.resolveUrl(`../../video/polymon_monster_${index}.webm`);
-          } else {
-            this.classList.remove('animated');
           }
         });
       },
