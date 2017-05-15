@@ -17,6 +17,21 @@
         background-repeat: no-repeat;
         transform-origin: 0 0;
       }
+
+      #video {
+        width: 100%;
+        height: 100%;
+        transform: scale(1.3);
+        pointer-events: none;
+      }
+
+      :host(:not(.animated)) #video {
+        display: none;
+      }
+
+      :host(.animated) #image {
+        background-image: none !important;
+      }
     </style>
     <div id="image">
       <content></content>
@@ -27,6 +42,11 @@
       is: 'polymon-portrait',
 
       properties: {
+        animated: {
+          type: Boolean,
+          value: false
+        },
+
         polymon: {
           type: Object,
           observer: '__applyPolymonImage'
@@ -73,6 +93,26 @@
             this.$.image.style.backgroundSize = `${size * 20}px ${size * 20}px`;
             this.$.image.style.backgroundPosition = `${left}px ${top}px`;
             this.$.image.style.backgroundImage = '';
+          }
+
+          if (polymon && polymon.animated && this.animated && index === 28) {
+            if (this.__video == null) {
+              const video = document.createElement('video');
+              video.id = 'video';
+              video.autoplay = true;
+              video.loop = true;
+              video.muted = true;
+
+              const image = Polymer.dom(this.$.image);
+              image.insertBefore(video, image.firstElementChild);
+
+              this.__video = video;
+            }
+
+            this.classList.add('animated');
+            this.__video.src = this.resolveUrl(`../../video/polymon_monster_${index}.webm`);
+          } else {
+            this.classList.remove('animated');
           }
         });
       },
