@@ -279,9 +279,9 @@
 
         console.log(this.lastShownMove, '=>', latestMoveNumber, latestMove);
 
-        return result.then(() => {
-          this._setLastShownMove(latestMoveNumber);
-        });
+        this._setLastShownMove(latestMoveNumber);
+
+        return result;
       },
 
       __proclaimVictor() {

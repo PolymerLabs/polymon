@@ -18,6 +18,21 @@
 
       behaviors: [PolymonElement],
 
+      registered() {
+        // NOTE(cdata): There seems to be a condition with Firebase Query where
+        // changing the path can cause the data to be reset twice. This is a
+        // terrible remedy, but it works and we don't really have time to do
+        // anything else right now.
+        const firebaseQuery = document.createElement('firebase-query');
+        const FirebaseQuery = firebaseQuery.constructor;
+        const queryChanged = FirebaseQuery.prototype.__queryChanged;
+        FirebaseQuery.prototype.__queryChanged = function(query, oldQuery) {
+          this.async(() => {
+            queryChanged.call(this, query, oldQuery);
+          });
+        };
+      },
+
       properties: {
         teamPath: {
           type: String,
