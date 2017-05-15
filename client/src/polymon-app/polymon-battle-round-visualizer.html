@@ -4,9 +4,14 @@
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-portrait.html">
+<link rel="import" href="polymon-renderable-behavior.html">
 <dom-module id="polymon-battle-round-visualizer">
   <template>
     <style include="active-fade-up">
+      :host([hidden]) {
+        display: none !important;
+      }
+
       @-webkit-keyframes flash {
         0% {
           opacity: 0;
@@ -1909,7 +1914,8 @@
 
       behaviors: [
         PolymonElement,
-        Polymer.IronResizableBehavior
+        Polymer.IronResizableBehavior,
+        PolymonRenderableBehavior
       ],
 
       properties: {

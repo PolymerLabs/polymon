@@ -5,6 +5,7 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-logo.html">
 <link rel="import" href="polymon-carousel.html">
+<link rel="import" href="polymon-renderable-behavior.html">
 
 <dom-module id="polymon-start-screen">
   <template>
@@ -31,6 +32,10 @@
       :host(:not(.hidden)) #container {
         @apply --layout-fit;
         transform: translateY(0);
+      }
+
+      :host([hidden]) {
+        display: none !important;
       }
 
       @media (max-height: 525px) and (orientation: landscape) {
@@ -204,7 +209,10 @@
     Polymer({
       is: 'polymon-start-screen',
 
-      behaviors: [PolymonElement],
+      behaviors: [
+        PolymonElement,
+        PolymonRenderableBehavior
+      ],
 
       properties: {
         hidden: {

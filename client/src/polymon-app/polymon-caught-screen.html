@@ -5,6 +5,7 @@
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-button.html">
+<link rel="import" href="polymon-renderable-behavior.html">
 
 <dom-module id="polymon-caught-screen">
   <template>
@@ -28,6 +29,10 @@
         justify-content: space-between;
 
         --polymon-portrait-background: transparent;
+      }
+
+      :host([hidden]) {
+        display: none !important;
       }
 
       :host(.active) #container > div {
@@ -179,7 +184,10 @@
     Polymer({
       is: 'polymon-caught-screen',
 
-      behaviors: [PolymonElement],
+      behaviors: [
+        PolymonElement,
+        PolymonRenderableBehavior
+      ],
 
       properties: {
         active: {

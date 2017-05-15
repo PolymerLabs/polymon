@@ -29,13 +29,17 @@
         align-items: center;
       }
 
+      :host([hidden]), [hidden] {
+        display: none !important;
+      }
+
       :host(.active) {
         pointer-events: all;
         opacity: 1;
         transition: opacity 0s 0s;
       }
 
-      :host(.active.open) #background {
+      :host(.open) #background {
         transform: scale(22);
         background-color: #f9f9f9;
       }
@@ -54,6 +58,10 @@
         transition-delay: 0.3s;
         transform: translateY(0);
         opacity: 1;
+      }
+
+      :host([opaque]) {
+        background-color: #f9f9f9;
       }
 
       firebase-document {
@@ -168,25 +176,25 @@
       }
 
       @media (min-width: 500px) {
-        :host(.active.open) #background {
+        :host(.open) #background {
           transform: scale(30);
         }
       }
 
       @media (min-width: 750px) {
-        :host(.active.open) #background {
+        :host(.open) #background {
           transform: scale(35);
         }
       }
 
       @media (min-width: 1000px) {
-        :host(.active.open) #background {
+        :host(.open) #background {
           transform: scale(50);
         }
       }
 
       @media (min-width: 1500px) {
-        :host(.active.open) #background {
+        :host(.open) #background {
           transform: scale(70);
         }
       }
@@ -283,6 +291,15 @@
       __openOrClose: function() {
         this.deraf('openOrClose', () => {
           if (this.active) {
+            // makes sure detail screen has a non-transparent background when we
+            // remove the oversized background layer
+            const addOpaque = () => {
+              this.setAttribute('opaque', true);
+              this.$.background.setAttribute('hidden', true);
+              this.$.background.removeEventListener('transitionend', addOpaque);
+            }
+
+            this.$.background.addEventListener('transitionend', addOpaque);
             this.$.portrait.style.transform = '';
 
             let selfBoundingRect = this.getBoundingClientRect();
@@ -322,18 +339,13 @@
               this._setOpen(true);
             });
           } else {
-            let self = this;
+            this.$.background.removeAttribute('hidden');
+            this.removeAttribute('opaque');
 
-            // this.addEventListener('transitionend', function onTransitionEnd(event) {
-            //   if (event.target === self.$.background && event.propertyName === 'transform') {
-            //     this.removeEventListener('transitionend', onTransitionEnd);
-            //
-            //   }
-            // });
-            this._setOpen(false);
-            // this.debounce('close', () => {
-            //   this.classList.remove('visible');
-            // }, 500);
+            // RAF needed so background can become visible and rescale
+            requestAnimationFrame(() => {
+              this._setOpen(false);
+            });
           }
         });
       },

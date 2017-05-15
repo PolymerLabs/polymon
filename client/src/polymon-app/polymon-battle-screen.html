@@ -7,6 +7,8 @@
 <link rel="import" href="polymon-battle-round-visualizer.html">
 <link rel="import" href="polymon-battle-victory-screen.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-renderable-behavior.html">
+<link rel="import" href="polymon-multi-pages.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-qr-code.html">
@@ -25,6 +27,10 @@
         font-family: var(--polymon-font-family);
         --polymon-portrait-size: 128px;
         --polymon-portrait-background: transparent;
+      }
+
+      :host([hidden]) {
+        display: none !important;
       }
 
       :host(:not(.active)) > * {
@@ -59,44 +65,56 @@
         battle-status="{{opposingTeamStatus}}">
     </polymon-team-query>
 
-    <polymon-initiate-battle-screen
-        user="[[user]]"
-        user-data="[[userData]]"
-        active="[[initiatingBattle]]"
-        battle-id="[[userData.player.activeBattleId]]">
-    </polymon-initiate-battle-screen>
+    <polymon-multi-pages
+        selected-values="[[visiblePages]]">
+      <polymon-initiate-battle-screen
+          id="initiate"
+          page-name="initiate"
+          user="[[user]]"
+          user-data="[[userData]]"
+          active="[[initiatingBattle]]"
+          battle-id="[[userData.player.activeBattleId]]">
+      </polymon-initiate-battle-screen>
 
-    <polymon-battle-field
-        user-team-status="[[userTeamStatus]]"
-        opposing-team-status="[[opposingTeamStatus]]"
-        user-state="[[userState]]"
-        opponent-state="[[opponentState]]"
-        active="[[active]]"
-        waiting="[[waiting]]"
-        battle-finished="[[battleFinished]]"
-        on-polymon-move="__onPolymonMove">
-    </polymon-battle-field>
+      <polymon-battle-field
+          page-name="field"
+          user-team-status="[[userTeamStatus]]"
+          opposing-team-status="[[opposingTeamStatus]]"
+          user-state="[[userState]]"
+          opponent-state="[[opponentState]]"
+          active="[[active]]"
+          waiting="[[waiting]]"
+          battle-finished="[[battleFinished]]"
+          on-polymon-move="__onPolymonMove">
+      </polymon-battle-field>
 
-    <polymon-battle-victory-screen
-        active="[[battleFinished]]"
-        user="[[user]]"
-        battle-data="[[battleData]]">
-    </polymon-battle-victory-screen>
+      <polymon-battle-victory-screen
+          page-name="victory"
+          active="[[battleFinished]]"
+          user="[[user]]"
+          battle-data="[[battleData]]">
+      </polymon-battle-victory-screen>
 
-    <polymon-battle-round-visualizer
-        id="roundVisualizer"
-        user-id="[[user.uid]]"
-        opposing-user-id="[[opposingUserId]]"
-        user-team-status="[[userTeamStatus]]"
-        opposing-team-status="[[opposingTeamStatus]]">
-    </polymon-battle-round-visualizer>
+      <polymon-battle-round-visualizer
+          page-name="visualizer"
+          id="roundVisualizer"
+          hide-delay="0"
+          user-id="[[user.uid]]"
+          opposing-user-id="[[opposingUserId]]"
+          user-team-status="[[userTeamStatus]]"
+          opposing-team-status="[[opposingTeamStatus]]">
+      </polymon-battle-round-visualizer>
+    </polymon-multi-pages>
 
   </template>
   <script>
     Polymer({
       is: 'polymon-battle-screen',
 
-      behaviors: [PolymonElement],
+      behaviors: [
+        PolymonElement,
+        PolymonRenderableBehavior
+      ],
 
       properties: {
         battleId: {
@@ -140,7 +158,8 @@
         initiatingBattle: {
           type: Boolean,
           value: false,
-          readOnly: true
+          readOnly: true,
+          observer: '__initiatingBattleChanged'
         },
 
         waiting: {
@@ -152,6 +171,11 @@
         battleFinished: {
           type: Boolean,
           computed: '__computeBattleFinished(battleData.*)'
+        },
+
+        visiblePages: {
+          type: Array,
+          value: () => []
         }
       },
 
@@ -248,6 +272,14 @@
         });
       },
 
+      __initiatingBattleChanged: function() {
+        if (this.initiatingBattle) {
+          this.visiblePages = ['initiate']
+        } else {
+          this.visiblePages = ['field'];
+        }
+      },
+
       __sendHeartbeat: function() {
         firebase.app('polymon').database()
             .ref(`/users/${this.user.uid}/battleQueue`).push({
@@ -278,6 +310,7 @@
           this._setWaiting(false);
         } else {
           this._setWaiting(true);
+          this.visiblePages = ['visualizer'];
 
           this.deraf('battle-rounds-changed', () => {
             // TODO(cdata): This is necessary to make sure that metrics get
@@ -289,6 +322,12 @@
                     .then(function() {
                       console.log('DONE');
                       this._setWaiting(false);
+
+                      if (this.battleFinished) {
+                        this.visiblePages = ['victory'];
+                      } else {
+                        this.visiblePages = ['field'];
+                      }
                     }.bind(this));
           });
         }

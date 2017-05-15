@@ -1,0 +1,63 @@
+<script>
+  (() => {
+    /** @polymerBehavior */
+    PolymonRenderableBehavior = {
+      properties: {
+        hidden: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
+        hideDelay: {
+          type: Number,
+          value: 300
+        },
+
+        _isHiddenDirty: {
+          type: Boolean,
+          value: false
+        },
+
+        __hidingTimeout: {
+          type: Number
+        }
+      },
+
+      attached: function() {
+        this.fire('polymon-renderable-attached', { item: this });
+      },
+
+      /**
+       * @abstract
+       *
+       * Applies or removes the `hidden` attribute on the element (defaults to
+       * hidden). Override for element-specific rendering.
+       *
+       * @param {boolean=} shouldBeVisible whether or not the element should
+       *    be visible. Defaults to false.
+       * @returns {Promise<boolean>} whether or not the element should be visible. True
+       *    if set `hidden` attribute. False if removed it.
+       */
+      render: function(shouldBeVisible) {
+        if (this.__hidingTimeout) {
+          this.cancelAsync(this.__hidingTimeout);
+          this.__hidingTimeout = null;
+        }
+
+        if (config && config.observed) {
+          shouldBeVisible = !this.hidden;
+        }
+
+        if (shouldBeVisible) {
+          this.hidden = false;
+        } else {
+          this.__hidingTimeout = this.async(() => {
+            this.hidden = true;
+          }, this.hideDelay);
+        }
+
+        return shouldBeVisible;
+      }
+    };
+  })();
+</script>

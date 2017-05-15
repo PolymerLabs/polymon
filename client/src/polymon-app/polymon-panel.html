@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-element.html">
+<link rel="import" href="polymon-multi-pages-behavior.html">
+<link rel="import" href="polymon-renderable-behavior.html">
 <link rel="import" href="polymon-styles.html">
 
 <dom-module id="polymon-panel">
@@ -8,6 +10,10 @@
     <style include="panel active-fade-up">
       :host(.animatable) #container {
         transition: transform 0.3s cubic-bezier(0.65, 0.05, 0.36, 1);
+      }
+
+      :host([hidden]) {
+        display: none !important;
       }
 
       #container {
@@ -35,7 +41,11 @@
     Polymer({
       is: 'polymon-panel',
 
-      behaviors: [PolymonElement],
+      behaviors: [
+        PolymonElement,
+        PolymonRenderableBehavior,
+        PolymonMultiPagesBehavior
+      ],
 
       properties: {
         activeIndex: {

@@ -1,0 +1,70 @@
+<link rel="import" href="../../bower_components/iron-selector/iron-multi-selectable.html">
+
+<script>
+  (() => {
+    /** @polymerBehavior */
+    const PolymonMultiPagesBehaviorImpl = {
+      properties: {
+        siteMap: {
+          type: Object
+        },
+
+        attrForSelected: {
+          type: String,
+          value: 'page-name'
+        },
+
+        multi: {
+          type: Boolean,
+          value: true
+        },
+
+        activateEvent: {
+          type: String,
+          value: 'ignore'
+        },
+
+        selectable: {
+          type: String,
+          value: '[page-name]'
+        },
+
+        selectedClass: {
+          type: String,
+          value: 'rendered'
+        }
+      },
+
+      listeners: {
+        'iron-select': '_renderElement',
+        'iron-deselect': '_renderElement',
+        'polymon-renderable-attached': '_renderElement'
+      },
+
+      _renderElement: function(e) {
+        const element = e.detail.item;
+        if (!this.selectedValues || element == this ||
+            !element.getAttribute('page-name')) {
+          return;
+        }
+
+        const renderFn = element.render;
+        const pageName = element.getAttribute('page-name');
+        const shouldRender = this.selectedValues.indexOf(pageName) >= 0;
+        e.stopPropagation();
+
+        if (renderFn) {
+          element.render(shouldRender);
+        } else if(Polymer.isInstance(element)) {
+          console.error(`No render function for ${element.getAttribute('page-name')}`);
+        }
+      }
+    };
+
+    /** @polymerBehavior */
+    PolymonMultiPagesBehavior = [
+      Polymer.IronMultiSelectableBehavior,
+      PolymonMultiPagesBehaviorImpl
+    ];
+  })();
+</script>
