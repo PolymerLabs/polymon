@@ -353,7 +353,9 @@
           return '???';
         }
 
-        return text.replace(/[^\s]/g, '?');
+        // replace non-space to ? and split anything over 8 question marks
+        return text.replace(/[^\s]/g, '?')
+            .replace(/\?\?\?\?\?\?\?\?[^\s]*/g, '???? ????');
       }
     });
   </script>
