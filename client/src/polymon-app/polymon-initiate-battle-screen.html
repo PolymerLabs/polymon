@@ -7,11 +7,11 @@
 <link rel="import" href="polymon-button.html">
 <dom-module id="polymon-initiate-battle-screen">
   <template>
-    <style include="active-fade-up">
+    <style include="typography active-fade-up">
       :host {
         @apply --layout-fit;
         @apply --layout-vertical;
-        color: var(--polymon-blue);
+        @apply --layout-center;
         padding: 8px;
 
         z-index: 2;
@@ -23,29 +23,43 @@
         flex: 1;
         @apply --layout-vertical;
         @apply --layout-center-center;
+        margin: 0.5em auto;
+      }
+
+      @media (orientation: landscape) {
+        :host > section#battle-code {
+          @apply --layout-horizontal;
+        }
+      }
+
+      #text {
+        @apply --layout-vertical;
+        @apply --layout-center;
+        margin: 1em;
+      }
+
+      h1, h2, polymon-qr-code {
+        margin: 0.5em;
       }
 
       h1, h2 {
         font-weight: bold;
-        text-transform: uppercase;
+        color: #536DFE; /* Indigo A200 */
+        text-align: center;
       }
-
-      h1 {
-        font-size: 2.5em;
-        font-family: var(--polymon-font-family);
-        margin-top: 10px;
-        margin-bottom: 50px;
-      }
-
-      h2 {
-        margin-top: 50px;
-      }
-
 
       polymon-qr-code {
         display: block;
-        border: 32px solid var(--polymon-blue);
-        border-radius: 8px;
+        border: 32px solid #FFF;
+        border-radius: 4px;
+        max-width: 60vmin;
+        max-height: 60vmin;
+      }
+
+      @media (max-width: 320px), (max-height: 480px) {
+        polymon-qr-code {
+          border-width: 24px;
+        }
       }
 
       :host(.tournament) #battle-code,
@@ -58,30 +72,20 @@
       }
 
       polymon-button {
-        flex: 0;
-        width: 100%;
-      }
-
-
-      @media (max-height: 640px) {
-        h1 {
-          margin-bottom: 20px;
-        }
-
-        h2 {
-          margin-top: 20px;
-        }
+        align-self: stretch;
       }
     </style>
 
     <section id="battle-code">
-      <h1>Battle Code</h1>
+      <div id="text">
+        <h1>Battle Code</h1>
+        <h2>Scan to Join</h2>
+      </div>
       <polymon-qr-code
-          size="7"
+          size="6"
           margin="2"
           data="[[battleCode]]">
       </polymon-qr-code>
-      <h2>Scan to Join</h2>
     </section>
     <section id="tournament">
       <h1>Please Wait</h1>
