@@ -1,0 +1,199 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="polymon-element.html">
+
+<dom-module id="polymon-space-debris">
+  <template>
+    <style>
+      @keyframes float {
+        0% {
+          transform: translate(2170px, -100px) rotate(0deg);
+        }
+
+        100% {
+          transform: translate(-300px, 100px) rotate(45deg);
+        }
+      }
+
+      :host {
+        @apply --layout-fit;
+      }
+
+      #moon {
+        position: absolute;
+        top: 300px;
+        width: 234px;
+        height: 234px;
+        background-image: url('../../images/moon.png');
+        transition: transform 3s, opacity 3s;
+        transform: translate(0, 0) scale(1);
+      }
+
+      :host(.one) #moon {
+        right: 150px;
+      }
+
+      :host(.two) #moon {
+        left: 150px;
+      }
+
+      :host(.outer) #moon {
+        transform: translate(0px, -300px) scale(2.5);
+        opacity: 0.75;
+      }
+
+      #floaters {
+        @apply --layout-fit;
+        transition: transform 3s;
+        transform: scale(1);
+      }
+
+      :host(.outer) #floaters {
+        transform: translateY(200px) scale(1.25);
+      }
+
+      .rock {
+        position: absolute;
+        top: 0;
+        left: 0;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        animation-name: float;
+      }
+
+      .rock.one {
+        background-image: url('../../images/polymon_rock_1.png');
+        width: 262px;
+        height: 235px;
+      }
+
+      .rock.two {
+        background-image: url('../../images/polymon_rock_2.png');
+        width: 86px;
+        height: 78px;
+      }
+
+      .rock.three {
+        background-image: url('../../images/polymon_rock_3.png');
+        width: 116px;
+        height: 87px;
+      }
+
+      .rock.four {
+        background-image: url('../../images/polymon_rock_4.png');
+        width: 76px;
+        height: 44px;
+      }
+
+      .rock.five {
+        background-image: url('../../images/polymon_rock_5.png');
+        width: 44px;
+        height: 124px;
+      }
+
+      .rock.six {
+        background-image: url('../../images/polymon_rock_6.png');
+        width: 97px;
+        height: 78px;
+      }
+
+      .rock.seven {
+        background-image: url('../../images/polymon_rock_7.png');
+        width: 67px;
+        height: 44px;
+      }
+
+      .rock.eight {
+        background-image: url('../../images/polymon_rock_8.png');
+        width: 19px;
+        height: 15px;
+      }
+
+      .rock.nine {
+        background-image: url('../../images/polymon_rock_9.png');
+        width: 86px;
+        height: 74px;
+      }
+
+      .rock.ten {
+        background-image: url('../../images/polymon_rock_10.png');
+        width: 58px;
+        height: 73px;
+      }
+
+      .rock.eleven {
+        background-image: url('../../images/polymon_rock_11.png');
+        width: 45px;
+        height: 75px;
+      }
+    </style>
+    <div id="moon"></div>
+    <div id="floaters">
+      <div class="rock one"></div>
+      <div class="rock two"></div>
+      <div class="rock three"></div>
+      <div class="rock four"></div>
+      <div class="rock five"></div>
+      <div class="rock six"></div>
+      <div class="rock seven"></div>
+      <div class="rock eight"></div>
+      <div class="rock nine"></div>
+      <div class="rock ten"></div>
+      <div class="rock eleven"></div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'polymon-space-debris',
+
+      behaviors: [PolymonElement],
+
+      properties: {
+        player: {
+          type: String,
+          observer: '__playerChanged'
+        },
+
+        outer: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        'reflectToClass(outer, "outer")'
+      ],
+
+      attached() {
+        this.__randomizeFloaters();
+      },
+
+      __playerChanged(player, oldPlayer) {
+        if (oldPlayer != null) {
+          this.classList.remove(oldPlayer);
+        }
+
+        if (player != null) {
+          this.classList.add(player);
+        }
+      },
+
+      __randomizeFloaters() {
+        this.deraf('randomize-floaters', () => {
+          const floaters = Polymer.dom(this.$.floaters).querySelectorAll('.rock');
+
+          for (let i = 0; i < floaters.length; ++i) {
+            const floater = floaters[i];
+            const duration = Math.floor(Math.random() * 50 + 80);
+            const y = Math.floor(Math.random() * 550) + 50;
+            const x = Math.floor((Math.random() * 6 + 4) * i);
+
+            floater.style.top = `${y}px`;
+            floater.style.animationDelay = `-${x}s`;
+            floater.style.animationDuration = `${duration}s`;
+          }
+        });
+      }
+    });
+  </script>
+</dom-module>
