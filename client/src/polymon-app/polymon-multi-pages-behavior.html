@@ -3,7 +3,7 @@
 <script>
   (() => {
     /** @polymerBehavior */
-    const PolymonRenderControllerBehaviorImpl = {
+    const PolymonMultiPagesBehaviorImpl = {
       properties: {
         siteMap: {
           type: Object
@@ -12,11 +12,6 @@
         attrForSelected: {
           type: String,
           value: 'page-name'
-        },
-
-        renderPath: {
-          type: String,
-          observer: '_renderPathChanged'
         },
 
         multi: {
@@ -46,37 +41,10 @@
         'polymon-renderable-attached': '_renderElement'
       },
 
-      renderChildren: function(path) {
-        if (!this.siteMap) {
-          return null;
-        }
-
-        const pathParts = path.split('/');
-        let subMap = this.siteMap;
-
-        for(const pathPart of pathParts) {
-          let dirtySubmap = subMap._default || subMap[pathPart];
-
-          // ends in /, use previous level
-          if (pathPart === '' && !dirtySubmap) {
-            break;
-          }
-
-          subMap = dirtySubmap;
-
-          if (subMap === undefined) {
-            return null;
-          }
-        }
-
-        const newIds = subMap._elements;
-        this.selectedValues = Array.from(newIds);
-        return this.selectedValues;
-      },
-
       _renderElement: function(e) {
         const element = e.detail.item;
-        if (element == this || !element.getAttribute('page-name')) {
+        if (!this.selectedValues || element == this ||
+            !element.getAttribute('page-name')) {
           return;
         }
 
@@ -86,21 +54,17 @@
         e.stopPropagation();
 
         if (renderFn) {
-          element.render(shouldRender, { path: this.renderPath });
+          element.render(shouldRender);
         } else if(Polymer.isInstance(element)) {
           console.error(`No render function for ${element.getAttribute('page-name')}`);
         }
-      },
-
-      _renderPathChanged: function() {
-        this.renderChildren(this.renderPath);
       }
     };
 
     /** @polymerBehavior */
-    PolymonRenderControllerBehavior = [
+    PolymonMultiPagesBehavior = [
       Polymer.IronMultiSelectableBehavior,
-      PolymonRenderControllerBehaviorImpl
+      PolymonMultiPagesBehaviorImpl
     ];
   })();
 </script>

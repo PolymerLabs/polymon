@@ -8,7 +8,7 @@
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-notification-overlay.html">
 <link rel="import" href="polymon-lazy-loader.html">
-<link rel="import" href="polymon-render-controller.html">
+<link rel="import" href="polymon-multi-pages.html">
 <!-- Chagnes to lazy loading should be reflected here and in the data-fragments
     of the app routes -->
 <link rel="lazy-import" href="polymon-space-background.html">
@@ -219,9 +219,8 @@
 
     </polymon-lazy-loader>
 
-    <polymon-render-controller
-        site-map="[[siteMap]]"
-        render-path="[[route.path]]">
+    <polymon-multi-pages
+        id="multiPages">
       <polymon-qr-code-scanner
           unresolved
           page-name="scanner"
@@ -268,8 +267,8 @@
 
       <polymon-panel
           unresolved
+          id="panel"
           page-name="panel"
-          render-path="[[route.path]]"
           active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive, rootRouteActive)]]"
           active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
         <polymon-polydex
@@ -310,9 +309,10 @@
       </polymon-coded-url-screen>
 
       <polymon-about-screen
+          page-name="about"
           active="[[aboutRouteActive]]">
       </polymon-about-screen>
-    </polymon-render-controller>
+    </polymon-multi-pages>
 
     <polymon-tournament-screen
         active="[[tournamentRouteActive]]"
@@ -368,92 +368,6 @@
         queryParams: {
           type: Object
         },
-
-        siteMap: {
-          type: Object,
-          readOnly: true,
-          value: () => {
-            const map = {
-              '': {
-                _elements: [
-                  'map',
-                  'start',
-                  'background'
-                ],
-                map: {
-                  _elements: [
-                    'map'
-                  ],
-                  scan: {
-                    _elements: [
-                      'scanner'
-                    ]
-                  }
-                },
-                polydex: {
-                  _elements: [
-                    'panel',
-                    'background'
-                  ],
-                  _default: {
-                    _elements: [
-                      'panel',
-                      'background'
-                    ]
-                  }
-                },
-                battle: {
-                  _elements: [],
-                  new: {
-                    _elements: [
-                      'panel',
-                      'background'
-                    ],
-                    scan: {
-                      _elements: [
-                        'scanner'
-                      ]
-                    }
-                  },
-                  engage: {
-                    _elements: [],
-                    _default: {
-                      _elements: [
-                        'battleScreen',
-                        'background'
-                      ]
-                    }
-                  }
-                },
-                about: {
-                  _elements: [
-                    'about',
-                    'background'
-                  ]
-                },
-                code: {
-                  _elements: [],
-                  _default: {
-                    _elements: [
-                      'codedUrl',
-                      'background'
-                    ]
-                  }
-                },
-                caught: {
-                  _elements: [],
-                  _default: {
-                    _elements: [
-                      'caughtScreen'
-                    ]
-                  }
-                }
-              }
-            }
-
-            return map;
-          }
-        }
       },
 
       listeners: {
@@ -620,13 +534,76 @@
         });
       },
 
-      // This method handles pageview tracking for analytics.
+      // This method handles pageview tracking for analytics and what to render.
       __routePathChanged: function() {
         this.debounce('route-path-changed', () => {
           if (window.ga) {
             window.ga('send', 'pageview', this.route.path);
           }
         });
+
+        const path = this.route.path;
+        const pathParts = path.split('/');
+        let elementsToRender = this.$.multiPages.selectedValues;
+        let panelElementsToRender = this.$.panel.selectedValues;
+
+        // controls what to render based on the path
+        switch (pathParts.shift()) {
+          case '':
+            elementsToRender = ['map', 'start', 'background'];
+            switch (pathParts.shift()) {
+              case 'about':
+                elementsToRender = ['about', 'background'];
+                break;
+
+              case 'code':
+                elementsToRender = ['codedUrl', 'background'];
+                break;
+
+              case 'caught':
+                elementsToRender = ['caughtScreen'];
+                break;
+
+              case 'map':
+                elementsToRender = ['map'];
+                switch (pathParts.shift()) {
+                  case 'scan':
+                    elementsToRender = ['scanner'];
+                    break;
+                }
+                break;
+
+              case 'polydex':
+                elementsToRender = ['panel', 'background'];
+                panelElementsToRender = ['polydex'];
+                this.$.panel.selectedValues = panelElementsToRender;
+                break;
+
+              case 'battle':
+                switch (pathParts.shift()) {
+                  case 'new':
+                    elementsToRender = ['panel', 'background'];
+                    panelElementsToRender = ['newBattle'];
+                    switch(pathParts.shift()) {
+                      case 'scan':
+                        elementsToRender = ['scanner'];
+                        break;
+
+                      case undefined:
+                        this.$.panel.selectedValues = panelElementsToRender;
+                    }
+                    break;
+
+                  case 'engage':
+                    elementsToRender = ['battleScreen', 'background'];
+                    break;
+                }
+                break;
+            }
+            break;
+        }
+
+        this.$.multiPages.selectedValues = elementsToRender;
       }
     });
   </script>

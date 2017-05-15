@@ -5,8 +5,7 @@
       properties: {
         hidden: {
           type: Boolean,
-          reflectToAttribute: true,
-          observer: '_hiddenChanged',
+          reflectToAttribute: true
         },
 
         hideDelay: {
@@ -36,17 +35,14 @@
        *
        * @param {boolean=} shouldBeVisible whether or not the element should
        *    be visible. Defaults to false.
-       * @param {Object=} config configs for specific render function
        * @returns {Promise<boolean>} whether or not the element should be visible. True
        *    if set `hidden` attribute. False if removed it.
        */
-      render: function(shouldBeVisible, config) {
+      render: function(shouldBeVisible) {
         if (this.__hidingTimeout) {
           this.cancelAsync(this.__hidingTimeout);
           this.__hidingTimeout = null;
         }
-
-        this._isHiddenDirty = true;
 
         if (config && config.observed) {
           shouldBeVisible = !this.hidden;
@@ -54,23 +50,13 @@
 
         if (shouldBeVisible) {
           this.hidden = false;
-          this._isHiddenDirty = false;
         } else {
           this.__hidingTimeout = this.async(() => {
             this.hidden = true;
-            this._isHiddenDirty = false;
           }, this.hideDelay);
         }
 
         return shouldBeVisible;
-      },
-
-      _hiddenChanged: function() {
-        if (this._isHiddenDirty) {
-          return;
-        }
-
-        this.render(null, { observed: true });
       }
     };
   })();

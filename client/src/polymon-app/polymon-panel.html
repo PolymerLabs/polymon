@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-render-controller.html">
+<link rel="import" href="polymon-multi-pages-behavior.html">
 <link rel="import" href="polymon-renderable-behavior.html">
 <link rel="import" href="polymon-styles.html">
 
@@ -44,44 +44,13 @@
       behaviors: [
         PolymonElement,
         PolymonRenderableBehavior,
-        PolymonRenderControllerBehavior
+        PolymonMultiPagesBehavior
       ],
 
       properties: {
         activeIndex: {
           type: Number,
           observer: '__activeIndexChanged'
-        },
-
-        siteMap: {
-          type: Object,
-          value: () => {
-            const map = {
-              '': {
-                _elements: [],
-                polydex: {
-                  _elements: [
-                    'polydex'
-                  ],
-                  _default: {
-                    _elements: [
-                      'polydex'
-                    ]
-                  }
-                },
-                battle: {
-                  _elements: [],
-                  new: {
-                    _elements: [
-                      'newBattle'
-                    ]
-                  }
-                }
-              }
-            }
-
-            return map;
-          }
         }
       },
 

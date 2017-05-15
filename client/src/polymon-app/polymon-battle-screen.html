@@ -8,7 +8,7 @@
 <link rel="import" href="polymon-battle-victory-screen.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-renderable-behavior.html">
-<link rel="import" href="polymon-render-controller.html">
+<link rel="import" href="polymon-multi-pages.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-qr-code.html">
@@ -65,7 +65,7 @@
         battle-status="{{opposingTeamStatus}}">
     </polymon-team-query>
 
-    <polymon-render-controller
+    <polymon-multi-pages
         selected-values="[[visiblePages]]">
       <polymon-initiate-battle-screen
           id="initiate"
@@ -104,7 +104,7 @@
           user-team-status="[[userTeamStatus]]"
           opposing-team-status="[[opposingTeamStatus]]">
       </polymon-battle-round-visualizer>
-    </polymon-render-controller>
+    </polymon-multi-pages>
 
   </template>
   <script>
