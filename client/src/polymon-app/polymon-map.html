@@ -7,7 +7,6 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-map-overlay.html">
 <link rel="import" href="polymon-polydex-query.html">
-<link rel="import" href="polymon-renderable-behavior.html">
 
 <dom-module id="polymon-map">
   <template>
@@ -131,8 +130,7 @@
       is: 'polymon-map',
 
       behaviors: [
-        PolymonElement,
-        PolymonRenderableBehavior
+        PolymonElement
       ],
 
       properties: {

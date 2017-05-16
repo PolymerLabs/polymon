@@ -9,7 +9,6 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-space-background.html">
-<link rel="import" href="polymon-renderable-behavior.html">
 <dom-module id="polymon-battle-field">
   <template>
     <style include="typography">
@@ -558,8 +557,7 @@
 
       behaviors: [
         PolymonElement,
-        Polymer.IronResizableBehavior,
-        PolymonRenderableBehavior
+        Polymer.IronResizableBehavior
       ],
 
       properties: {
