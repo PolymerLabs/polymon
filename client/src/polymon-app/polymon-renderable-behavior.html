@@ -5,7 +5,8 @@
       properties: {
         hidden: {
           type: Boolean,
-          reflectToAttribute: true
+          reflectToAttribute: true,
+          observer: '__hiddenChanged'
         },
 
         hideDelay: {
@@ -13,9 +14,9 @@
           value: 300
         },
 
-        _isHiddenDirty: {
+        rendered: {
           type: Boolean,
-          value: false
+          readOnly: true
         },
 
         __hidingTimeout: {
@@ -30,8 +31,8 @@
       /**
        * @abstract
        *
-       * Applies or removes the `hidden` attribute on the element (defaults to
-       * hidden). Override for element-specific rendering.
+       * Renders the Element ([hidden] or not) and sets the value of rendered
+       * (defaults to hidden). Override for element-specific rendering.
        *
        * @param {boolean=} shouldBeVisible whether or not the element should
        *    be visible. Defaults to false.
@@ -46,13 +47,19 @@
 
         if (shouldBeVisible) {
           this.hidden = false;
+          this._setRendered(!this.hidden);
         } else {
           this.__hidingTimeout = this.async(() => {
             this.hidden = true;
+            this._setRendered(!this.hidden);
           }, this.hideDelay);
         }
 
-        return shouldBeVisible;
+        return this.rendered;
+      },
+
+      __hiddenChanged: function() {
+        this.render(!this.hidden);
       }
     };
   })();

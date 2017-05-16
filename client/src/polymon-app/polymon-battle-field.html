@@ -607,7 +607,7 @@
       },
 
       observers: [
-        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting, loading, hidden)',
+        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting, loading, rendered)',
         '__submitMove(selectedAttribute, selectedPolydexId)'
       ],
 
@@ -645,7 +645,7 @@
 
       __updateControlsPosition: function() {
         this.deraf('update-controls-position', () => {
-          if (this.loading || this.hidden) {
+          if (this.loading || !this.rendered) {
             // We are loading, so the controls should stay in their default
             // position (which is offscreen).
             return;
