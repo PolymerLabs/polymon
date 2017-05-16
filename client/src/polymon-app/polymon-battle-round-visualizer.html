@@ -218,14 +218,15 @@
 
       @-webkit-keyframes moveTop {
         0% {
-          transform: translateX(-10000px);
+          opacity: 0;
         }
 
-        25% {
-          transform: translateX(-10000px);
+        25.4% {
+          opacity: 0;
         }
 
         25.5% {
+          opacity: 1;
           transform: translateX(0px);
         }
 
@@ -236,14 +237,15 @@
 
       @-webkit-keyframes moveBottom {
         0% {
-          transform: translateX(-10000px);
+          opacity: 0;
         }
 
-        30% {
-          transform: translateX(-10000px);
+        30.4% {
+          opacity: 0;
         }
 
         30.5% {
+          opacity: 1;
           transform: translateX(0px);
         }
 
@@ -254,14 +256,15 @@
 
       @-webkit-keyframes total {
         0% {
-          transform: translateX(-10000px);
+          opacity: 0;
         }
 
-        30% {
-          transform: translateX(-10000px);
+        30.4% {
+          opacity: 0;
         }
 
         30.5% {
+          opacity: 1;
           transform: translateX(0);
         }
 
@@ -481,6 +484,8 @@
         }
 
         91.5% {
+          /* Changes to this timing should also change count calc in
+              .speedline:nth-of-type */
           transform: translateX(0);
           opacity: 1;
         }
@@ -528,6 +533,8 @@
         }
 
         91.5% {
+          /* Changes to this timing should also change count calc in
+              .speedline:nth-of-type */
           transform: translateX(0);
           opacity: 1;
         }
@@ -540,10 +547,11 @@
 
       @-webkit-keyframes fateBottom {
         0% {
-          transform: translate(200%, 25%);
+          opacity: 0;
         }
 
         40% {
+          opacity: 1;
           transform: translate(200%, 25%);
         }
 
@@ -558,10 +566,11 @@
 
       @-webkit-keyframes fateTop {
         0% {
-          transform: translate(-150%, -25%);
+          opacity: 0;
         }
 
         40% {
+          opacity: 1;
           transform: translate(-150%, -25%);
         }
 
@@ -661,9 +670,6 @@
           opacity: 1;
         }
       }
-
-
-
 
       /**
        * NOTE(cdata): The (many) keyframe animations that follow assume a common
@@ -882,14 +888,15 @@
 
       @keyframes moveTop {
         0% {
-          transform: translateX(-10000px);
+          opacity: 0;
         }
 
-        25% {
-          transform: translateX(-10000px);
+        25.4% {
+          opacity: 0;
         }
 
         25.5% {
+          opacity: 1;
           transform: translateX(0px);
         }
 
@@ -900,14 +907,15 @@
 
       @keyframes moveBottom {
         0% {
-          transform: translateX(-10000px);
+          opacity: 0;
         }
 
-        30% {
-          transform: translateX(-10000px);
+        30.4% {
+          opacity: 0;
         }
 
         30.5% {
+          opacity: 1;
           transform: translateX(0px);
         }
 
@@ -918,14 +926,15 @@
 
       @keyframes total {
         0% {
-          transform: translateX(-10000px);
+          opacity: 0;
         }
 
-        30% {
-          transform: translateX(-10000px);
+        30.4% {
+          opacity: 0;
         }
 
         30.5% {
+          opacity: 1;
           transform: translateX(0);
         }
 
@@ -1145,6 +1154,8 @@
         }
 
         91.5% {
+          /* Changes to this timing should also change count calc in
+              .speedline:nth-of-type */
           transform: translateX(0);
           opacity: 1;
         }
@@ -1192,6 +1203,8 @@
         }
 
         91.5% {
+          /* Changes to this timing should also change count calc in
+              .speedline:nth-of-type */
           transform: translateX(0);
           opacity: 1;
         }
@@ -1204,10 +1217,11 @@
 
       @keyframes fateBottom {
         0% {
-          transform: translate(200%, 25%);
+          opacity: 0;
         }
 
         40% {
+          opacity: 1;
           transform: translate(200%, 25%);
         }
 
@@ -1222,10 +1236,11 @@
 
       @keyframes fateTop {
         0% {
-          transform: translate(-150%, -25%);
+          opacity: 0;
         }
 
         40% {
+          opacity: 1;
           transform: translate(-150%, -25%);
         }
 
@@ -1360,7 +1375,6 @@
         -webkit-animation-timing-function: linear;
         animation-duration: 10s;
         animation-timing-function: linear;
-        /*animation-iteration-count: infinite;*/
       }
 
       #scene {
@@ -1494,23 +1508,22 @@
         height: 33.33333334%;
         background-color: #000;
         -webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0, 0 0);
-        -moz-clip-path: polygon(0 0, 100% 33.33333334%, 100% 100%, 0 100%, 0 0);
-        clip-path: polygon(0 0, 100% 33.33333334%, 100% 100%, 0 100%, 0 0);
+        -webkit-clip-path: polygon(0 0, 0 0, 0 0, 0 0, 0 0);
+        clip-path: polygon(0 0, 0 0, 0 0, 0 0, 0 0);
       }
 
       .speedline {
+        will-change: transform;
         position: absolute;
         width: 100%;
         height: 100%;
 
         -webkit-animation-name: float;
         -webkit-animation-timing-function: linear;
-        -webkit-animation-iteration-count: infinite;
         -webkit-animation-direction: alternate;
 
         animation-name: float;
         animation-timing-function: linear;
-        animation-iteration-count: infinite;
         animation-direction: alternate;
 
         z-index: 1;
@@ -1532,11 +1545,11 @@
       }
 
       .speedline.s1:after {
-        border-width: 1px 0 1px 150px;
+        border-width: 1px 0 1px 500px;
       }
 
       .speedline.s1.alt:after {
-        border-width: 1px 150px 1px 0;
+        border-width: 1px 400px 1px 0;
       }
 
       .speedline.s2:after {
@@ -1555,6 +1568,37 @@
         border-width: 3px 600px 3px 0;
       }
 
+      .speedline:nth-of-type(4n -3) {
+        -webkit-animation-duration: .13s;
+        animation-duration: .13s;
+        /* count is 10s / duration * coverTop percentage */
+        -webkit-animation-iteration-count: calc(10 / .13 * .9);
+        animation-iteration-count: calc(10 / .13 * .9);
+      }
+
+      .speedline:nth-of-type(4n -2) {
+        -webkit-animation-duration: .2s;
+        animation-duration: .2s;
+        /* count is 10s / duration * coverTop percentage */
+        -webkit-animation-iteration-count: calc(10 / .2 * .9);
+        animation-iteration-count: calc(10 / .2 * .9);
+      }
+
+      .speedline:nth-of-type(4n -1) {
+        -webkit-animation-duration: .25s;
+        animation-duration: .25s;
+        /* count is 10s / duration * coverTop percentage */
+        -webkit-animation-iteration-count: calc(10 / .25 * .9);
+        animation-iteration-count: calc(10 / .25 * .9);
+      }
+
+      .speedline:nth-of-type(4n) {
+        -webkit-animation-duration: .15s;
+        animation-duration: .15s;
+        /* count is 10s / duration * coverTop percentage */
+        -webkit-animation-iteration-count: calc(10 / .15 * .9);
+        animation-iteration-count: calc(10 / .15 * .9);
+      }
 
       #top .speedline:nth-of-type(4n -3):after {
         color: #C2311E;
@@ -1571,7 +1615,6 @@
       #top .speedline:nth-of-type(4n):after {
         color: #F68B2C;
       }
-
 
       #bottom .speedline:nth-of-type(4n -3):after {
         color: #0E44C0;
@@ -2089,10 +2132,9 @@
         let top = Polymer.dom(this.$.top);
         let bottom = Polymer.dom(this.$.bottom);
 
-        for (var i = 0; i < 30; ++i) {
-          var container = i < 15 ? top : bottom;
+        for (var i = 0; i < 8; ++i) {
+          var container = i < 4 ? top : bottom;
           var index = Math.floor(Math.random() * 3) + 1;
-          var alt = Math.floor(Math.random() * 2);
           var div = document.createElement('div');
 
           container.insertBefore(div, container.firstElementChild);
@@ -2100,17 +2142,9 @@
           Polymer.dom(div).classList.add('speedline');
           Polymer.dom(div).classList.add('s' + index);
 
-          if (alt === 1) {
+          if (i % 2) {
             div.classList.add('alt');
           }
-
-          let delay = Math.floor(Math.random() * -10) * 3 + 's';
-          let duration = (0.5 - (Math.random() * 0.4)) + 's';
-
-          div.style.webkitAnimationDelay = delay;
-          div.style.animationDelay = delay;
-          div.style.webkitAnimationDuration = duration;
-          div.style.animationDuration = duration;
         }
       }
     });
