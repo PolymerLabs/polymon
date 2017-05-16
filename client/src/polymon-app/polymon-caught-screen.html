@@ -8,14 +8,14 @@
 
 <dom-module id="polymon-caught-screen">
   <template>
-    <style include="rotate-animation wiggle-animation">
+    <style include="typography rotate-animation wiggle-animation">
       :host {
         @apply --layout-fit;
         @apply --layout-vertical;
 
-        font-family: var(--polymon-font-family);
         text-align: center;
-        background-image: linear-gradient(25deg, #71D3F4, #DEF6FF);
+
+        background-color: #F9F9F9; /* Grey 50 */
 
         opacity: 0;
         pointer-events: none;
@@ -30,29 +30,43 @@
         --polymon-portrait-background: transparent;
       }
 
-      :host(.active) #container > div {
-        animation-name: rotate;
-      }
-
-      :host(.active) #container polymon-portrait {
-        animation-name: wiggle;
-      }
-
-      a {
-        -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
-      }
-
-      h1 {
-        color: #F43865;
-        font-weight: bold;
-        text-transform: uppercase;
-        text-shadow: 0 1px 0 #a31733;
-      }
-
       :host([active]) {
         opacity: 1;
         pointer-events: all;
         transform: translateY(0);
+      }
+
+      #main {
+        @apply --layout-flex;
+        @apply --layout-vertical;
+        @apply --layout-center;
+        @apply --layout-around-justified;
+      }
+
+      #text {
+        font-size: 2em;
+        color: #536DFE; /* Indigo A200 */
+      }
+
+      @media (orientation: landscape) {
+        #main {
+          @apply --layout-horizontal;
+          @apply --layout-center-center;
+        }
+
+        #text {
+          width: 250px;
+          height: 250px;
+          @apply --layout-vertical;
+          @apply --layout-center-center;
+        }
+      }
+
+      #name {
+        display: block;
+        font-size: 1.4em;
+        min-height: 1.2em;
+        text-transform: capitalize;
       }
 
       #container {
@@ -74,70 +88,20 @@
         left: calc(50% - 100px);
         width: 200px;
         height: 200px;
-        background-color: #71D3F4;
+        box-sizing: border-box;
+        border: 12px solid #1CE8B5; /* Teal A400 */
         border-radius: 100px;
       }
 
-      #container > div {
-        position: absolute;
-        animation-duration: 10s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
+      :host(.active) #container > div {
+        animation-name: rotate;
       }
 
-      #container > div#one {
-        width: 260px;
-        height: 260px;
-        top: 0px;
-        left: calc(50% - 130px);
-        border-left: 15px solid #71D3F4;
-        border-radius: 130px;
+      :host(.active) #container polymon-portrait {
+        animation-name: wiggle;
       }
 
-      #container > div#one {
-        width: 260px;
-        height: 260px;
-        top: 0px;
-        left: calc(50% - 130px);
-        border-left: 15px solid #71D3F4;
-        border-radius: 130px;
-      }
-
-      #container > div#two {
-        width: 280px;
-        height: 280px;
-        top: -20px;
-        left: calc(50% - 160px);
-        border-left: 10px solid #71D3F4;
-        border-radius: 140px;
-        animation-duration: 9s;
-        animation-delay: -4s;
-        animation-direction: reverse;
-      }
-
-      #container > div#three {
-        width: 270px;
-        height: 270px;
-        top: -10px;
-        left: calc(50% - 140px);
-        border-left: 20px solid #71D3F4;
-        border-radius: 135px;
-        animation-duration: 12s;
-        animation-delay: -7s;
-      }
-
-      #container > div#four {
-        width: 260px;
-        height: 260px;
-        top: 10px;
-        left: calc(50% - 120px);
-        border-left: 15px solid #71D3F4;
-        border-radius: 130px;
-        animation-delay: -2s;
-        animation-direction: reverse;
-      }
-
-      #overlay {
+      #controls {
         @apply --layout-vertical;
         @apply --layout-end-justified;
       }
@@ -149,29 +113,30 @@
       firebase-document {
         display: none;
       }
-
     </style>
     <firebase-document
         app-name="polymon"
         path="[[__caughtPolymonPath(data.polymonId)]]"
         data="{{polymon}}">
     </firebase-document>
-    <h1>You caught a [[polymon.shortName]] Polymon!</h1>
-    <section id="container">
-      <polymon-portrait
-          size="250"
-          polymon="[[polymon]]"
-          caught>
-      </polymon-portrait>
-      <div id="one"></div>
-      <div id="two"></div>
-      <div id="three"></div>
-      <div id="four"></div>
+    <section id="main">
+      <div id="text">
+        You caught a
+        <div id="name">[[polymon.shortName]]</div>
+        Polymon!
+      </div>
+      <section id="container">
+        <polymon-portrait
+            size="250"
+            polymon="[[polymon]]"
+            caught>
+        </polymon-portrait>
+      </section>
     </section>
 
-    <section id="overlay">
+    <section id="controls">
       <a href="[[continueTo]]">
-        <polymon-button id="continue" class="alt">Continue</polymon-button>
+        <polymon-button id="continue">Continue</polymon-button>
       </a>
     </section>
   </template>
