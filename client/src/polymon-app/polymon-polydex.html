@@ -15,6 +15,7 @@
   <template>
     <style include="typography wiggle-animation scaled-rotate-animation">
       :host {
+        @apply --layout-fit;
         position: relative;
         box-sizing: border-box;
         padding: 8px;
@@ -26,7 +27,11 @@
         overflow: hidden;
       }
 
-      [hidden] > * {
+      :host([hidden]) {
+        display: flex !important;
+      }
+
+      :host([hidden]) > * {
         display: none !important;
       }
 

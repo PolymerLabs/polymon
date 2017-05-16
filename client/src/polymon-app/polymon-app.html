@@ -56,6 +56,12 @@
         background-image:
           linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
       }
+
+      polymon-polydex[hidden] {
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+      }
     </style>
 
     <firebase-auth
@@ -220,16 +226,19 @@
     </polymon-lazy-loader>
 
     <polymon-qr-code-scanner
+        hidden
         unresolved
         id="scanner">
     </polymon-qr-code-scanner>
 
     <polymon-space-background
+        hidden
         prevent-load="[[!logoLoaded]]"
         id="background">
     </polymon-space-background>
 
     <polymon-map
+        hidden
         unresolved
         id="map"
         active="[[mapRouteActive]]"
@@ -240,6 +249,7 @@
     </polymon-map>
 
     <polymon-start-screen
+        hidden
         unresolved
         id="start"
         active="[[rootRouteActive]]"
@@ -254,6 +264,7 @@
 
     <!-- TODO(cdata): Consider moving this to the map screen? -->
     <polymon-caught-screen
+        hidden
         unresolved
         id="caughtScreen"
         active="[[caughtRouteActive]]"
@@ -262,11 +273,13 @@
     </polymon-caught-screen>
 
     <polymon-panel
+        hidden
         unresolved
         id="panel"
         active-index="[[__computePanelIndex(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive, rootRouteActive)]]"
         active="[[or(polydexRouteActive, newBattleRouteActive, battleTutorialRouteActive)]]">
       <polymon-polydex
+          hidden
           id="polydex"
           active="[[polydexRouteActive]]"
           team="[[team]]"
@@ -276,6 +289,7 @@
           user="[[user]]">
       </polymon-polydex>
       <polymon-new-battle-screen
+          hidden
           id="newBattle"
           active="[[newBattleRouteActive]]"
           route="{{newBattleRoute}}"
@@ -285,6 +299,7 @@
     </polymon-panel>
 
     <polymon-battle-screen
+        hidden
         unresolved
         id="battleScreen"
         active="[[engageBattleRouteActive]]"
@@ -294,6 +309,7 @@
     </polymon-battle-screen>
 
     <polymon-coded-url-screen
+        hidden
         id="codedUrl"
         route="{{route}}"
         user="{{user}}"
@@ -304,6 +320,7 @@
     </polymon-coded-url-screen>
 
     <polymon-about-screen
+        hidden
         id="about"
         active="[[aboutRouteActive]]">
     </polymon-about-screen>
@@ -365,7 +382,12 @@
 
         __renderedPages: {
           type: Array,
-          value: _ => []
+          value: function() { return []; }
+        },
+
+        __outstandingHides: {
+          type: Object,
+          value: function() { return {}; }
         }
       },
 
@@ -596,14 +618,27 @@
           }
 
           for (let id of oldRenderedPages) {
+            if (this.__outstandingHides[id]) {
+              this.cancelAsync(this.__outstandingHides[id]);
+              this.__outstandingHides[id] = null;
+            }
+
             const element = this.$[id];
 
             if (element) {
-              element.setAttribute('hidden', true);
+              this.__outstandingHides[id] = this.async(_ => {
+                element.setAttribute('hidden', true);
+                this.__outstandingHides[id] = null;
+              }, 300)
             }
           }
 
           for (let id of elementsToRender) {
+            if (this.__outstandingHides[id]) {
+              this.cancelAsync(this.__outstandingHides[id]);
+              this.__outstandingHides[id] = null;
+            }
+
             const element = this.$[id];
 
             if (element) {

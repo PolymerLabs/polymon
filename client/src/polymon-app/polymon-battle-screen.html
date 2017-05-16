@@ -7,7 +7,6 @@
 <link rel="import" href="polymon-battle-round-visualizer.html">
 <link rel="import" href="polymon-battle-victory-screen.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-multi-pages.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-qr-code.html">
@@ -64,47 +63,45 @@
         battle-status="{{opposingTeamStatus}}">
     </polymon-team-query>
 
-    <polymon-multi-pages
-        selected-values="[[visiblePages]]">
-      <polymon-initiate-battle-screen
-          id="initiate"
-          page-name="initiate"
-          user="[[user]]"
-          user-data="[[userData]]"
-          active="[[initiatingBattle]]"
-          battle-id="[[userData.player.activeBattleId]]">
-      </polymon-initiate-battle-screen>
+    <polymon-initiate-battle-screen
+        hidden
+        id="initiate"
+        user="[[user]]"
+        user-data="[[userData]]"
+        active="[[initiatingBattle]]"
+        battle-id="[[userData.player.activeBattleId]]">
+    </polymon-initiate-battle-screen>
 
-      <polymon-battle-field
-          page-name="field"
-          user-team-status="[[userTeamStatus]]"
-          opposing-team-status="[[opposingTeamStatus]]"
-          user-state="[[userState]]"
-          opponent-state="[[opponentState]]"
-          active="[[active]]"
-          waiting="[[waiting]]"
-          battle-finished="[[battleFinished]]"
-          on-polymon-move="__onPolymonMove">
-      </polymon-battle-field>
+    <polymon-battle-field
+        hidden
+        id="field"
+        user-team-status="[[userTeamStatus]]"
+        opposing-team-status="[[opposingTeamStatus]]"
+        user-state="[[userState]]"
+        opponent-state="[[opponentState]]"
+        active="[[active]]"
+        waiting="[[waiting]]"
+        battle-finished="[[battleFinished]]"
+        on-polymon-move="__onPolymonMove">
+    </polymon-battle-field>
 
-      <polymon-battle-victory-screen
-          page-name="victory"
-          active="[[battleFinished]]"
-          user="[[user]]"
-          battle-data="[[battleData]]">
-      </polymon-battle-victory-screen>
+    <polymon-battle-victory-screen
+        hidden
+        id="victory"
+        active="[[battleFinished]]"
+        user="[[user]]"
+        battle-data="[[battleData]]">
+    </polymon-battle-victory-screen>
 
-      <polymon-battle-round-visualizer
-          page-name="visualizer"
-          id="roundVisualizer"
-          hide-delay="0"
-          user-id="[[user.uid]]"
-          opposing-user-id="[[opposingUserId]]"
-          user-team-status="[[userTeamStatus]]"
-          opposing-team-status="[[opposingTeamStatus]]">
-      </polymon-battle-round-visualizer>
-    </polymon-multi-pages>
-
+    <polymon-battle-round-visualizer
+        hidden
+        id="roundVisualizer"
+        hide-delay="0"
+        user-id="[[user.uid]]"
+        opposing-user-id="[[opposingUserId]]"
+        user-team-status="[[userTeamStatus]]"
+        opposing-team-status="[[opposingTeamStatus]]">
+    </polymon-battle-round-visualizer>
   </template>
   <script>
     Polymer({
@@ -171,9 +168,14 @@
           computed: '__computeBattleFinished(battleData.*)'
         },
 
-        visiblePages: {
+        __renderedPages: {
           type: Array,
-          value: () => []
+          value: function() { return []; }
+        },
+
+        __outstandingHides: {
+          type: Object,
+          value: function() { return {}; }
         }
       },
 
@@ -272,9 +274,9 @@
 
       __initiatingBattleChanged: function() {
         if (this.initiatingBattle) {
-          this.visiblePages = ['initiate']
+          this.__renderPages(['initiate']);
         } else {
-          this.visiblePages = ['field'];
+          this.__renderPages(['field']);
         }
       },
 
@@ -308,7 +310,7 @@
           this._setWaiting(false);
         } else {
           this._setWaiting(true);
-          this.visiblePages = ['visualizer'];
+          this.__renderPages(['roundVisualizer']);
 
           this.deraf('battle-rounds-changed', () => {
             // TODO(cdata): This is necessary to make sure that metrics get
@@ -322,13 +324,53 @@
                       this._setWaiting(false);
 
                       if (this.battleFinished) {
-                        this.visiblePages = ['victory', 'field'];
+                        this.__renderPages(['victory', 'field']);
                       } else {
-                        this.visiblePages = ['field'];
+                        this.__renderPages(['field']);
                       }
                     }.bind(this));
           });
         }
+      },
+
+      __renderPages: function(ids) {
+        if (!this.__renderedPages) {
+          return;
+        }
+
+        for (let id of this.__renderedPages) {
+          if (this.__outstandingHides[id]) {
+            this.cancelAsync(this.__outstandingHides[id]);
+            this.__outstandingHides[id] = null;
+          }
+
+          const element = this.$[id];
+
+          if (element) {
+            this.__outstandingHides[id] = this.async(_ => {
+              element.setAttribute('hidden', true);
+            });
+          }
+        }
+
+        for (let id of ids) {
+          if (this.__outstandingHides[id]) {
+            this.cancelAsync(this.__outstandingHides[id]);
+            this.__outstandingHides[id] = null;
+          }
+
+          const element = this.$[id];
+
+          if (element) {
+            element.removeAttribute('hidden');
+
+            if (id === 'field') {
+              element.__updateControlsPosition();
+            }
+          }
+        }
+
+        this.__renderedPages = ids;
       }
     });
   </script>
