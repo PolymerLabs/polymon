@@ -80,17 +80,30 @@
       }
 
       #fallback .text {
+        @apply --layout-flex-none;
         @apply --layout-vertical;
         @apply --layout-center-center;
         box-sizing: border-box;
-        width: 70vmin;
-        height: 70vmin;
-        max-width: 320px;
-        max-height: 320px;
+        min-width: 200px;
+        min-height: 200px;
+        width: 65vmin;
+        height: 65vmin;
+        max-width: 300px;
+        max-height: 300px;
         border: 12px solid #536DFE; /* Indigo A200 */
         border-radius: 10000px;
         padding: 36px 24px;
-        transition: none;
+      }
+
+      @media (max-height: 320px), (max-width: 280px) {
+        #fallback .text {
+          font-size: 0.8em;
+          padding: 24px;
+          min-width: 175px;
+          min-height: 175px;
+          width: 55vmin;
+          height: 55vmin;
+        }
       }
 
       #code-scanned-indicator {
