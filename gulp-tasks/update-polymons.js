@@ -45,13 +45,13 @@ module.exports.updatePolymons = async () => {
   });
 
   formattedPolymons.forEach(newPolymon => {
-    const reference = common.makeReference(polymon);
-    const polymonPushPromise = polymonsRef.push(polymon);
+    const reference = common.makeReference(newPolymon);
+    const polymonPushPromise = polymonsRef.push(newPolymon);
     const polymonKey = polymonPushPromise.key;
     const referenceUpdatePromise =
         referencesRef.child(reference).set(polymonKey);
 
-    console.log('Creating new Polymon:', polymon.name);
+    console.log('Creating new Polymon:', newPolymon.name);
 
     operations.push(polymonPushPromise);
     operations.push(referenceUpdatePromise);

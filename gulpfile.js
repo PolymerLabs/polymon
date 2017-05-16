@@ -11,6 +11,8 @@ gulp.task('gen-data:dev', async _ => tasks.generateData('dev'));
 gulp.task('gen-data:prod', async _ => tasks.generateData('prod'));
 
 gulp.task('update-polymons', async _ => tasks.updatePolymons());
+gulp.task('update-polymons:dev', async _ => tasks.updatePolymons('dev'));
+gulp.task('update-polymons:prod', async _ => tasks.updatePolymons('prod'));
 
 gulp.task('deploy:all', async _ => tasks.deployAll());
 gulp.task('deploy:all:dev', async _ => tasks.deployAll('dev'));
