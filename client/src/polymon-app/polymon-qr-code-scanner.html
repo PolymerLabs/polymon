@@ -28,14 +28,6 @@
         pointer-events: all;
       }
 
-      :host(:not(.has-stream):not(.has-code)) {
-        background-color: #1CE8B5; /* Teal A400 */
-      }
-
-      polymon-button.alt {
-        --polymon-button-background: #FF6C00; /* Orange A700 */
-      }
-
       #camera {
         @apply --layout-fit;
         pointer-events: none;
@@ -59,6 +51,11 @@
         margin: 1em;
       }
 
+      /* #fallback background */
+      :host(:not(.has-stream):not(.has-code)) {
+        background-color: #000;
+      }
+
       #fallback {
         @apply --layout-fit;
         @apply --layout-vertical;
@@ -66,7 +63,7 @@
         align-items: center;
         justify-content: center;
 
-        color: #536DFE; /* Indigo A200 */
+        color: #1CE8B5; /* Teal A400 */
         font-size: 1.5em;
         font-family: var(--polymon-accent-font-family);
 
@@ -82,32 +79,31 @@
         transition-delay: 1s;
       }
 
-      #fallback .warning {
-        margin: 0 1em;
-        display: inline-block;
-        max-width: 40rem;
-        transition: none;
+      #fallback .text {
+        @apply --layout-flex-none;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+        box-sizing: border-box;
+        min-width: 200px;
+        min-height: 200px;
+        width: 65vmin;
+        height: 65vmin;
+        max-width: 300px;
+        max-height: 300px;
+        border: 12px solid #536DFE; /* Indigo A200 */
+        border-radius: 10000px;
+        padding: 36px 24px;
       }
 
-      #fallback .warning::before,
-      #fallback .warning::after {
-        display: block;
-        content: '';
-        margin: 1em 0px;
-        height: 0.25em;
-        background-image:
-          linear-gradient(90deg,
-            transparent 0px,
-            transparent 11%,
-            #536DFE 11%, /* Indigo A200 */
-            #536DFE 44%,
-            transparent 44%,
-            transparent 55%,
-            #536DFE 55%,
-            #536DFE 88%,
-            transparent 88%,
-            transparent 100%
-          );
+      @media (max-height: 320px), (max-width: 280px) {
+        #fallback .text {
+          font-size: 0.8em;
+          padding: 24px;
+          min-width: 175px;
+          min-height: 175px;
+          width: 55vmin;
+          height: 55vmin;
+        }
       }
 
       #code-scanned-indicator {
@@ -208,7 +204,7 @@
     <div id="content">
       <div id="main">
         <section id="fallback">
-          <span class="warning">Please enable your camera to scan for QR codes!</span>
+          <span class="text">Please enable your camera to scan for QR codes!</span>
         </section>
         <section id="code-scanned-indicator">
           <polymon-spinner></polymon-spinner>
