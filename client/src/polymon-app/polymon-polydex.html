@@ -16,7 +16,8 @@
   <template>
     <style include="typography wiggle-animation scaled-rotate-animation">
       :host {
-        position: relative;
+        @apply --layout-fit;
+
         box-sizing: border-box;
         padding: 8px;
 
@@ -27,6 +28,7 @@
         overflow: hidden;
       }
 
+      :host([hidden]) > *,
       [hidden] {
         display: none !important;
       }
@@ -276,27 +278,6 @@
 
       listeners: {
         'cancel-team-swap.tap': '__onCancelTeamSwapTap'
-      },
-
-      render: function(shouldBeVisible=false, config) {
-        if (this.__hidingTimeout) {
-          this.cancelAsync(this.__hidingTimeout)
-          this.__hidingTimeout = null;
-        }
-
-        if (shouldBeVisible) {
-          this.$.team.removeAttribute('hidden');
-          this.$.index.removeAttribute('hidden');
-          this.$.controls.removeAttribute('hidden');
-          this.$.detail.removeAttribute('hidden');
-        } else {
-          this._hidingTimeout = this.async(() => {
-            this.$.team.setAttribute('hidden', true);
-            this.$.index.setAttribute('hidden', true);
-            this.$.controls.setAttribute('hidden', true);
-            this.$.detail.setAttribute('hidden', true);
-          }, this.hideDelay);
-        }
       },
 
       __onPolymonAnchorClick: function(event) {

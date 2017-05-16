@@ -287,7 +287,6 @@
             route="{{newBattleRoute}}"
             user="[[user]]">
         </polymon-new-battle-screen>
-        <div></div>
       </polymon-panel>
 
       <polymon-battle-screen
@@ -545,8 +544,8 @@
 
         const path = this.route.path;
         const pathParts = path.split('/');
-        let elementsToRender = this.$.multiPages.selectedValues;
-        let panelElementsToRender = this.$.panel.selectedValues;
+        let elementsToRender = [];
+        let panelElementsToRender = [];
 
         // controls what to render based on the path
         switch (pathParts.shift()) {

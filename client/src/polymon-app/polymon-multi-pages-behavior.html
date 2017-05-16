@@ -55,8 +55,8 @@
 
         if (renderFn) {
           element.render(shouldRender);
-        } else if(Polymer.isInstance(element)) {
-          console.error(`No render function for ${element.getAttribute('page-name')}`);
+        } else {
+          console.error(`No render function for ${pageName}`);
         }
       }
     };
