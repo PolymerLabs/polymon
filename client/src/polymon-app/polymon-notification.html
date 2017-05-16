@@ -17,7 +17,6 @@
         left: 0;
         box-sizing: border-box;
         width: 100%;
-        padding: 1em;
         color: #FFFFFF;
         background-color: #536DFE; /* Indigo A200 */
         font-family: var(--polymon-accent-font-family);
@@ -39,11 +38,16 @@
 
       #content {
         flex: 1;
+        position: relative;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0px 0px 0px 0.5em;
+        padding: 1em 0.5em 1em 0.5em;
       }
 
       #button {
         flex: 0 0 auto;
-        margin-left: 0.5em;
+        margin: 1em 1em 1em 0.5em;
       }
     </style>
     <span id="content">[[notification.message]]</span>
