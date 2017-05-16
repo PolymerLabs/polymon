@@ -138,6 +138,13 @@ const generateData = async (env='dev') => {
   await require('./generate-seed-data.js').generate(confirmed);
 };
 
+const updatePolymons = async (env='dev') => {
+  await setEnv(env);
+  await generateFirebaseConfig();
+
+  await require('./update-polymons.js').updatePolymons();
+};
+
 const clean = async _ => {
   console.log('cleaning workspace...');
 
@@ -197,6 +204,7 @@ module.exports = {
   deployFunctionsDatabase: deployFunctionsDatabase,
   deployHosting: deployHosting,
   generateData: generateData,
+  updatePolymons: updatePolymons,
   install: install,
   quickStart: quickStart,
   serve: serve,
