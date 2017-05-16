@@ -544,8 +544,8 @@
 
         const path = this.route.path;
         const pathParts = path.split('/');
-        let elementsToRender = [];
-        let panelElementsToRender = [];
+        let elementsToRender = undefined;
+        let panelElementsToRender = undefined;
 
         // controls what to render based on the path
         switch (pathParts.shift()) {
@@ -599,8 +599,12 @@
             break;
         }
 
-        this.$.panel.selectedValues = panelElementsToRender;
-        this.$.multiPages.selectedValues = elementsToRender;
+        if (elementsToRender) {
+          this.$.multiPages.selectedValues = elementsToRender;
+        }
+        if (panelElementsToRender) {
+          this.$.panel.selectedValues = panelElementsToRender;
+        }
       }
     });
   </script>
