@@ -14,7 +14,7 @@
           linear-gradient(to bottom, #04072f, #4f496f 30%, #bd97a8 70%, #a193a8);
       }
 
-      #image {
+      .image {
         @apply --layout-fit;
 
         background-size: cover;
@@ -24,26 +24,16 @@
         transition: opacity 1s;
       }
 
-      #image.load {
-        background-image: url(/images/space_bg@1x.jpg);
-      }
-
-      /* This should match the media query in the code below. */
-      @media (min-resolution: 2dppx), (min-width: 700px), (min-height: 700px) {
-        #image.load {
-          background-image: url(/images/space_bg@2x.jpg);
-        }
-      }
-
-      #image.visible {
+      .image.visible {
         opacity: 1;
       }
 
-      #image.skip-transition {
+      .image.skip-transition {
         transition: none;
       }
     </style>
-    <div id="image"></div>
+    <div class="image" id="bg1x"></div>
+    <div class="image" id="bg2x"></div>
   </template>
   <script>
     Polymer({
@@ -52,9 +42,9 @@
       behaviors: [PolymonElement],
 
       properties: {
-        __loadStarted: {
-          type: Boolean,
-          value: false,
+        __is2x: {
+          type: Object,
+          value: window.matchMedia("(min-resolution: 2dppx), (min-width: 700px), (min-height: 700px)"),
         },
 
         preventLoad: {
@@ -66,6 +56,11 @@
       },
 
       ready: function() {
+        this.__bg1xLoadStarted = false;
+        this.__bg2xLoadStarted = false;
+
+        this.__is2x.addListener(this.__load.bind(this));
+
         // Skip the transition if the image loads before the next paint (i.e. if
         // it's cached).
         this.__skipTransition = true;
@@ -75,31 +70,46 @@
       },
 
       __preventLoadChanged: function() {
-        console.log("polymon-space-background.preventLoad", this.preventLoad);
         if (!this.preventLoad) {
           this.__load();
         }
       },
 
       __load: function() {
-        if (this.__loadStarted) {
-          return;
+        const is2x = this.__is2x.matches;
+
+        if (is2x) {
+          if (this.__bg2xLoadStarted) {
+            return;
+          }
+
+          this.__bg2xLoadStarted = true;
+          // Don't switch back to 1x once 2x has started loading.
+          this.__bg1xLoadStarted = true;
+        } else {
+          if (this.__bg1xLoadStarted) {
+            return;
+          }
+
+          this.__bg1xLoadStarted = true;
         }
-        this.__loadStarted = true;
 
-        const image = this.$.image;
-        image.classList.toggle('load', true);
-
-        // Load the same image as the background of #background and fade it in
-        // only after the load event.
-        const background = new Image();
-        // This should match the media query in the CSS above.
-        background.src = window.matchMedia("(min-resolution: 2dppx), (min-width: 700px), (min-height: 700px)").matches
+        const bgElement = is2x
+            ? this.$.bg2x
+            : this.$.bg1x;
+        const bgSrc = is2x
             ? "/images/space_bg@2x.jpg"
             : "/images/space_bg@1x.jpg";
+
+        // Load the background image without displaying it. Once it has loaded
+        // set the background of the associated div and fade it in.
+        const background = new Image();
+        // This should match the media query in the CSS above.
+        background.src = bgSrc;
         background.onload = () => {
-          image.classList.toggle('visible', true);
-          image.classList.toggle('skip-transition', this.__skipTransition);
+          bgElement.style.backgroundImage = `url(${background.src})`;
+          bgElement.classList.toggle('visible', true);
+          bgElement.classList.toggle('skip-transition', this.__skipTransition);
         };
       },
     });
