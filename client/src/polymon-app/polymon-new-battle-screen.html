@@ -13,9 +13,8 @@
   <template>
     <style include="typography">
       :host {
-        position: relative;
+        @apply --layout-fit;
 
-        position: relative;
         box-sizing: border-box;
         padding: 8px;
 
@@ -26,7 +25,7 @@
         overflow: hidden;
       }
 
-      :host([hidden]) {
+      :host([hidden]) > * {
         display: none !important;
       }
 
