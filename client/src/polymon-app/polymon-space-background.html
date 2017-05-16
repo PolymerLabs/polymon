@@ -51,14 +51,15 @@
           type: Boolean,
           value: false,
           reflectToAttribute: true,
-          observer: '__preventLoadChanged',
+          observer: '__load',
         },
       },
 
-      ready: function() {
-        this.__bg1xLoadStarted = false;
-        this.__bg2xLoadStarted = false;
+      created: function() {
+        this.__maxQualityLoadStarted = 0;
+      },
 
+      ready: function() {
         this.__is2x.addListener(this.__load.bind(this));
 
         // Skip the transition if the image loads before the next paint (i.e. if
@@ -67,31 +68,21 @@
         requestAnimationFrame(() => {
           this.__skipTransition = false;
         });
-      },
 
-      __preventLoadChanged: function() {
-        if (!this.preventLoad) {
-          this.__load();
-        }
+        this.__load();
       },
 
       __load: function() {
+        if (this.preventLoad) return;
+
         const is2x = this.__is2x.matches;
 
         if (is2x) {
-          if (this.__bg2xLoadStarted) {
-            return;
-          }
-
-          this.__bg2xLoadStarted = true;
-          // Don't switch back to 1x once 2x has started loading.
-          this.__bg1xLoadStarted = true;
+          if (this.__maxQualityLoadStarted >= 2) return;
+          this.__maxQualityLoadStarted = 2;
         } else {
-          if (this.__bg1xLoadStarted) {
-            return;
-          }
-
-          this.__bg1xLoadStarted = true;
+          if (this.__maxQualityLoadStarted >= 1) return;
+          this.__maxQualityLoadStarted = 1;
         }
 
         const bgElement = is2x
@@ -103,11 +94,10 @@
 
         // Load the background image without displaying it. Once it has loaded
         // set the background of the associated div and fade it in.
-        const background = new Image();
-        // This should match the media query in the CSS above.
-        background.src = bgSrc;
-        background.onload = () => {
-          bgElement.style.backgroundImage = `url(${background.src})`;
+        const image = new Image();
+        image.src = bgSrc;
+        image.onload = () => {
+          bgElement.style.backgroundImage = `url(${bgSrc})`;
           bgElement.classList.toggle('visible', true);
           bgElement.classList.toggle('skip-transition', this.__skipTransition);
         };
