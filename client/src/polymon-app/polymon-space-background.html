@@ -68,20 +68,26 @@
         requestAnimationFrame(() => {
           this.__skipTransition = false;
         });
-
-        this.__load();
       },
 
       __load: function() {
-        if (this.preventLoad) return;
+        if (this.preventLoad) {
+          return;
+        }
 
         const is2x = this.__is2x.matches;
 
         if (is2x) {
-          if (this.__maxQualityLoadStarted >= 2) return;
+          if (this.__maxQualityLoadStarted >= 2) {
+            return;
+          }
+
           this.__maxQualityLoadStarted = 2;
         } else {
-          if (this.__maxQualityLoadStarted >= 1) return;
+          if (this.__maxQualityLoadStarted >= 1) {
+            return;
+          }
+
           this.__maxQualityLoadStarted = 1;
         }
 
