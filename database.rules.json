@@ -54,9 +54,8 @@
       }
     },
     "tournaments": {
-      ".read": "auth != null && root.child('users').child(auth.uid).child('admin').val() === true",
+      ".read": "auth != null",
       "$tournament": {
-        ".read": "true",
         "createdAt": {},
         "secret": {},
         "currentBattleId": {},
