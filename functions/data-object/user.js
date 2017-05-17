@@ -3,6 +3,12 @@ const DataObject = require('../data-object');
 class User extends DataObject {
   static get properNoun() { return 'User'; }
 
+  async isAdmin() {
+    const user = await this.read();
+
+    return !!user.admin;
+  }
+
   async getActiveBattle() {
     const user = await this.read();
 

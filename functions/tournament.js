@@ -1,5 +1,6 @@
 const Tournament = require('./data-object/tournament');
 const Battle = require('./data-object/battle');
+const User = require('./data-object/user');
 const { userErrorNotifier } = require('./common');
 
 async function findTournamentBattle(db, battleId) {
@@ -75,8 +76,12 @@ exports.processTournamentQueue = (functions, admin) => functions.database
           switch (action) {
             case 'create': {
               const { secret } = message;
+              const user = new User(db, userId);
+              const isAdmin = await user.isAdmin();
 
-              await Tournament.create(admin.database(), secret);
+              if (isAdmin) {
+                await Tournament.create(admin.database(), secret);
+              }
               break;
             }
 
