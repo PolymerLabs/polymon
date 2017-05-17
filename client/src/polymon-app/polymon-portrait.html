@@ -23,68 +23,102 @@
     </div>
   </template>
   <script>
-    Polymer({
-      is: 'polymon-portrait',
+    (() => {
+      const animatedPolymonLoadPromises = new Map();
 
-      properties: {
-        polymon: {
-          type: Object,
-          observer: '__applyPolymonImage'
-        },
+      Polymer({
+        is: 'polymon-portrait',
 
-        caught: {
-          type: Boolean,
-          value: false,
-          observer: '__caughtChanged'
-        },
+        properties: {
+          animated: {
+            type: Boolean,
+            value: false
+          },
 
-        size: {
-          type: Number,
-          value: 64
-        }
-      },
+          polymon: {
+            type: Object,
+            observer: '__applyPolymonImage'
+          },
 
-      observers: [
-        '__applyPolymonImage(polymon, caught, size)'
-      ],
+          caught: {
+            type: Boolean,
+            value: false,
+            observer: '__caughtChanged'
+          },
 
-      __applyPolymonImage: function(polymon) {
-        this.debounce('apply-polymon-image', () => {
-          let polymon = this.polymon;
-          let index = polymon && polymon.spriteIndex;
-          let size = this.size;
-
-          if (index == null) {
-            index = -1;
+          size: {
+            type: Number,
+            value: 64
           }
+        },
 
-          this.style.width = `${size}px`;
-          this.style.height = `${size}px`;
-          this.style.borderRadius = `${size / 2}px`;
+        observers: [
+          '__applyPolymonImage(polymon, caught, size)'
+        ],
 
+        __applyPolymonImage: function(polymon) {
+          this.debounce('apply-polymon-image', () => {
+            let polymon = this.polymon;
+            let index = polymon && polymon.spriteIndex;
+            let size = this.size;
+            const animated = this.animated && polymon && polymon.animated;
+
+            if (index == null) {
+              index = -1;
+            }
+
+            this.style.width = `${size}px`;
+            this.style.height = `${size}px`;
+            this.style.borderRadius = `${size / 2}px`;
+
+            if (this.caught) {
+              this.$.image.style.backgroundPosition = 'top left';
+              this.$.image.style.backgroundSize = '100%';
+              this.$.image.style.backgroundImage = `url(/images/polymon_monster_${index}.png)`;
+
+              if (animated) {
+                const animatedUrl = this.resolveUrl(`../../images/polymon_monster_${index}.gif`);
+                const imagePreloads = animatedPolymonLoadPromises.has(polymon)
+                    ? animatedPolymonLoadPromises.get(polymon)
+                    : new Promise((resolve, reject) => {
+                        const image = new Image();
+                        image.onload = resolve;
+                        image.src = animatedUrl;
+                      });
+
+                animatedPolymonLoadPromises.set(polymon, imagePreloads);
+
+                this.classList.toggle('animated', animated);
+
+                imagePreloads.then(() => {
+                  if (this.polymon &&
+                      this.polymon.spriteIndex === polymon.spriteIndex &&
+                      this.animated) {
+                    this.$.image.style.backgroundImage = `url(${animatedUrl})`;
+                  }
+                });
+              }
+            } else {
+              let top = Math.floor(index / 20) * -size;
+              let left = (index % 20) * -size;
+
+              this.classList.remove('animated');
+
+              this.$.image.style.backgroundSize = `${size * 20}px ${size * 20}px`;
+              this.$.image.style.backgroundPosition = `${left}px ${top}px`;
+              this.$.image.style.backgroundImage = '';
+            }
+          });
+        },
+
+        __caughtChanged: function() {
           if (this.caught) {
-            this.$.image.style.backgroundSize = '100%';
-            this.$.image.style.backgroundPosition = 'top left';
-            this.$.image.style.backgroundImage = `url(/images/polymon_monster_${index}.png)`;
+            this.classList.add('caught');
           } else {
-            let top = Math.floor(index / 20) * -size;
-            let left = (index % 20) * -size;
-
-            this.$.image.style.backgroundSize = `${size * 20}px ${size * 20}px`;
-            this.$.image.style.backgroundPosition = `${left}px ${top}px`;
-            this.$.image.style.backgroundImage = '';
+            this.classList.remove('caught');
           }
-        });
-      },
-
-      __caughtChanged: function() {
-        if (this.caught) {
-          this.classList.add('caught');
-        } else {
-          this.classList.remove('caught');
         }
-      }
-    });
-
+      });
+    })();
   </script>
 </dom-module>
