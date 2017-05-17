@@ -228,6 +228,11 @@
         playerStatusPath: {
           type: String,
           computed: '__computePlayerStatusPath(battlePath, spectatedUserId)'
+        },
+
+        winnerTeamStatus: {
+          type: Array,
+          value: null
         }
       },
 
