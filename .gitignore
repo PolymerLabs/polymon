@@ -9,6 +9,7 @@ build
 .*.service-account.json
 .*.env.json
 client/index.html
+client/sw-precache-config.js
 build-compare
 build/*
 firebase.json

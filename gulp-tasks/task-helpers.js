@@ -150,6 +150,9 @@ const clean = async _ => {
 
   await Promise.all([
     exec('rm -rf ./build'),
+    exec('rm ./client/index.html'),
+    exec('rm ./client/polymer.json'),
+    exec('rm ./client/sw-precache-config.js'),
     exec('rm -rf ./client/bower_components'),
     exec('rm -rf ./functions/node_modules'),
     exec('rm -rf ./firebase.json')
@@ -171,6 +174,7 @@ const build = async (env='dev') => {
 
   console.log('building polymon...');
   await exec('cp polymer.json client');
+  await exec('cp sw-precache-config.js client');
   process.chdir('client');
   await spawn('polymer', ['build']);
   process.chdir('..');
