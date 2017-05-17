@@ -108,7 +108,7 @@
 
         copy: {
           type: String,
-          computed: '__computeCopy(ready, victory)'
+          computed: '__computeCopy(ready, victory, player)'
         },
 
         victory: {
@@ -132,9 +132,11 @@
         }
       },
 
-      __computeCopy(ready, victory) {
+      __computeCopy(ready, victory, player) {
         return victory
-            ? 'WINS!'
+            ? player === 'draw'
+                ? 'The battle ended in a draw.'
+                : 'WINS!'
             : ready
                 ? 'READY!'
                 : 'Go head to head here!'

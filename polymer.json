@@ -45,6 +45,7 @@
     "./fonts/**/*",
     "./images/**/*",
     "./music/**/*",
+    "./video/**/*",
     "./manifest.json",
     "./bower_components/webrtc-polyfill/index.js"
   ]

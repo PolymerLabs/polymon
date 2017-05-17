@@ -259,7 +259,7 @@
       },
 
       __performCountdownSequence() {
-        return new Promise(resolve => setTimeout(resolve, 5000))
+        return new Promise(resolve => setTimeout(resolve, 7000))
           .then(() => this.$.clock.count());
       },
 
@@ -450,7 +450,9 @@
         // TODO: Handle ties!
         return latestTournamentRound.winningUserId === latestTournamentRound.playerOneUserId
             ? 'one'
-            : 'two';
+            : latestTournamentRound.winningUserId === latestTournamentRound.playerTwoUserId
+                ? 'two'
+                : 'draw';
       },
 
       __computePresentedTeamStatus(presentationState, spectatedTeamStatus, winnerTeamStatus) {
