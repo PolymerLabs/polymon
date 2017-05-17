@@ -25,6 +25,20 @@
         transform-origin: top left;
         overflow: hidden;
       }
+
+      #qr-code {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      h1 {
+        color: #04072F;
+        margin: 1.5em 0 0;
+        font-size: 64px;
+        text-shadow: 0px 2px 0px rgba(255, 255, 255, 0.75);
+      }
     </style>
     <firebase-document
         app-name="polymon"
@@ -47,9 +61,13 @@
     </app-route>
 
     <template is="dom-if" if="[[secretConfigured]]">
-      <polymon-qr-code
-          data="[[tournamentJoinUrl]]">
-      </polymon-qr-code>
+      <div id="qr-code">
+        <polymon-qr-code
+            size="16"
+            data="[[tournamentJoinUrl]]">
+        </polymon-qr-code>
+        <h1>Scan to Join the Battle!</h1>
+      </div>
     </template>
     <template is="dom-if" if="[[playerSelectionActive]]">
       <polymon-tournament-spectator
