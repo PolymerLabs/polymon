@@ -244,13 +244,7 @@
             // NOTE(cdata): This controls the visibility of the QR code screen
             // that is used to share a battle with another player so that they
             // can join it:
-            if (battleData.tournamentId != null) {
-              setTimeout(() => {
-                this._setInitiatingBattle(active && battleData.engaged === false);
-              }, 7000);
-            } else {
-              this._setInitiatingBattle(active && battleData.engaged === false);
-            }
+            this._setInitiatingBattle(active && battleData.engaged === false);
           }
         });
       },
