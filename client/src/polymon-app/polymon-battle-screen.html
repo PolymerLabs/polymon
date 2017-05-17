@@ -245,9 +245,14 @@
             // that is used to share a battle with another player so that they
             // can join it:
             if (battleData.tournamentId != null) {
-              setTimeout(() => {
-                this._setInitiatingBattle(active && battleData.engaged === false);
-              }, 7000);
+              const initiatingBattle = active && battleData.engaged === false;
+              if (!initiatingBattle) {
+                setTimeout(() => {
+                  this._setInitiatingBattle(false);
+                }, 7000);
+              } else {
+                this._setInitiatingBattle(true);
+              }
             } else {
               this._setInitiatingBattle(active && battleData.engaged === false);
             }
