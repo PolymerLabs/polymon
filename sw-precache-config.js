@@ -4,7 +4,10 @@ module.exports = {
     '/manifest.json',
     '/bower_components/webcomponentsjs/webcomponents-lite.min.js',
     '/bower_components/webrtc-polyfill/index.js',
-    '/images/**/*',
+    '/images/*.svg',
+    '/images/*.jpg',
+    '/images/polymon_monster_*.png',
+    '/images/polymon_icon.png',
     '/fonts/**/*'
   ],
   navigateFallback: '/index.html',
