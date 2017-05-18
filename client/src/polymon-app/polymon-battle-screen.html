@@ -247,7 +247,6 @@
             const initiatingBattle = active && battleData.engaged === false;
 
             if (!initiatingBattle && battleData.tournamentId != null) {
-              this._setInitiatingBattle(true);
               this.__delayTournamentDebounce =
                   this.debounce('delay-tournament', () => {
                     this._setInitiatingBattle(this.active &&
