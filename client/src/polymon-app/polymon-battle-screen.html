@@ -244,7 +244,19 @@
             // NOTE(cdata): This controls the visibility of the QR code screen
             // that is used to share a battle with another player so that they
             // can join it:
-            this._setInitiatingBattle(active && battleData.engaged === false);
+            const initiatingBattle = active && battleData.engaged === false;
+
+            if (!initiatingBattle && battleData.tournamentId != null) {
+              this.__delayTournamentDebounce =
+                  this.debounce('delay-tournament', () => {
+                    this._setInitiatingBattle(this.active &&
+                        this.battleData.engaged === false);
+                  }, 7000);
+              return;
+            }
+
+            this.cancelDebouncer(this.__delayTournamentDebounce);
+            this._setInitiatingBattle(initiatingBattle);
           }
         });
       },
