@@ -10,12 +10,12 @@
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-detail.html">
 <link rel="import" href="polymon-polydex-query.html">
-<link rel="import" href="polymon-renderable-behavior.html">
 
 <dom-module id="polymon-polydex">
   <template>
     <style include="typography wiggle-animation scaled-rotate-animation">
       :host {
+        @apply --layout-fit;
         position: relative;
         box-sizing: border-box;
         padding: 8px;
@@ -27,7 +27,11 @@
         overflow: hidden;
       }
 
-      [hidden] {
+      :host([hidden]) {
+        display: flex !important;
+      }
+
+      :host([hidden]) > * {
         display: none !important;
       }
 
@@ -234,8 +238,7 @@
       is: 'polymon-polydex',
 
       behaviors: [
-        PolymonElement,
-        PolymonRenderableBehavior
+        PolymonElement
       ],
 
       properties: {
@@ -276,27 +279,6 @@
 
       listeners: {
         'cancel-team-swap.tap': '__onCancelTeamSwapTap'
-      },
-
-      render: function(shouldBeVisible=false, config) {
-        if (this.__hidingTimeout) {
-          this.cancelAsync(this.__hidingTimeout)
-          this.__hidingTimeout = null;
-        }
-
-        if (shouldBeVisible) {
-          this.$.team.removeAttribute('hidden');
-          this.$.index.removeAttribute('hidden');
-          this.$.controls.removeAttribute('hidden');
-          this.$.detail.removeAttribute('hidden');
-        } else {
-          this._hidingTimeout = this.async(() => {
-            this.$.team.setAttribute('hidden', true);
-            this.$.index.setAttribute('hidden', true);
-            this.$.controls.setAttribute('hidden', true);
-            this.$.detail.setAttribute('hidden', true);
-          }, this.hideDelay);
-        }
       },
 
       __onPolymonAnchorClick: function(event) {

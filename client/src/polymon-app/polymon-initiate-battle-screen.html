@@ -5,7 +5,6 @@
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-qr-code.html">
 <link rel="import" href="polymon-button.html">
-<link rel="import" href="polymon-renderable-behavior.html">
 <dom-module id="polymon-initiate-battle-screen">
   <template>
     <style include="active-fade-up">
@@ -88,8 +87,7 @@
       is: 'polymon-initiate-battle-screen',
 
       behaviors: [
-        PolymonElement,
-        PolymonRenderableBehavior
+        PolymonElement
       ],
 
       properties: {

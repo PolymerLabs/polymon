@@ -4,7 +4,6 @@
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="polymon-styles.html">
 <link rel="import" href="polymon-element.html">
-<link rel="import" href="polymon-renderable-behavior.html">
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-qr-code-scanner-proxy.html">
@@ -13,6 +12,7 @@
   <template>
     <style include="typography">
       :host {
+        @apply --layout-fit;
         position: relative;
 
         position: relative;
@@ -142,8 +142,7 @@
       is: 'polymon-new-battle-screen',
 
       behaviors: [
-        PolymonElement,
-        PolymonRenderableBehavior
+        PolymonElement
       ],
 
       __onStartTap: function() {

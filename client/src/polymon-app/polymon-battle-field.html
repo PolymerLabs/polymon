@@ -9,7 +9,6 @@
 <link rel="import" href="polymon-button.html">
 <link rel="import" href="polymon-portrait.html">
 <link rel="import" href="polymon-space-background.html">
-<link rel="import" href="polymon-renderable-behavior.html">
 <dom-module id="polymon-battle-field">
   <template>
     <style include="typography">
@@ -558,8 +557,7 @@
 
       behaviors: [
         PolymonElement,
-        Polymer.IronResizableBehavior,
-        PolymonRenderableBehavior
+        Polymer.IronResizableBehavior
       ],
 
       properties: {
@@ -607,7 +605,7 @@
       },
 
       observers: [
-        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting, loading, rendered)',
+        '__updateControlsPosition(selectedAttribute, userTeamStatus, waiting, loading)',
         '__submitMove(selectedAttribute, selectedPolydexId)'
       ],
 
@@ -645,7 +643,7 @@
 
       __updateControlsPosition: function() {
         this.deraf('update-controls-position', () => {
-          if (this.loading || !this.rendered) {
+          if (this.loading) {
             // We are loading, so the controls should stay in their default
             // position (which is offscreen).
             return;

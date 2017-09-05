@@ -2,7 +2,6 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="polymon-element.html">
 <link rel="import" href="polymon-multi-pages-behavior.html">
-<link rel="import" href="polymon-renderable-behavior.html">
 <link rel="import" href="polymon-styles.html">
 
 <dom-module id="polymon-panel">
@@ -30,6 +29,7 @@
       }
 
       #container ::content > * {
+        position: relative;
         flex: 0 0 100%;
       }
     </style>
@@ -42,9 +42,7 @@
       is: 'polymon-panel',
 
       behaviors: [
-        PolymonElement,
-        PolymonRenderableBehavior,
-        PolymonMultiPagesBehavior
+        PolymonElement
       ],
 
       properties: {
